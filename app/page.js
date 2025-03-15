@@ -3,10 +3,10 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
-import HeroSection from "./components/HeroSection";
-import ServicesSection from "./components/Services/ServicesSection";
-import BrandingModel from "./components/Branding/BrandingModel";
-import WorkAndBlogsSection from "./components/Work and Blog/Worksection";
+import HeroSection from "./components/Home/HeroSection";
+import ServicesSection from "./components/Home/Services/ServicesSection";
+import BrandingModel from "./components/Home/Branding/BrandingModel";
+import WorkAndBlogsSection from "./components/Home/Work and Blog/Worksection";
 
 // Animation variants for different effects
 const fadeIn = {
