@@ -97,7 +97,7 @@ const InvertedServicesAnimation = () => {
 
 
   // Create service refs array once
-  const serviceRefs = useRef(services.map(() => useRef(null)))
+  const serviceRefs = useRef(Array(services.length).fill().map(() => ({ current: null })))
 
   // Initialize animations on component mount
   useEffect(() => {
