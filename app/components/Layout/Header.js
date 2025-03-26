@@ -3,17 +3,21 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ChevronDown, ArrowRight, Zap, Coffee, Users, MessageSquare, PenTool, Layout, ExternalLink } from 'lucide-react'
+import { Menu, X, ChevronDown, ArrowRight, Zap, Coffee, Users, MessageSquare, PenTool, Layout, ExternalLink, LogIn, Globe, FileText, TrendingUp } from 'lucide-react'
 
 const Header = () => {
     const [isServicesOpen, setIsServicesOpen] = useState(false);
+    const [isBlogOpen, setIsBlogOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(null);
     const dropdownRef = useRef(null);
+    const blogsRef = useRef(null);
+    const servicesRef = useRef(null);
 
     const navItemsLeft = [
         { label: "Contact Us", href: "/contact-us", icon: <MessageSquare size={18} /> },
         { label: "About Us", href: "/about-us", icon: <Users size={18} /> },
+        { label: "Portfolio", href: "/portfolio", icon: <Users size={18} /> },
     ]
 
     const navItemsRight = [
@@ -32,7 +36,25 @@ const Header = () => {
                 { label: "Social-Media Management", href: "/services/social-media", icon: <MessageSquare size={16} /> },
             ]
         },
-        { label: "Blogs", href: "/blogs", icon: <PenTool size={18} /> },
+        {
+            label: "Blogs",
+            href: "/blogs",
+            icon: <PenTool size={18} />,
+            hasDropdown: true,
+            dropdownItems: [
+                { label: "Digital Marketing Strategies", href: "/blogs/digital-marketing", icon: <Globe size={16} /> },
+                { label: "Content Marketing Strategies", href: "/blogs/content-marketing", icon: <FileText size={16} /> },
+                { label: "Social Media Strategies", href: "/blogs/social-media", icon: <Users size={16} /> },
+                { label: "Sales Strategies", href: "/blogs/sales-strategies", icon: <TrendingUp size={16} /> },
+            ]
+
+        },
+        {
+            label: "Login",
+            href: "/login",
+            hasDropdown: false,
+            icon: <LogIn size={18} />
+        }
     ]
 
     // Animation variants
@@ -187,6 +209,7 @@ const Header = () => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsServicesOpen(false);
+                setIsBlogOpen(false);
             }
         };
 
@@ -206,11 +229,42 @@ const Header = () => {
         };
     }, [isMobileMenuOpen]);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (servicesRef.current && !servicesRef.current.contains(event.target)) {
+                setIsServicesOpen(false);
+            }
+            if (blogsRef.current && !blogsRef.current.contains(event.target)) {
+                setIsBlogOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    const handleDropdown = (menuType) => {
+        if (menuType === "services") {
+            setIsServicesOpen(true);
+            setIsBlogOpen(false);
+        } else if (menuType === "blogs") {
+            setIsBlogOpen(true);
+            setIsServicesOpen(false);
+        }
+    };
+
+    const closeDropdown = () => {
+        setIsServicesOpen(false);
+        setIsBlogOpen(false);
+    };
+
     return (
         <header className="bg-white border-b border-gray-200 relative z-50">
             <div className="container mx-auto px-4">
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center justify-center h-16">
+                <nav className="hidden md:flex items-center justify-center h-20">
                     {/* Left Side Navigation */}
                     <ul className="flex space-x-16">
                         {navItemsLeft.map((item, index) => (
@@ -235,7 +289,7 @@ const Header = () => {
                     >
                         <Link href="/">
                             <Image
-                                src="/logo.png" // Update with your actual logo path
+                                src="/logo.png"
                                 alt="Logo"
                                 fill
                                 className="object-cover"
@@ -249,10 +303,10 @@ const Header = () => {
                         {navItemsRight.map((item, index) => (
                             <motion.li
                                 key={index}
-                                className="text-black hover:text-gray-700 relative"
-                                ref={item.hasDropdown ? dropdownRef : null}
-                                onMouseEnter={() => item.hasDropdown && setIsServicesOpen(true)}
-                                onMouseLeave={() => item.hasDropdown && setIsServicesOpen(false)}
+                                className="relative text-black hover:text-gray-700"
+                                ref={item.label === "Services" ? servicesRef : item.label === "Blogs" ? blogsRef : null}
+                                onMouseEnter={() => item.hasDropdown && handleDropdown(item.label.toLowerCase())}
+                                onMouseLeave={closeDropdown}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
@@ -260,7 +314,7 @@ const Header = () => {
                                     {item.label}
                                     {item.hasDropdown && (
                                         <motion.div
-                                            animate={{ rotate: isServicesOpen ? 180 : 0 }}
+                                            animate={{ rotate: (item.label === "Services" && isServicesOpen) || (item.label === "Blogs" && isBlogOpen) ? 180 : 0 }}
                                             transition={{ duration: 0.3 }}
                                         >
                                             <ChevronDown size={16} />
@@ -269,7 +323,7 @@ const Header = () => {
                                 </Link>
 
                                 <AnimatePresence>
-                                    {item.hasDropdown && isServicesOpen && (
+                                    {item.hasDropdown && ((item.label === "Blogs" && isBlogOpen) || (item.label === "Services" && isServicesOpen)) && (
                                         <motion.div
                                             className="absolute top-full right-0 mt-1 w-64 bg-white shadow-lg rounded-md border border-gray-200 z-50 overflow-hidden"
                                             initial="hidden"
@@ -422,8 +476,8 @@ const Header = () => {
                                                             </Link>
                                                         </motion.div>
 
-                                                        {/* Basic Navigation Links */}
-                                                        {[...navItemsLeft, ...navItemsRight.filter(item => !item.hasDropdown)].map((item, index) => (
+                                                        {/* Mobile Navigation Links */}
+                                                        {[...navItemsLeft, ...navItemsRight].map((item, index) => (
                                                             <motion.div
                                                                 key={index}
                                                                 custom={index + 1}
@@ -438,73 +492,10 @@ const Header = () => {
                                                                     onClick={() => setIsMobileMenuOpen(false)}
                                                                 >
                                                                     <div className="flex items-center gap-3">
-                                                                        {React.cloneElement(item.icon, { className: "text-black" })}
+                                                                        {item.icon}
                                                                         <span className="font-medium">{item.label}</span>
                                                                     </div>
-                                                                    <ExternalLink size={16} className="text-black" />
-                                                                </Link>
-                                                            </motion.div>
-                                                        ))}
-
-                                                        {/* Services (with dropdown) */}
-                                                        {navItemsRight.filter(item => item.hasDropdown).map((item, index) => (
-                                                            <motion.div
-                                                                key={`dropdown-${index}`}
-                                                                custom={navItemsLeft.length + navItemsRight.filter(item => !item.hasDropdown).length + index + 1}
-                                                                variants={card3DVariants}
-                                                                whileHover="hover"
-                                                                whileTap="tap"
-                                                                style={{ transformStyle: "preserve-3d" }}
-                                                            >
-                                                                <button
-                                                                    onClick={() => setActiveTab('services')}
-                                                                    className="w-full flex items-center justify-between p-4 rounded-lg border border-gray-900 bg-gray-900 text-white transition-all"
-                                                                >
-                                                                    <div className="flex items-center gap-3">
-                                                                        {item.icon && React.cloneElement(item.icon, { size: 20, className: "text-white" })}
-                                                                        <span className="font-medium">{item.label}</span>
-                                                                    </div>
-                                                                    <ArrowRight size={16} className="text-white" />
-                                                                </button>
-                                                            </motion.div>
-                                                        ))}
-                                                    </div>
-                                                </motion.div>
-                                            )}
-
-                                            {/* Services Panel View */}
-                                            {activeTab === 'services' && (
-                                                <motion.div
-                                                    className="p-6"
-                                                    initial="hidden"
-                                                    animate="visible"
-                                                    exit="exit"
-                                                    variants={servicesPanelVariants}
-                                                    key="services-panel"
-                                                    style={{ transformStyle: "preserve-3d" }}
-                                                >
-                                                    <div className="space-y-4">
-                                                        {navItemsRight.find(item => item.hasDropdown)?.dropdownItems.map((service, index) => (
-                                                            <motion.div
-                                                                key={index}
-                                                                custom={index}
-                                                                variants={serviceItemVariants}
-                                                                whileHover="hover"
-                                                                whileTap="tap"
-                                                                style={{ transformStyle: "preserve-3d" }}
-                                                            >
-                                                                <Link
-                                                                    href={service.href}
-                                                                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
-                                                                    onClick={() => setIsMobileMenuOpen(false)}
-                                                                >
-                                                                    <div className="flex items-center gap-3">
-                                                                        <div className="bg-gray-900 p-2 rounded-md">
-                                                                            {React.cloneElement(service.icon, { className: "text-white", size: 16 })}
-                                                                        </div>
-                                                                        <span>{service.label}</span>
-                                                                    </div>
-                                                                    <ExternalLink size={16} className="text-black" />
+                                                                    <ExternalLink size={16} />
                                                                 </Link>
                                                             </motion.div>
                                                         ))}
@@ -521,7 +512,7 @@ const Header = () => {
                                         animate={{ opacity: 1 }}
                                         transition={{ delay: 0.5 }}
                                     >
-                                        <p>© 2025 Your Company</p>
+                                        <p>© 2025 Poppy Pie</p>
                                     </motion.div>
                                 </motion.div>
                             </div>

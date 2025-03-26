@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import Image from "next/image"
 
 // Sample data for our work and blogs
 const workData = [
@@ -88,8 +89,9 @@ const Card = ({ item, cardRef, isTilted, index }) => {
     useEffect(() => {
         if (cardRef.current) {
             gsap.to(cardRef.current, {
-                rotateY: isTilted ? 15 : 0,
-                rotateX: isTilted ? 5 : 0,
+                rotateY: isTilted ? 15 : 0,  // Rotate on Y axis for perspective effect
+                perspective: isTilted ? 800 : 0, // Add perspective for 3D effect
+                transformOrigin: "center center", // Ensure rotation happens from center
                 scale: isTilted ? 1.05 : 1,
                 zIndex: isTilted ? 10 : index,
                 boxShadow: isTilted
@@ -104,22 +106,23 @@ const Card = ({ item, cardRef, isTilted, index }) => {
     return (
         <div
             ref={cardRef}
-            className="relative flex-shrink-0 w-64 h-72 mx-3 bg-white rounded-lg overflow-hidden transform-gpu transition-all duration-300 hover:shadow-xl"
-            style={{ transformStyle: "preserve-3d" }}
+            className="relative flex-shrink-0 w-64 h-72 mx-3 bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+            style={{
+                transformStyle: "preserve-3d",
+                perspective: "1000px"  // Add this to parent for better 3D effect
+            }}
         >
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-20 z-10"></div>
-            <img
+            <Image
                 src={item.image || "/placeholder.svg"}
                 alt={item.title}
+                fill
                 className="w-full h-40 object-cover grayscale hover:grayscale-0 transition-all duration-500"
             />
             <div className="p-4 relative z-20">
                 <h3 className="text-lg font-semibold text-black">{item.title}</h3>
                 <p className="text-sm text-gray-600 mt-1 line-clamp-2">{item.description}</p>
             </div>
-            {isTilted && (
-                <div className="absolute top-0 right-0 bg-black text-white px-2 py-1 text-xs font-bold z-20">FEATURED</div>
-            )}
         </div>
     )
 }
@@ -160,7 +163,7 @@ const Carousel = ({ data, title }) => {
     }
 
     return (
-        <div className="w-full max-w-5xl mx-auto mb-16">
+        <div className="w-full max-w-7xl mx-auto mb-16">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-3xl font-bold text-black">{title}</h2>
 

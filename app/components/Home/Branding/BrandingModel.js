@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { gsap } from "gsap"
 import { brandingData } from "./Utility"
+import Link from "next/link"
 
 export default function InteractiveBrandingModel() {
     const [activeSection, setActiveSection] = useState("visual-identity")
@@ -239,7 +240,7 @@ export default function InteractiveBrandingModel() {
                             {brandingData[activeSection].title}
                         </motion.h2>
                         <motion.p
-                            className="text-xl text-gray-700 mb-8 leading-relaxed"
+                            className="text-xl text-gray-700 mb-8 leading-relaxed w-2xl"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5, delay: 0.3 }}
@@ -249,14 +250,16 @@ export default function InteractiveBrandingModel() {
                     </motion.div>
                 </AnimatePresence>
 
-                <motion.button
-                    className="self-start bg-gray-900 hover:bg-gray-800 text-white py-3 px-8 rounded-lg text-lg shadow-lg"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                    Know More
-                </motion.button>
+                <Link href={brandingData[activeSection].url}>
+                    <motion.button
+                        className="self-start bg-gray-900 hover:bg-gray-800 text-white py-3 px-8 rounded-lg text-lg shadow-lg"
+                        whileHover={{ scale: 1.025 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    >
+                        Know More
+                    </motion.button>
+                </Link>
             </div>
         </div>
     )

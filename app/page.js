@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import HeroSection from "./components/Home/HeroSection";
 import ServicesSection from "./components/Home/Services/ServicesSection";
 import BrandingModel from "./components/Home/Branding/BrandingModel";
 import WorkAndBlogsSection from "./components/Home/Work and Blog/Worksection";
+import Preloader from "./components/Preloader";
 
 // Animation variants for different effects
 const fadeIn = {
@@ -65,33 +66,47 @@ const AnimatedSection = ({ children, variants, viewAmount = 0.2, className = "" 
 };
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
+
+  const handleComplete = () => {
+    setLoading(false);
+  };
+
   return (
-    <div className="overflow-hidden">
-      {/* Hero section - can have a special animation if desired */}
-      <HeroSection />
+    <>
+      {
+        loading ? (
+          <Preloader onComplete={handleComplete} />
+        ) : (
+          <div className="overflow-hidden">
+            {/* Hero section - can have a special animation if desired */}
+            < HeroSection />
 
-      {/* Services section with a fade-in animation */}
-      <AnimatedSection
-        variants={fadeIn}
-        className="my-8"
-      >
-        <ServicesSection />
-      </AnimatedSection>
+            {/* Services section with a fade-in animation */}
+            < AnimatedSection
+              variants={fadeIn}
+              className="my-8"
+            >
+              <ServicesSection />
+            </AnimatedSection >
 
-      {/* Branding model with slide-in animation */}
-      <AnimatedSection
-        variants={slideIn}
-        className="my-8"
-      >
-        <BrandingModel />
-      </AnimatedSection>
+            {/* Branding model with slide-in animation */}
+            < AnimatedSection
+              variants={slideIn}
+              className="my-8"
+            >
+              <BrandingModel />
+            </AnimatedSection >
 
-      <AnimatedSection
-        variants={slideIn}
-        className="my-8"
-      >
-        <WorkAndBlogsSection />
-      </AnimatedSection>
-    </div>
+            <AnimatedSection
+              variants={slideIn}
+              className="my-8"
+            >
+              <WorkAndBlogsSection />
+            </AnimatedSection>
+          </div >
+        )
+      }
+    </>
   );
 }

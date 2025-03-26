@@ -11,13 +11,13 @@ const InvertedServicesAnimation = () => {
   const dotRef = useRef(null)
   const circleArcRef = useRef(null);
   const rotatingLineRef = useRef(null);
-  
+
 
   // State
   const [activeService, setActiveService] = useState(1)
   const [isFirstLoad, setIsFirstLoad] = useState(true)
 
-  // ============================================================
+    // ============================================================
   // CONFIGURATION PARAMETERS - Adjust these values as needed
   // ============================================================
 
@@ -50,15 +50,15 @@ const InvertedServicesAnimation = () => {
 
     // Additional adjustments for each individual service by ID
     serviceAdjustments: {
-      1: { x: "19rem", y: "1.5rem" },     // Right position (service 1)
-      2: { x: "15.5rem", y: "5.5rem" },     // Bottom position (service 2)
-      3: { x: "11rem", y: "1.5rem" },    // Left position (service 3)
-      4: { x: "15.5rem", y: "-2rem" }     // Top position (service 4)
+      1: { x: "30rem", y: "1.5rem" },     // Right position (service 1)
+      2: { x: "26rem", y: "5.5rem" },     // Bottom position (service 2)
+      3: { x: "21rem", y: "1.5rem" },    // Left position (service 3)
+      4: { x: "26rem", y: "-2rem" }     // Top position (service 4)
     },
 
     // Service content panel position
-    serviceContentLeft: "400",  // in percentage or pixels (e.g. "96%" or "400px")
-    serviceContentWidth: "150", // in percentage or pixels
+    serviceContentLeft: "240",  // in percentage or pixels (e.g. "96%" or "400px")
+    serviceContentWidth: "500", // in percentage or pixels
 
     // Visual appearance
     activeOpacity: 1,
@@ -72,28 +72,29 @@ const InvertedServicesAnimation = () => {
     {
       id: 1,
       title: "Brand Strategy",
-      description: "Defining your brand's vision, values, and positioning in the market.",
+      description: "Defining your brand's vision, values, and positioning in the market. We conduct in-depth market research, competitor analysis, and audience segmentation to build a strategic roadmap that differentiates your brand and ensures long-term success.",
       position: "right", // Line points right (0 degrees)
     },
     {
       id: 2,
       title: "Visual Identity",
-      description: "Creating compelling visual elements that represent your brand essence.",
+      description: "Creating compelling visual elements that represent your brand essence. From logo design and color palettes to typography and brand guidelines, we craft a cohesive and memorable visual identity that resonates with your target audience and strengthens brand recognition.",
       position: "bottom", // Line points down (90 degrees)
     },
     {
       id: 3,
       title: "Digital Experience",
-      description: "Crafting memorable interactions across all digital touchpoints.",
+      description: "Crafting memorable interactions across all digital touchpoints. We design and develop intuitive websites, engaging mobile experiences, and interactive interfaces that prioritize user experience, accessibility, and seamless navigation to maximize engagement and conversions.",
       position: "left", // Line points left (180 degrees)
     },
     {
       id: 4,
       title: "Content Creation",
-      description: "Developing strategic content that engages your target audience.",
+      description: "Developing strategic content that engages your target audience. We specialize in copywriting, video production, and social media storytelling to build a compelling narrative that captures attention, drives traffic, and fosters meaningful connections with your brand.",
       position: "top", // Line points up (270 degrees)
     },
-  ]
+  ];
+
 
   // Create service refs array once
   const serviceRefs = useRef(services.map(() => useRef(null)))
@@ -344,7 +345,7 @@ const InvertedServicesAnimation = () => {
       ></div>
 
       {/* SVG container */}
-      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+      <div className="absolute top-0 left-44 w-full h-full flex items-center justify-center">
         <svg ref={svgRef} viewBox="-250 -150 500 300" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
           {/* Grid pattern for depth */}
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -406,7 +407,7 @@ const InvertedServicesAnimation = () => {
       </div>
 
       {/* Service details */}
-      <h2 className="relative text-2xl md:text-3xl ml-[25rem] mt-82 font-medium tracking-wide z-50">Service</h2>
+      <h2 className="relative text-2xl md:text-4xl ml-[15rem] mt-82 font-medium tracking-wide z-50">Service</h2>
 
       <div
         className="absolute top-1/2 transform -translate-y-1/2 z-10"
@@ -427,8 +428,8 @@ const InvertedServicesAnimation = () => {
                   pointerEvents: isActive ? "auto" : "none",
                 }}
               >
-                <h3 className="text-xl mb-3 font-medium tracking-wide">{service.title}</h3>
-                <p className="text-gray-700 leading-relaxed text-sm mb-6">{service.description}</p>
+                <h3 className="text-2xl mb-3 font-medium tracking-wide">{service.title}</h3>
+                <p className="text-gray-700 leading-relaxed text-lg mb-6">{service.description}</p>
 
                 <div className="flex items-center text-xs">
                   <button className="px-4 py-2 border border-gray-300 rounded-sm hover:bg-black hover:text-white hover:border-black transition-colors text-xs tracking-wide">
@@ -499,4 +500,4 @@ const InvertedServicesAnimation = () => {
   )
 }
 
-export default InvertedServicesAnimation
+export default InvertedServicesAnimation;
