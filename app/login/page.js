@@ -4,33 +4,84 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { cn } from "@/lib/utils";
+import { useRouter } from 'next/navigation';
 import {
     IconBrandGithub,
     IconBrandGoogle,
 } from "@tabler/icons-react";
+import { useAuth } from '../components/context/AuthProvider';
 
 const Auth = () => {
+    const { login, loading, error } = useAuth();
+    const router = useRouter();
+
     const [activeTab, setActiveTab] = useState('login');
-    const [username, setUsername] = useState('');
+    const [mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [loginError, setLoginError] = useState('');
+    const [registerError, setRegisterError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
-        if (activeTab === 'login') {
-            console.log('Login submitted:', { username, password });
-        } else {
-            console.log('Register submitted:', {
-                firstName,
-                lastName,
-                email,
-                password,
-                confirmPassword
-            });
+        setLoginError('');
+
+        if (!email || !password) {
+            setLoginError('Email and password are required');
+            return;
         }
+
+        try {
+            // Call the login function from our auth context
+            const result = await login(email, password);
+
+            if (result.success) {
+                // Redirect based on login result
+                router.push(result.url);
+            } else {
+                setLoginError(result.error || 'Login failed. Please try again.');
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            setLoginError('An unexpected error occurred. Please try again.');
+        }
+    };
+
+    const handleRegisterSubmit = async (e) => {
+        e.preventDefault();
+        setRegisterError('');
+
+        // Basic validation
+        if (!firstName || !email || !password || !mobile) {
+            setRegisterError('All fields are required');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setRegisterError('Passwords do not match');
+            return;
+        }
+
+        try {
+            const response = await register(firstName, lastName, email, mobile, password);
+            if (response.success) {
+                setActiveTab('login');
+            } else {
+                setRegisterError(response.error || 'Registration failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Register error: ', error);
+        }
+
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setMobile('');
     };
 
     const tabVariants = {
@@ -134,7 +185,7 @@ const Auth = () => {
                         <motion.form
                             key="login"
                             className="mt-8 space-y-6"
-                            onSubmit={handleSubmit}
+                            onSubmit={handleLoginSubmit}
                             variants={tabVariants}
                             initial="hidden"
                             animate="visible"
@@ -146,20 +197,30 @@ const Auth = () => {
                                 initial="hidden"
                                 animate="visible"
                             >
+                                {loginError && (
+                                    <motion.div
+                                        className="p-3 text-sm text-red-700 bg-red-100 rounded-md"
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                    >
+                                        {loginError}
+                                    </motion.div>
+                                )}
+
                                 <motion.div variants={itemVariants}>
                                     <LabelInputContainer>
-                                        <Label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                                            Username:
+                                        <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                            Email:
                                         </Label>
                                         <input
-                                            id="username"
-                                            name="username"
-                                            type="text"
+                                            id="email"
+                                            name="email"
+                                            type="email"
                                             required
                                             className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
-                                            placeholder="Enter your username"
-                                            value={username}
-                                            onChange={(e) => setUsername(e.target.value)}
+                                            placeholder="Enter your email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                         />
                                     </LabelInputContainer>
                                 </motion.div>
@@ -180,7 +241,6 @@ const Auth = () => {
                                             onChange={(e) => setPassword(e.target.value)}
                                         />
                                     </LabelInputContainer>
-
                                 </motion.div>
 
                                 <motion.div variants={itemVariants} className="flex items-center justify-between">
@@ -211,8 +271,9 @@ const Auth = () => {
                                     variants={buttonVariants}
                                     whileHover="hover"
                                     whileTap="tap"
+                                    disabled={loading}
                                 >
-                                    Login
+                                    {loading ? 'Logging in...' : 'Login'}
                                 </motion.button>
                             </motion.div>
                         </motion.form>
@@ -220,7 +281,7 @@ const Auth = () => {
                         <motion.form
                             key="register"
                             className="mt-8 space-y-6"
-                            onSubmit={handleSubmit}
+                            onSubmit={handleRegisterSubmit}
                             variants={tabVariants}
                             initial="hidden"
                             animate="visible"
@@ -232,6 +293,16 @@ const Auth = () => {
                                 initial="hidden"
                                 animate="visible"
                             >
+                                {registerError && (
+                                    <motion.div
+                                        className="p-3 text-sm text-red-700 bg-red-100 rounded-md"
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                    >
+                                        {registerError}
+                                    </motion.div>
+                                )}
+
                                 {/* First & Last Name Row */}
                                 <motion.div variants={itemVariants} className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                                     <LabelInputContainer>
@@ -261,13 +332,26 @@ const Auth = () => {
                                 </motion.div>
 
                                 <motion.div variants={itemVariants}>
-                                    <Label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</Label>
+                                    <Label htmlFor="register-email" className="block text-sm font-medium text-gray-700">Email Address</Label>
                                     <input
-                                        id="email"
+                                        id="register-email"
                                         placeholder="projectmayhem@fc.com"
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
+                                        className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
+                                        required
+                                    />
+                                </motion.div>
+
+                                <motion.div variants={itemVariants}>
+                                    <Label htmlFor="register-mobile" className="block text-sm font-medium text-gray-700">Mobile Number</Label>
+                                    <input
+                                        id="register-mobile"
+                                        placeholder="XXXXX-XXXXX"
+                                        type="tel"
+                                        value={mobile}
+                                        onChange={(e) => setMobile(e.target.value)}
                                         className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                                         required
                                     />

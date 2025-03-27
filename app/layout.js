@@ -3,6 +3,7 @@ import { Reenie_Beanie } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Layout/Header";
 import Footer from "./components/Layout/Footer";
+import { AuthProvider } from "./components/context/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +33,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${reenieBeanie.variable} antialiased`}
       >
-        <Header />
-        {children}
-        <Footer />
+        <AuthProvider>
+          <Header />
+          {children}
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
