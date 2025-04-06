@@ -1,53 +1,53 @@
 'use client'
-import Image from 'next/image'
-import Link from 'next/link'
-import React, { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ChevronDown, ArrowRight, Zap, Coffee, Users, MessageSquare, PenTool, Layout, ExternalLink, LogIn, Globe, FileText, TrendingUp } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, ChevronDown, ArrowRight, LogIn } from 'lucide-react';
+
+// Preloading icons to avoid layout shifts
+import IconComponents from '../IconComponents';
 
 const Header = () => {
     const [isServicesOpen, setIsServicesOpen] = useState(false);
     const [isBlogOpen, setIsBlogOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(null);
-    const dropdownRef = useRef(null);
-    const blogsRef = useRef(null);
     const servicesRef = useRef(null);
+    const blogsRef = useRef(null);
 
+    // Reduced navigation items with icons imported from IconComponents
     const navItemsLeft = [
-        { label: "Contact Us", href: "/contact-us", icon: <MessageSquare size={18} /> },
-        { label: "About Us", href: "/about-us", icon: <Users size={18} /> },
-        { label: "Carriers", href: "/carriers", icon: <Users size={18} /> },
-    ]
+        { label: "Contact Us", href: "/contact-us", icon: <IconComponents.MessageSquare /> },
+        { label: "About Us", href: "/about-us", icon: <IconComponents.Users /> },
+        { label: "Carriers", href: "/carriers", icon: <IconComponents.Users /> },
+    ];
 
     const navItemsRight = [
         {
             label: "Services",
             href: "/services",
-            icon: <Layout size={18} />,
+            icon: <IconComponents.Layout />,
             hasDropdown: true,
             dropdownItems: [
-                { label: "Marketing Services", href: "/services/marketing", icon: <Zap size={16} /> },
-                { label: "Funnel Creation", href: "/services/funnel-creation", icon: <Layout size={16} /> },
-                { label: "Branding", href: "/services/branding", icon: <PenTool size={16} /> },
-                { label: "Re-Branding", href: "/services/rebranding", icon: <Coffee size={16} /> },
-                { label: "Customer-Relations", href: "/services/customer-relations", icon: <Users size={16} /> },
-                { label: "Content Management", href: "/services/content-management", icon: <PenTool size={16} /> },
-                { label: "Social-Media Management", href: "/services/social-media", icon: <MessageSquare size={16} /> },
+                { label: "Marketing Services", href: "/services/marketing", icon: <IconComponents.Zap /> },
+                { label: "Funnel Creation", href: "/services/funnel-creation", icon: <IconComponents.Layout /> },
+                { label: "Branding", href: "/services/branding", icon: <IconComponents.PenTool /> },
+                { label: "Re-Branding", href: "/services/rebranding", icon: <IconComponents.Coffee /> },
+                { label: "Customer-Relations", href: "/services/customer-relations", icon: <IconComponents.Users /> },
             ]
         },
         {
             label: "Blogs",
             href: "/blogs",
-            icon: <PenTool size={18} />,
+            icon: <IconComponents.PenTool />,
             hasDropdown: true,
             dropdownItems: [
-                { label: "Digital Marketing Strategies", href: "/blogs/digital-marketing", icon: <Globe size={16} /> },
-                { label: "Content Marketing Strategies", href: "/blogs/content-marketing", icon: <FileText size={16} /> },
-                { label: "Social Media Strategies", href: "/blogs/social-media", icon: <Users size={16} /> },
-                { label: "Sales Strategies", href: "/blogs/sales-strategies", icon: <TrendingUp size={16} /> },
+                { label: "Digital Marketing", href: "/blogs/digital-marketing", icon: <IconComponents.Globe /> },
+                { label: "Content Marketing", href: "/blogs/content-marketing", icon: <IconComponents.FileText /> },
+                { label: "Social Media", href: "/blogs/social-media", icon: <IconComponents.Users /> },
+                { label: "Sales Strategies", href: "/blogs/sales-strategies", icon: <IconComponents.TrendingUp /> },
             ]
-
         },
         {
             label: "Login",
@@ -55,17 +55,18 @@ const Header = () => {
             hasDropdown: false,
             icon: <LogIn size={18} />
         }
-    ]
+    ];
 
-    // Animation variants
+    // Optimized animation variants
     const dropdownVariants = {
-        hidden: { opacity: 0, y: -5 },
+        hidden: { opacity: 0, y: -5, height: 0 },
         visible: {
             opacity: 1,
             y: 0,
+            height: 'auto',
             transition: {
-                duration: 0.3,
-                staggerChildren: 0.05
+                duration: 0.25,
+                staggerChildren: 0.04
             }
         }
     };
@@ -75,147 +76,52 @@ const Header = () => {
         visible: { opacity: 1, y: 0 }
     };
 
-    // 3D Cube Animation for Mobile Menu
-    const cubeVariants = {
-        hidden: {
-            rotateY: 90,
-            x: "100%",
-            opacity: 0,
-            transition: {
-                duration: 0.5,
-                ease: [0.32, 0.72, 0, 1]
-            }
-        },
+    // Mobile menu animation
+    const mobileMenuVariants = {
+        hidden: { x: '100%' },
         visible: {
-            rotateY: 0,
-            x: "0%",
-            opacity: 1,
+            x: 0,
             transition: {
-                duration: 0.6,
-                ease: [0.32, 0.72, 0, 1],
-                when: "beforeChildren"
+                duration: 0.3,
+                ease: [0.22, 1, 0.36, 1]
             }
         },
         exit: {
-            rotateY: -90,
-            x: "100%",
-            opacity: 0,
+            x: '100%',
             transition: {
-                duration: 0.5,
-                ease: [0.32, 0.72, 0, 1]
+                duration: 0.2,
+                ease: [0.22, 1, 0.36, 1]
             }
         }
     };
 
-    const drawerBackgroundVariants = {
+    const overlayVariants = {
         hidden: { opacity: 0 },
         visible: { opacity: 1 },
         exit: { opacity: 0 }
     };
 
-    // 3D Card animation for menu items
-    const card3DVariants = {
-        hidden: {
-            opacity: 0,
-            rotateX: 45,
-            y: 20,
-            z: -50,
-        },
-        visible: (i) => ({
-            opacity: 1,
-            rotateX: 0,
-            y: 0,
-            z: 0,
-            transition: {
-                delay: i * 0.07,
-                duration: 0.5,
-                type: "spring",
-                stiffness: 100,
-                damping: 20
-            }
-        }),
-        hover: {
-            scale: 1.03,
-            rotateX: -5,
-            rotateY: 5,
-            z: 20,
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)"
-        },
-        tap: {
-            scale: 0.97,
-            rotateX: 0,
-            z: 0,
-            boxShadow: "0 5px 10px -6px rgba(0, 0, 0, 0.1)"
-        }
-    };
-
-    const servicesPanelVariants = {
-        hidden: {
-            opacity: 0,
-            rotateY: -90,
-            x: 100,
-            transition: { duration: 0.3 }
-        },
-        visible: {
-            opacity: 1,
-            rotateY: 0,
-            x: 0,
-            transition: {
-                duration: 0.5,
-                staggerChildren: 0.07,
-                when: "beforeChildren"
-            }
-        },
-        exit: {
-            opacity: 0,
-            rotateY: 90,
-            x: -100,
-            transition: { duration: 0.3 }
-        }
-    };
-
-    const serviceItemVariants = {
-        hidden: {
-            opacity: 0,
-            y: 20,
-            rotateX: 20,
-            z: -50
-        },
-        visible: (i) => ({
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            z: 0,
-            transition: {
-                delay: i * 0.05,
-                duration: 0.4,
-                type: "spring",
-                stiffness: 120
-            }
-        }),
-        hover: {
-            scale: 1.03,
-            rotateX: -5,
-            z: 20,
-            boxShadow: "0 15px 30px -5px rgba(0, 0, 0, 0.1)"
-        },
-        tap: {
-            scale: 0.97,
-            boxShadow: "0 5px 10px -5px rgba(0, 0, 0, 0.1)"
-        }
-    };
-
+    // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsServicesOpen(false);
-                setIsBlogOpen(false);
+            if (!isMobileMenuOpen) {
+                if (servicesRef.current && !servicesRef.current.contains(event.target)) {
+                    setIsServicesOpen(false);
+                }
+                if (blogsRef.current && !blogsRef.current.contains(event.target)) {
+                    setIsBlogOpen(false);
+                }
             }
         };
 
         document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isMobileMenuOpen]);
 
-        // Prevent scrolling when mobile menu is open
+    // Handle mobile menu scroll locking
+    useEffect(() => {
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
         } else {
@@ -224,40 +130,18 @@ const Header = () => {
         }
 
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
             document.body.style.overflow = 'unset';
         };
     }, [isMobileMenuOpen]);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (servicesRef.current && !servicesRef.current.contains(event.target)) {
-                setIsServicesOpen(false);
-            }
-            if (blogsRef.current && !blogsRef.current.contains(event.target)) {
-                setIsBlogOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
     const handleDropdown = (menuType) => {
         if (menuType === "services") {
-            setIsServicesOpen(true);
+            setIsServicesOpen(prev => !prev);
             setIsBlogOpen(false);
         } else if (menuType === "blogs") {
-            setIsBlogOpen(true);
+            setIsBlogOpen(prev => !prev);
             setIsServicesOpen(false);
         }
-    };
-
-    const closeDropdown = () => {
-        setIsServicesOpen(false);
-        setIsBlogOpen(false);
     };
 
     return (
@@ -282,35 +166,37 @@ const Header = () => {
                     </ul>
 
                     {/* Logo (centered) */}
-                    <motion.div
-                        className="mx-24 relative h-16 w-16"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                    >
+                    <div className="mx-24 relative h-16 w-16">
                         <Link href="/">
                             <Image
                                 src="/logo.png"
-                                alt="Logo"
-                                fill
-                                className="object-cover"
+                                alt="Poppy Pie Logo"
+                                width={64}
+                                height={64}
                                 priority
+                                className="object-contain"
                             />
                         </Link>
-                    </motion.div>
+                    </div>
 
                     {/* Right Side Navigation */}
                     <ul className="flex space-x-16">
                         {navItemsRight.map((item, index) => (
-                            <motion.li
+                            <li
                                 key={index}
                                 className="relative text-black hover:text-gray-700"
                                 ref={item.label === "Services" ? servicesRef : item.label === "Blogs" ? blogsRef : null}
                                 onMouseEnter={() => item.hasDropdown && handleDropdown(item.label.toLowerCase())}
-                                onMouseLeave={closeDropdown}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
                             >
-                                <Link href={item.href} className="flex items-center gap-2">
+                                <Link
+                                    href={item.href}
+                                    className="flex items-center gap-2"
+                                    onClick={() => {
+                                        if (item.hasDropdown) {
+                                            handleDropdown(item.label.toLowerCase());
+                                        }
+                                    }}
+                                >
                                     {item.label}
                                     {item.hasDropdown && (
                                         <motion.div
@@ -339,8 +225,15 @@ const Header = () => {
                                                         variants={itemVariants}
                                                         whileHover={{ x: 5 }}
                                                     >
-                                                        <Link href={dropdownItem.href} className="flex items-center gap-2 w-full px-4 py-2 text-black hover:text-gray-700">
-                                                            {React.cloneElement(dropdownItem.icon, { className: "text-black" })}
+                                                        <Link
+                                                            href={dropdownItem.href}
+                                                            className="flex items-center gap-2 w-full px-4 py-2 text-black hover:text-gray-700"
+                                                            onClick={() => {
+                                                                setIsServicesOpen(false);
+                                                                setIsBlogOpen(false);
+                                                            }}
+                                                        >
+                                                            {dropdownItem.icon}
                                                             {dropdownItem.label}
                                                         </Link>
                                                     </motion.li>
@@ -349,7 +242,7 @@ const Header = () => {
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
-                            </motion.li>
+                            </li>
                         ))}
                     </ul>
                 </nav>
@@ -357,171 +250,126 @@ const Header = () => {
                 {/* Mobile Navigation Header */}
                 <div className="md:hidden flex items-center justify-between h-16">
                     {/* Mobile Logo */}
-                    <motion.div
-                        className="relative h-8 w-8 z-20"
-                        whileTap={{ scale: 0.9 }}
-                    >
+                    <div className="relative h-8 w-8 z-20">
                         <Link href="/">
                             <Image
-                                src="/logo.png" // Update with your actual logo path
-                                alt="Logo"
-                                fill
-                                className="object-contain"
+                                src="/logo.png"
+                                alt="Poppy Pie Logo"
+                                width={32}
+                                height={32}
                                 priority
+                                className="object-contain"
                             />
                         </Link>
-                    </motion.div>
+                    </div>
 
                     {/* Mobile Menu Button */}
-                    <motion.button
+                    <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         className="p-2 text-black hover:text-gray-700 focus:outline-none z-20"
-                        whileTap={{ scale: 0.9 }}
+                        aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                     >
                         {isMobileMenuOpen ? (
                             <X size={24} className="text-black" />
                         ) : (
                             <Menu size={24} />
                         )}
-                    </motion.button>
+                    </button>
                 </div>
 
-                {/* 3D Mobile Menu Animation with Black & White Theme */}
+                {/* Mobile Menu */}
                 <AnimatePresence>
                     {isMobileMenuOpen && (
                         <>
                             {/* Background overlay */}
                             <motion.div
-                                className="fixed inset-0 bg-black/10 bg-opacity-20 backdrop-blur-sm z-10 md:hidden"
+                                className="fixed inset-0 bg-black/10 backdrop-blur-sm z-10 md:hidden"
                                 initial="hidden"
                                 animate="visible"
                                 exit="exit"
-                                variants={drawerBackgroundVariants}
+                                variants={overlayVariants}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             />
 
-                            {/* 3D Cube Effect Menu Container */}
-                            <div className="fixed inset-0 pointer-events-none perspective-1000 z-20 md:hidden">
-                                <motion.div
-                                    className="absolute top-0 right-0 w-full max-w-sm h-full bg-white pointer-events-auto origin-right overflow-hidden"
-                                    style={{
-                                        transformStyle: "preserve-3d",
-                                        backfaceVisibility: "hidden"
-                                    }}
-                                    initial="hidden"
-                                    animate="visible"
-                                    exit="exit"
-                                    variants={cubeVariants}
-                                >
-                                    {/* Menu Header */}
-                                    <div className="flex justify-between items-center p-6 border-b border-gray-200">
-                                        <motion.div
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.3 }}
-                                            className="text-xl font-medium text-black"
-                                        >
-                                            {activeTab ? (
-                                                <button
-                                                    onClick={() => setActiveTab(null)}
-                                                    className="flex items-center gap-2 text-black"
-                                                >
-                                                    <ArrowRight size={20} className="rotate-180" />
-                                                    Back
-                                                </button>
-                                            ) : 'Poppy Pie'}
-                                        </motion.div>
-
-                                        <motion.button
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                            whileTap={{ scale: 0.9 }}
-                                            className="text-black"
-                                        >
-                                            <X size={24} />
-                                        </motion.button>
+                            {/* Menu Container */}
+                            <motion.div
+                                className="fixed top-0 right-0 w-full max-w-sm h-full bg-white z-20 md:hidden overflow-y-auto"
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                                variants={mobileMenuVariants}
+                            >
+                                {/* Menu Header */}
+                                <div className="flex justify-between items-center p-6 border-b border-gray-200">
+                                    <div className="text-xl font-medium text-black">
+                                        {activeTab ? (
+                                            <button
+                                                onClick={() => setActiveTab(null)}
+                                                className="flex items-center gap-2 text-black"
+                                                aria-label="Back to main menu"
+                                            >
+                                                <ArrowRight size={20} className="rotate-180" />
+                                                Back
+                                            </button>
+                                        ) : 'Poppy Pie'}
                                     </div>
 
-                                    {/* Main Content Area with 3D Perspective */}
-                                    <div className="perspective-1000">
-                                        <AnimatePresence mode="wait">
-                                            {!activeTab && (
-                                                <motion.div
-                                                    className="p-6"
-                                                    initial="hidden"
-                                                    animate="visible"
-                                                    exit="exit"
-                                                    variants={servicesPanelVariants}
-                                                    key="main-menu"
-                                                    style={{ transformStyle: "preserve-3d" }}
-                                                >
-                                                    <div className="space-y-4">
-                                                        {/* Home Button */}
-                                                        <motion.div
-                                                            custom={0}
-                                                            variants={card3DVariants}
-                                                            whileHover="hover"
-                                                            whileTap="tap"
-                                                            style={{ transformStyle: "preserve-3d" }}
-                                                        >
-                                                            <Link
-                                                                href="/"
-                                                                className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
-                                                                onClick={() => setIsMobileMenuOpen(false)}
-                                                            >
-                                                                <div className="flex items-center gap-3">
-                                                                    <Layout size={20} className="text-black" />
-                                                                    <span className="font-medium">Home</span>
-                                                                </div>
-                                                                <ExternalLink size={16} className="text-black" />
-                                                            </Link>
-                                                        </motion.div>
-
-                                                        {/* Mobile Navigation Links */}
-                                                        {[...navItemsLeft, ...navItemsRight].map((item, index) => (
-                                                            <motion.div
-                                                                key={index}
-                                                                custom={index + 1}
-                                                                variants={card3DVariants}
-                                                                whileHover="hover"
-                                                                whileTap="tap"
-                                                                style={{ transformStyle: "preserve-3d" }}
-                                                            >
-                                                                <Link
-                                                                    href={item.href}
-                                                                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
-                                                                    onClick={() => setIsMobileMenuOpen(false)}
-                                                                >
-                                                                    <div className="flex items-center gap-3">
-                                                                        {item.icon}
-                                                                        <span className="font-medium">{item.label}</span>
-                                                                    </div>
-                                                                    <ExternalLink size={16} />
-                                                                </Link>
-                                                            </motion.div>
-                                                        ))}
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-
-                                    {/* Footer with copyright */}
-                                    <motion.div
-                                        className="absolute bottom-8 left-0 right-0 text-center text-gray-500 text-sm px-6"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 0.5 }}
+                                    <button
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        aria-label="Close menu"
+                                        className="text-black"
                                     >
-                                        <p>© 2025 Poppy Pie</p>
-                                    </motion.div>
-                                </motion.div>
-                            </div>
+                                        <X size={24} />
+                                    </button>
+                                </div>
+
+                                {/* Main Content Area */}
+                                <AnimatePresence mode="wait">
+                                    {!activeTab && (
+                                        <div className="p-6">
+                                            <div className="space-y-4">
+                                                {/* Home Button */}
+                                                <Link
+                                                    href="/"
+                                                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <IconComponents.Layout className="text-black" />
+                                                        <span className="font-medium">Home</span>
+                                                    </div>
+                                                </Link>
+
+                                                {/* Mobile Navigation Links */}
+                                                {[...navItemsLeft, ...navItemsRight].map((item, index) => (
+                                                    <Link
+                                                        key={index}
+                                                        href={item.href}
+                                                        className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
+                                                        onClick={() => setIsMobileMenuOpen(false)}
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            {item.icon}
+                                                            <span className="font-medium">{item.label}</span>
+                                                        </div>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </AnimatePresence>
+
+                                {/* Footer with copyright */}
+                                <div className="absolute bottom-8 left-0 right-0 text-center text-gray-500 text-sm px-6">
+                                    <p>© {new Date().getFullYear()} Poppy Pie</p>
+                                </div>
+                            </motion.div>
                         </>
                     )}
                 </AnimatePresence>
             </div>
         </header>
-    )
-}
+    );
+};
 
-export default Header
+export default Header;

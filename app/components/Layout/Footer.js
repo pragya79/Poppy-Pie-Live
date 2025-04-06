@@ -1,6 +1,7 @@
 'use client'
 import React from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const Footer = () => {
     // Animation variants
@@ -70,12 +71,13 @@ const Footer = () => {
                     className="flex flex-col items-center md:items-start"
                     variants={itemVariants}
                 >
-                    <motion.img
+                    <Image
                         src="/logo.png"
-                        alt="The Poppy Pie"
-                        className="h-24 mb-4 object-contain"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ type: 'spring', stiffness: 300 }}
+                        alt="Poppy Pie Logo"
+                        width={64}
+                        height={64}
+                        priority={true}
+                        className="object-contain"
                     />
                     <motion.p
                         className="text-lg font-medium text-gray-700 tracking-wide"
