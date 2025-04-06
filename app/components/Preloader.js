@@ -17,16 +17,21 @@ const Preloader = ({ onComplete }) => {
 
     // Loading progress
     useEffect(() => {
+        // Start with higher progress to show faster initial loading
+        setProgress(30);
+
         const interval = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 100) {
                     clearInterval(interval);
-                    setTimeout(onComplete, 500); // Short delay before completing
+                    // Shorter delay for completion
+                    setTimeout(onComplete, 200);
                     return 100;
                 }
-                return prev + 1;
+                // Faster progress increments
+                return prev + 2;
             });
-        }, 30);
+        }, 20);
 
         return () => clearInterval(interval);
     }, [onComplete]);
@@ -36,9 +41,12 @@ const Preloader = ({ onComplete }) => {
             <div style={styles.dogContainer}>
                 <div className='object-cover'>
                     <Image
-                        src={'/logo.png'}
-                        fill
-                        alt='logo'
+                        src="/logo.png"
+                        alt="Poppy Pie Logo"
+                        width={64}
+                        height={64}
+                        priority={true}
+                        className="object-contain"
                     />
                 </div>
                 <svg
