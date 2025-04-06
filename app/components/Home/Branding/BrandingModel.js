@@ -232,7 +232,7 @@ export default function InteractiveBrandingModel() {
                         className="flex-grow flex flex-col justify-center"
                     >
                         <motion.h2
-                            className="text-4xl font-serif mb-6 text-gray-900"
+                            className="text-2xl md:text-4xl font-serif mb-6 text-gray-900"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5, delay: 0.2 }}
@@ -240,7 +240,7 @@ export default function InteractiveBrandingModel() {
                             {brandingData[activeSection].title}
                         </motion.h2>
                         <motion.p
-                            className="text-xl text-gray-700 mb-8 leading-relaxed w-2xl"
+                            className="text-base md:text-xl text-gray-700 mb-8 leading-relaxed md:w-2xl"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5, delay: 0.3 }}
@@ -252,7 +252,7 @@ export default function InteractiveBrandingModel() {
 
                 <Link href={brandingData[activeSection].url}>
                     <motion.button
-                        className="self-start bg-gray-900 hover:bg-gray-800 text-white py-3 px-8 rounded-lg text-lg shadow-lg"
+                        className="self-start bg-gray-900 hover:bg-gray-800 text-white py-3 px-8 rounded-lg text-base sm:text-lg shadow-lg"
                         whileHover={{ scale: 1.025 }}
                         whileTap={{ scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 400, damping: 17 }}

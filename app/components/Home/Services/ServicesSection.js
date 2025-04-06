@@ -1,503 +1,508 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
 import { gsap } from "gsap"
+import { motion, AnimatePresence } from "framer-motion"
+import { services } from "./ServicesUtility"
 
-const InvertedServicesAnimation = () => {
-  // Create refs outside of render
-  const svgRef = useRef(null)
-  const lineRef = useRef(null)
-  const circleRef = useRef(null)
-  const dotRef = useRef(null)
-  const circleArcRef = useRef(null);
-  const rotatingLineRef = useRef(null);
-
-
-  // State
+const FixedFloatingBubbles = () => {
+  // State for the active service
   const [activeService, setActiveService] = useState(1)
-  const [isFirstLoad, setIsFirstLoad] = useState(true)
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
+  const [isLoaded, setIsLoaded] = useState(false)
+  const containerRef = useRef(null)
+  const bubblesRef = useRef(null)
+  const bubbleRefs = useRef([])
+  const contentRef = useRef(null)
 
-    // ============================================================
-  // CONFIGURATION PARAMETERS - Adjust these values as needed
-  // ============================================================
+  // Determine device type for responsive adjustments
+  const getDeviceType = useCallback(() => {
+    const { width } = windowSize
+    if (width < 640) return "mobile"
+    if (width < 1024) return "tablet"
+    return "desktop"
+  }, [windowSize])
 
-  // Circle and center position configuration
-  const CONFIG = {
-    // Center point of the circle (in SVG coordinates)
-    circleCenterX: 80,
-    circleCenterY: 10,
-    circleRadius: 80,
+  // Get responsive values based on device type
+  const getResponsiveValues = useCallback(() => {
+    const deviceType = getDeviceType()
+    const { width, height } = windowSize
 
-    // Line configuration
-    lineStartX: -100,
-    lineStartY: 130,
-    lineEndX: 80, // Should match circleCenterX
-    lineEndY: 10, // Should match circleCenterY
+    // Base values that change with device type
+    switch (deviceType) {
+      case "mobile":
+        return {
+          baseSize: Math.min(width * 0.12, 50), // Smaller base size for mobile
+          activeSize: Math.min(width * 0.18, 70), // Smaller active size for mobile
+          orbitRadius: Math.min(width * 0.25, 110), // Smaller orbit for mobile
+          fontSize: "0.75rem",
+          activeFontSize: "0.85rem",
+          contentWidth: "90%",
+          contentPadding: "1rem",
+          contentMarginTop: "2rem", // More space between bubbles and content
+          showLabel: false, // Hide labels on mobile to save space
+          contentPosition: "bottom", // Content below bubbles on mobile
+          bubbleAreaHeight: 260, // Smaller height for bubble area on mobile
+          iconSize: "w-4 h-4",
+          activeIconSize: "w-5 h-5",
+        }
+      case "tablet":
+        return {
+          baseSize: 60,
+          activeSize: 80,
+          orbitRadius: Math.min(width * 0.22, 160), // Better fit for tablet screens
+          fontSize: "0.9rem",
+          activeFontSize: "1rem",
+          contentWidth: "85%",
+          contentPadding: "1.5rem",
+          contentMarginTop: "2rem",
+          showLabel: true,
+          contentPosition: "bottom", // Content below bubbles on tablet
+          bubbleAreaHeight: 300, // More compact for tablet
+          iconSize: "w-5 h-5",
+          activeIconSize: "w-6 h-6",
+        }
+      default: // desktop
+        return {
+          baseSize: 70,
+          activeSize: 100,
+          orbitRadius: Math.min(width * 0.15, 200), // More controlled orbit radius
+          fontSize: "1rem",
+          activeFontSize: "1.2rem",
+          contentWidth: "40%",
+          contentPadding: "2rem",
+          contentMarginTop: "0",
+          showLabel: true,
+          contentPosition: width > 1280 ? "right" : "bottom", // Switch to vertical layout on smaller desktops
+          bubbleAreaHeight: width > 1280 ? 450 : 350, // More compact heights overall
+          iconSize: "w-6 h-6",
+          activeIconSize: "w-7 h-7",
+        }
+    }
+  }, [getDeviceType, windowSize])
+  // Update bubble positions when active service changes
+  const updateBubblePositions = useCallback(
+    (newActiveId) => {
+      if (!containerRef.current || !bubblesRef.current || bubbleRefs.current.length === 0) return
 
-    // Rotating line length
-    rotatingLineLength: 80,
+      const bubbleContainerRect = bubblesRef.current.getBoundingClientRect()
+      const { baseSize, activeSize, orbitRadius, contentPosition } = getResponsiveValues()
 
-    // Service number positioning (distance from center as percentage of viewport)
-    numberDistance: 30, // Base distance (%)
+      // Content takes right side on desktop, so adjust orbit accordingly
+      const isDesktopLayout = contentPosition === "right"
 
-    // Fine-tuning offsets for each position (in pixels or percentage)
-    positionOffsets: {
-      right: { x: 0, y: 0 },
-      bottom: { x: 0, y: 0 },
-      left: { x: 0, y: 0 },
-      top: { x: 0, y: 0 }
+      // Define the center point based on the bubble container dimensions
+      const centerX = bubbleContainerRect.width / 2
+      const centerY = bubbleContainerRect.height / 2
+
+      // Set up GSAP timeline
+      const tl = gsap.timeline()
+
+      // Update position of each bubble
+      bubbleRefs.current.forEach((bubble, index) => {
+        if (!bubble) return
+
+        const service = services[index]
+        const isActive = service.id === newActiveId
+
+        // Calculate position angle
+        let angle
+
+        if (isActive) {
+          angle = 0 // Center
+        } else {
+          // Distribute other bubbles evenly
+          const remainingServices = services.filter((s) => s.id !== newActiveId)
+          const position = remainingServices.findIndex((s) => s.id === service.id)
+          const totalPositions = remainingServices.length
+
+          if (isDesktopLayout) {
+            // On desktop, arrange in semi-circle on left side
+            const arcStart = (5 * Math.PI) / 6 // ~150 degrees
+            const arcLength = (7 * Math.PI) / 6 // ~210 degrees
+            angle = arcStart + (position * arcLength) / totalPositions
+          } else {
+            // On mobile/tablet, arrange in full circle
+            angle = position * ((2 * Math.PI) / totalPositions)
+          }
+        }
+
+        // Calculate position
+        const x = isActive ? centerX : centerX + orbitRadius * Math.cos(angle)
+        const y = isActive ? centerY : centerY + orbitRadius * Math.sin(angle)
+
+        // Calculate bubble size based on state
+        const size = isActive ? activeSize : baseSize
+
+        // Animate to new position and size
+        tl.to(
+          bubble,
+          {
+            left: x - size / 2, // Use absolute positioning properties
+            top: y - size / 2,
+            width: size,
+            height: size,
+            zIndex: isActive ? 10 : 5,
+            duration: 0.8,
+            ease: "power3.out",
+          },
+          0,
+        )
+      })
     },
+    [getResponsiveValues, services],
+  )
 
-    // Additional adjustments for each individual service by ID
-    serviceAdjustments: {
-      1: { x: "30rem", y: "1.5rem" },     // Right position (service 1)
-      2: { x: "26rem", y: "5.5rem" },     // Bottom position (service 2)
-      3: { x: "21rem", y: "1.5rem" },    // Left position (service 3)
-      4: { x: "26rem", y: "-2rem" }     // Top position (service 4)
-    },
+  // Setup the initial bubble positions with proper distribution
+  const setupBubbles = useCallback(() => {
+    if (!containerRef.current || !bubblesRef.current || bubbleRefs.current.length === 0) return
 
-    // Service content panel position
-    serviceContentLeft: "240",  // in percentage or pixels (e.g. "96%" or "400px")
-    serviceContentWidth: "500", // in percentage or pixels
+    const containerRect = containerRef.current.getBoundingClientRect()
+    const bubbleContainerRect = bubblesRef.current.getBoundingClientRect()
+    const { baseSize, activeSize, orbitRadius, contentPosition } = getResponsiveValues()
 
-    // Visual appearance
-    activeOpacity: 1,
-    inactiveOpacity: 0.4,
-    activeScale: 1.05,
-    circleOpacity: 0.15
-  };
+    // Content takes right side on desktop, so adjust orbit accordingly
+    const isDesktopLayout = contentPosition === "right"
 
-  // Service data with positions matching line rotation
-  const services = [
-    {
-      id: 1,
-      title: "Brand Strategy",
-      description: "Defining your brand's vision, values, and positioning in the market. We conduct in-depth market research, competitor analysis, and audience segmentation to build a strategic roadmap that differentiates your brand and ensures long-term success.",
-      position: "right", // Line points right (0 degrees)
-    },
-    {
-      id: 2,
-      title: "Visual Identity",
-      description: "Creating compelling visual elements that represent your brand essence. From logo design and color palettes to typography and brand guidelines, we craft a cohesive and memorable visual identity that resonates with your target audience and strengthens brand recognition.",
-      position: "bottom", // Line points down (90 degrees)
-    },
-    {
-      id: 3,
-      title: "Digital Experience",
-      description: "Crafting memorable interactions across all digital touchpoints. We design and develop intuitive websites, engaging mobile experiences, and interactive interfaces that prioritize user experience, accessibility, and seamless navigation to maximize engagement and conversions.",
-      position: "left", // Line points left (180 degrees)
-    },
-    {
-      id: 4,
-      title: "Content Creation",
-      description: "Developing strategic content that engages your target audience. We specialize in copywriting, video production, and social media storytelling to build a compelling narrative that captures attention, drives traffic, and fosters meaningful connections with your brand.",
-      position: "top", // Line points up (270 degrees)
-    },
-  ];
+    // Define the center point based on the bubble container, not the entire page
+    const centerX = bubbleContainerRect.width / 2
+    const centerY = bubbleContainerRect.height / 2
 
+    // Set up GSAP timeline
+    const tl = gsap.timeline()
 
-  // Create service refs array once
-  const serviceRefs = useRef(Array(services.length).fill().map(() => ({ current: null })))
+    // Clear any existing animations
+    gsap.killTweensOf(bubbleRefs.current)
 
-  // Initialize animations on component mount
+    // Position each bubble in its initial place
+    bubbleRefs.current.forEach((bubble, index) => {
+      if (!bubble) return
+
+      const service = services[index]
+      const isActive = service.id === activeService
+
+      // Calculate position angle (distribute evenly in a circle)
+      let angle
+
+      if (isActive) {
+        angle = 0 // Center
+      } else {
+        // Distribute other bubbles evenly
+        const remainingServices = services.filter((s) => s.id !== activeService)
+        const position = remainingServices.findIndex((s) => s.id === service.id)
+        const totalPositions = remainingServices.length
+
+        if (isDesktopLayout) {
+          // On desktop, arrange in semi-circle on left side
+          // Start at 150 degrees and go 210 degrees counterclockwise
+          const arcStart = (5 * Math.PI) / 6 // ~150 degrees
+          const arcLength = (7 * Math.PI) / 6 // ~210 degrees
+          angle = arcStart + (position * arcLength) / totalPositions
+        } else {
+          // On mobile/tablet, arrange in full circle
+          angle = position * ((2 * Math.PI) / totalPositions)
+        }
+      }
+
+      // Calculate position
+      const x = isActive ? centerX : centerX + orbitRadius * Math.cos(angle)
+      const y = isActive ? centerY : centerY + orbitRadius * Math.sin(angle)
+
+      // Calculate bubble size based on state
+      const size = isActive ? activeSize : baseSize
+
+      // Set position and size with animation
+      tl.to(
+        bubble,
+        {
+          xPercent: 0,
+          yPercent: 0,
+          left: x - size / 2, // Position using left/top with absolute positioning
+          top: y - size / 2,
+          width: size,
+          height: size,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: index * 0.1,
+        },
+        0,
+      )
+    })
+  }, [activeService, getResponsiveValues, services])
+
+  // Get screen size and set up resize listener
   useEffect(() => {
-    if (!lineRef.current) return
-
-    // Get references to SVG elements
-    const line = lineRef.current
-    const circle = circleRef.current
-    const dot = dotRef.current
-    const circleArc = circleArcRef.current
-    const rotatingLine = rotatingLineRef.current
-
-    // Reset elements to initial state
-    gsap.set(line, {
-      strokeDasharray: line.getTotalLength(),
-      strokeDashoffset: line.getTotalLength(),
-      opacity: 0,
-    })
-    gsap.set(circle, { scale: 0, opacity: 0 })
-    gsap.set(dot, { scale: 0, opacity: 0 })
-    gsap.set(circleArc, { opacity: 0 })
-    gsap.set(rotatingLine, { opacity: 0, rotation: 0, svgOrigin: `${CONFIG.circleCenterX} ${CONFIG.circleCenterY}` })
-
-    // Create animation timeline
-    const tl = gsap.timeline({ delay: 0.5 })
-
-    // Animate the line drawing
-    tl.to(line, {
-      strokeDashoffset: 0,
-      opacity: 1,
-      duration: 1.5,
-      ease: "power2.inOut",
-    })
-      // Animate the dot appearance
-      .to(dot, {
-        scale: 1,
-        opacity: 1,
-        duration: 0.3,
-        ease: "back.out(1.7)",
+    // Handler to call on window resize
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
       })
-      // Create rotation effect for drawing the circle
-      .to(circleArc, {
-        opacity: 1,
-        duration: 0.2,
-        ease: "power1.inOut",
-      })
-      .to(circleArc, {
-        rotation: 360,
-        svgOrigin: `${CONFIG.circleCenterX} ${CONFIG.circleCenterY}`,
-        duration: 1.2,
-        ease: "power2.inOut",
-        onComplete: () => {
-          // Once the rotation completes, show the full circle
-          gsap.to(circle, {
-            opacity: CONFIG.circleOpacity,
-            scale: 1,
-            duration: 0.3,
-            ease: "power2.inOut"
-          });
-          // Hide the arc
-          gsap.to(circleArc, {
-            opacity: 0,
-            duration: 0.2
-          });
-          // Make rotating line visible
-          gsap.to(rotatingLine, {
-            opacity: 1,
-            duration: 0.2
-          });
-        }
-      });
+    }
 
-    // Animate service numbers appearing one by one
-    tl.add(() => {
-      serviceRefs.current.forEach((ref, index) => {
-        if (ref.current) {
-          gsap.fromTo(
-            ref.current,
-            {
-              y: 50,
-              opacity: 0,
-            },
-            {
-              y: 0,
-              opacity: index === 0 ? CONFIG.activeOpacity : CONFIG.inactiveOpacity,
-              duration: 0.5,
-              delay: index * 0.1,
-              ease: "power2.out",
-            },
-          )
-        }
-      })
-    })
+    // Set initial size
+    handleResize()
 
-    setIsFirstLoad(false)
+    // Add event listener
+    window.addEventListener("resize", handleResize)
 
-    // Cleanup function
+    // Initial load animation
+    const loadTimer = setTimeout(() => {
+      setIsLoaded(true)
+      setupBubbles()
+    }, 300)
+
+    // Remove event listener on cleanup
     return () => {
-      tl.kill()
+      window.removeEventListener("resize", handleResize)
+      clearTimeout(loadTimer)
     }
   }, [])
 
-  // Handle service selection
-  const handleServiceClick = (id) => {
+  // Update bubble positions when screen size changes
+  useEffect(() => {
+    if (isLoaded) {
+      // Add a small delay to ensure DOM is fully updated
+      const resizeTimer = setTimeout(() => {
+        setupBubbles()
+      }, 100)
+
+      return () => clearTimeout(resizeTimer)
+    }
+  }, [windowSize, isLoaded, setupBubbles])
+
+  // Handle active service changes
+  useEffect(() => {
+    if (isLoaded) {
+      updateBubblePositions(activeService)
+      animateContentChange(activeService)
+    }
+  }, [activeService, isLoaded])
+
+  // Animate content change
+  const animateContentChange = useCallback((newActiveId) => {
+    if (!contentRef.current) return
+
+    gsap.to(contentRef.current, {
+      opacity: 0,
+      y: 20,
+      duration: 0.3,
+      onComplete: () => {
+        gsap.to(contentRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          delay: 0.1,
+        })
+      },
+    })
+  }, [])
+
+  // Handle bubble click
+  const handleBubbleClick = (id) => {
     if (id !== activeService) {
       setActiveService(id)
-
-      // Animate elements on service change
-      if (!dotRef.current || !circleRef.current || !lineRef.current || !rotatingLineRef.current) return
-
-      // Calculate rotation angle based on service ID
-      const rotationAngle = (id - 1) * 90; // 90 degrees for each service
-
-      // Rotate the rotating line
-      gsap.to(rotatingLineRef.current, {
-        rotation: rotationAngle,
-        duration: 0.8,
-        ease: "power2.inOut"
-      });
-
-      // Pulse animation for the dot
-      gsap.to(dotRef.current, {
-        scale: 1.5,
-        duration: 0.2,
-        ease: "power2.out",
-        onComplete: () => {
-          if (dotRef.current) {
-            gsap.to(dotRef.current, {
-              scale: 1,
-              duration: 0.2,
-              ease: "power2.in",
-            })
-          }
-        },
-      })
-
-      // Subtle animation for the circle
-      gsap.to(circleRef.current, {
-        scale: 0.95,
-        duration: 0.3,
-        ease: "power1.out",
-        onComplete: () => {
-          if (circleRef.current) {
-            gsap.to(circleRef.current, {
-              scale: 1,
-              duration: 0.5,
-              ease: "elastic.out(1, 0.75)",
-            })
-          }
-        },
-      })
-
-      // Animate the line (optional ripple effect)
-      gsap.fromTo(
-        lineRef.current,
-        { strokeWidth: 1.5 },
-        {
-          strokeWidth: 1,
-          duration: 0.5,
-          ease: "elastic.out(1, 0.5)",
-        },
-      )
-
-      // Update service number styles
-      serviceRefs.current.forEach((ref, index) => {
-        if (ref.current) {
-          gsap.to(ref.current, {
-            opacity: services[index].id === id ? CONFIG.activeOpacity : CONFIG.inactiveOpacity,
-            scale: services[index].id === id ? CONFIG.activeScale : 1,
-            duration: 0.3,
-            ease: "power2.inOut",
-          })
-        }
-      })
     }
   }
 
-  // Calculate position for each service number based on the circle
-  const getNumberPosition = (position, serviceId) => {
-    // Use absolute positioning relative to the viewport
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  // Get active service data
+  const activeServiceData = services.find((service) => service.id === activeService)
 
-    // Calculate center coordinates
-    const centerX = viewportWidth / 2;
-    const centerY = viewportHeight / 2;
+  // Get responsive layout values
+  const {
+    contentWidth,
+    contentPadding,
+    contentMarginTop,
+    showLabel,
+    contentPosition,
+    bubbleAreaHeight,
+    iconSize,
+    activeIconSize
+  } = getResponsiveValues()
 
-    // Calculate radius (based on viewport size)
-    const radius = Math.min(viewportWidth, viewportHeight) * 0.25; // 25% of the smaller dimension
-
-    let angle, x, y;
-
-    // Calculate position based on service position
-    switch (position) {
-      case 'right':
-        angle = 0; // 0 degrees
-        break;
-      case 'bottom':
-        angle = 90; // 90 degrees
-        break;
-      case 'left':
-        angle = 180; // 180 degrees
-        break;
-      case 'top':
-        angle = 270; // 270 degrees
-        break;
-      default:
-        angle = 0;
-    }
-
-    // Convert angle to radians
-    const radians = (angle * Math.PI) / 180;
-
-    // Calculate x and y coordinates
-    x = centerX + radius * Math.cos(radians);
-    y = centerY + radius * Math.sin(radians);
-
-    // Apply service-specific adjustments
-    const adjustment = CONFIG.serviceAdjustments[serviceId] || { x: 0, y: 0 };
-
-    // Determine positioning style
-    return {
-      position: 'absolute',
-      left: `${x}px`,
-      top: `${y}px`,
-      transform: 'translate(-50%, -50%)',
-      // Add offset adjustments
-      marginLeft: adjustment.x,
-      marginTop: adjustment.y,
-    };
-  };
+  // Determine layout direction based on content position
+  const isVerticalLayout = contentPosition === "bottom"
 
   return (
-    <div className="relative w-full h-screen bg-white text-black overflow-hidden">
+    <div
+      ref={containerRef}
+      className="relative w-full bg-white text-black overflow-hidden"
+      style={{ minHeight: isVerticalLayout ? `auto` : '100vh' }}
+    >
       {/* Background texture */}
       <div className="absolute inset-0 bg-white opacity-90"></div>
-
-      {/* Subtle noise texture overlay */}
       <div
-        className="absolute inset-0 opacity-5"
+        className="absolute inset-0 opacity-10"
         style={{
-          backgroundImage:
-            'url("data:image/png;base64,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")',
+          backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+          backgroundSize: "30px 30px",
         }}
       ></div>
 
-      {/* SVG container */}
-      <div className="absolute top-0 left-44 w-full h-full flex items-center justify-center">
-        <svg ref={svgRef} viewBox="-250 -150 500 300" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
-          {/* Grid pattern for depth */}
-          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="0.5" />
-          </pattern>
-          <rect x="-250" y="-150" width="500" height="300" fill="url(#grid)" />
+      {/* Section header */}
+      <h2 className="relative text-2xl sm:text-3xl md:text-4xl font-light tracking-wide z-10 p-4 sm:p-6 md:p-10">Services</h2>
 
-          {/* The growing line - shorter and starts from bottom */}
-          <path
-            ref={lineRef}
-            d={`M${CONFIG.lineStartX} ${CONFIG.lineStartY} L ${CONFIG.lineEndX} ${CONFIG.lineEndY}`}
-            stroke="black"
-            strokeWidth="1"
-            fill="none"
-          />
-
-          {/* Arc path that will rotate to form the circle */}
-          <path
-            ref={circleArcRef}
-            d={`M${CONFIG.circleCenterX + CONFIG.circleRadius} ${CONFIG.circleCenterY} A${CONFIG.circleRadius} ${CONFIG.circleRadius} 0 0 1 ${CONFIG.circleCenterX} ${CONFIG.circleCenterY + CONFIG.circleRadius}`}
-            stroke="black"
-            strokeWidth="1.5"
-            fill="none"
-            opacity="0"
-          />
-
-          {/* Line that rotates when services change */}
-          <line
-            ref={rotatingLineRef}
-            x1={CONFIG.circleCenterX}
-            y1={CONFIG.circleCenterY}
-            x2={CONFIG.circleCenterX + CONFIG.rotatingLineLength}
-            y2={CONFIG.circleCenterY}
-            stroke="black"
-            strokeWidth="1"
-            opacity="0"
-          />
-
-          {/* The circle that appears */}
-          <circle
-            ref={circleRef}
-            cx={CONFIG.circleCenterX}
-            cy={CONFIG.circleCenterY}
-            r={CONFIG.circleRadius}
-            fill="black"
-            opacity="0"
-          />
-
-          {/* The dot at the connection point */}
-          <circle
-            ref={dotRef}
-            cx={CONFIG.circleCenterX}
-            cy={CONFIG.circleCenterY}
-            r="3"
-            fill="black"
-            opacity="0"
-          />
-        </svg>
-      </div>
-
-      {/* Service details */}
-      <h2 className="relative text-2xl md:text-4xl ml-[15rem] mt-82 font-medium tracking-wide z-50">Service</h2>
-
+      {/* Main content container with responsive layout */}
       <div
-        className="absolute top-1/2 transform -translate-y-1/2 z-10"
-        style={{ left: `${CONFIG.serviceContentLeft}px`, width: `${CONFIG.serviceContentWidth}px` }}
+        className={`relative w-full flex ${isVerticalLayout ? "flex-col" : "flex-row"} items-center justify-center pb-12`}
       >
+        {/* Bubbles container */}
+        <div
+          ref={bubblesRef}
+          className={`relative ${isVerticalLayout ? "w-full" : "w-1/2"} flex items-center justify-center`}
+          style={{
+            height: bubbleAreaHeight,
+            maxWidth: isVerticalLayout ? "100%" : "50%",
+            position: "relative",
+          }}
+        >
+          {/* Floating bubbles */}
+          <AnimatePresence>
+            {services.map((service, index) => {
+              const isActive = service.id === activeService;
 
-        <div className="relative min-h-[160px]">
-          {services.map((service) => {
-            const isActive = activeService === service.id
+              return (
+                <motion.div
+                  key={service.id}
+                  ref={(el) => (bubbleRefs.current[index] = el)}
+                  className={`absolute rounded-full flex items-center justify-center cursor-pointer shadow-sm transition-colors`}
+                  style={{
+                    backgroundColor: isActive ? "black" : "rgba(0, 0, 0, 0.05)",
+                    color: isActive ? "white" : "black",
+                    border: `1px solid ${isActive ? "black" : "rgba(0, 0, 0, 0.2)"}`,
+                    boxShadow: isActive ? "0 4px 12px rgba(0, 0, 0, 0.15)" : "none",
+                    opacity: 0, // Start invisible for entrance animation
+                    left: 0,
+                    top: 0,
+                    position: "absolute",
+                    zIndex: isActive ? 50 : 40,
+                    willChange: "transform, left, top, width, height", // Performance optimization
+                  }}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  onClick={() => handleBubbleClick(service.id)}
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: isActive
+                      ? "0 8px 16px rgba(0, 0, 0, 0.2)"
+                      : "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    transition: { duration: 0.2 }
+                  }}
+                  whileTap={{ scale: 0.95 }} // Feedback for touch interactions
+                >
+                  <div
+                    className={`flex ${isActive ? "flex-col" : ""} items-center justify-center w-full h-full`}
+                    style={{ padding: isActive ? '0.5rem' : '0' }}
+                  >
+                    {/* Icon container with simplified conditional rendering */}
+                    <div className={isActive ? "mb-1" : ""}>
+                      {React.cloneElement(service.svgIcon, {
+                        className: `${isActive ? activeIconSize : iconSize} ${isActive ? "text-white" : "text-black opacity-80"}`,
+                        "aria-hidden": "true"
+                      })}
+                    </div>
 
-            return (
-              <div
-                key={service.id}
-                className="transition-all duration-500 absolute top-0 left-0 w-full"
-                style={{
-                  opacity: isActive ? 1 : 0,
-                  transform: `translateY(${isActive ? '0' : '20px'})`,
-                  pointerEvents: isActive ? "auto" : "none",
-                }}
-              >
-                <h3 className="text-2xl mb-3 font-medium tracking-wide">{service.title}</h3>
-                <p className="text-gray-700 leading-relaxed text-lg mb-6">{service.description}</p>
+                    {/* Only show text label for active bubble */}
+                    {isActive && (
+                      <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.9 }}
+                        exit={{ opacity: 0 }}
+                        className="font-medium text-center"
+                        style={{ fontSize: "0.7rem", lineHeight: 1.2, maxWidth: "90%" }}
+                      >
+                        {service.icon}
+                      </motion.span>
+                    )}
+                  </div>
 
-                <div className="flex items-center text-xs">
-                  <button className="px-4 py-2 border border-gray-300 rounded-sm hover:bg-black hover:text-white hover:border-black transition-colors text-xs tracking-wide">
-                    Details
-                  </button>
-                </div>
+                  {/* Title label below active bubble (on larger screens) */}
+                  {showLabel && isActive && (
+                    <motion.span
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ delay: 0.1, duration: 0.2 }}
+                      className="text-xs absolute font-medium tracking-wider bg-white/80 px-2 py-0.5 rounded-full text-black"
+                      style={{
+                        bottom: "-24px", // Position below the bubble
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        whiteSpace: "nowrap",
+                        boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
+                      }}
+                    >
+                      {service.title}
+                    </motion.span>
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+
+        {/* Service content */}
+        <div
+          className={`relative ${isVerticalLayout ? "w-full px-4 sm:px-6" : "w-1/2 px-4 sm:px-6 md:pr-10"} z-0`}
+          style={{
+            maxWidth: isVerticalLayout ? contentWidth : "50%",
+            marginTop: contentMarginTop,
+          }}
+        >
+          <motion.div
+            ref={contentRef}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative bg-white border border-black/20 p-4 sm:p-6 md:p-8 rounded-lg shadow-md"
+          >
+            <span className="inline-block px-2 py-1 border border-black/30 rounded-full text-xs mb-3 md:mb-4 tracking-wider">
+              {activeServiceData?.icon} {activeServiceData?.title}
+            </span>
+
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-medium mb-4 md:mb-6">{activeServiceData?.title}</h3>
+
+            <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-6 md:mb-8">{activeServiceData?.description}</p>
+
+            {/* Service aspects */}
+            <div className="mb-6 md:mb-8">
+              <h4 className="text-xs sm:text-sm uppercase tracking-wider text-gray-600 mb-3 md:mb-4">Key Aspects</h4>
+              <div className="flex flex-wrap gap-2">
+                {activeServiceData?.aspects.map((aspect, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 + index * 0.1 }}
+                    className="px-2 sm:px-3 py-1 border border-black/20 rounded-full text-xs bg-gray-50"
+                  >
+                    {aspect}
+                  </motion.div>
+                ))}
               </div>
-            )
-          })}
+            </div>
+
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="px-4 sm:px-6 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-300 text-xs sm:text-sm tracking-wider"
+            >
+              Explore Service
+            </motion.button>
+          </motion.div>
         </div>
       </div>
 
-      {/* Service numbers positioned around the circle */}
-      {services.map((service) => {
-        const isActive = activeService === service.id;
-        const position = getNumberPosition(service.position, service.id);
-
-        return (
-          <div
-            key={service.id}
-            ref={serviceRefs.current[service.id - 1]}
-            className="absolute z-20 text-5xl md:text-6xl font-light cursor-pointer transition-all duration-300 flex items-center justify-center"
-            style={{
-              ...position,
-              opacity: isFirstLoad ? 0 : isActive ? CONFIG.activeOpacity : CONFIG.inactiveOpacity,
-              scale: isActive ? CONFIG.activeScale : 1,
-              color: "black",
-            }}
-            onClick={() => handleServiceClick(service.id)}
-          >
-            <div className="relative group">
-              <span>{service.id.toString().padStart(2, "0")}</span>
-
-              {/* Indicator dot that appears when active */}
-              <span
-                className={`absolute -right-4 top-1/2 w-2 h-2 bg-black rounded-full transition-all duration-300 transform -translate-y-1/2 ${isActive ? 'opacity-100' : 'opacity-0'}`}
-              />
-
-              {/* Service title hint on hover */}
-              <span className="absolute invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm font-normal bg-white px-2 py-1 rounded shadow-sm whitespace-nowrap"
-                style={{
-                  top: service.position === 'top' ? 'auto' : service.position === 'bottom' ? '100%' : '50%',
-                  bottom: service.position === 'top' ? '100%' : 'auto',
-                  left: service.position === 'right' ? '100%' : service.position === 'left' ? 'auto' : '50%',
-                  right: service.position === 'left' ? '100%' : 'auto',
-                  transform:
-                    service.position === 'top' || service.position === 'bottom'
-                      ? 'translateX(-50%)'
-                      : service.position === 'left' || service.position === 'right'
-                        ? 'translateY(-50%)'
-                        : 'translate(-50%, -50%)',
-                  marginTop: service.position === 'bottom' ? '0.5rem' : 0,
-                  marginBottom: service.position === 'top' ? '0.5rem' : 0,
-                  marginLeft: service.position === 'right' ? '0.5rem' : 0,
-                  marginRight: service.position === 'left' ? '0.5rem' : 0,
-                }}
-              >
-                {service.title}
-              </span>
-            </div>
-          </div>
-        )
-      })}
-
-      {/* Minimal footer line */}
-      <div className="absolute bottom-0 left-1/2 w-px h-16 bg-gray-200"></div>
+      {/* Mobile tip */}
+      {getDeviceType() === "mobile" && (
+        <div className="text-xs text-gray-600 text-center py-2 mb-2">
+          Tap circles to explore services
+        </div>
+      )}
     </div>
   )
 }
 
-export default InvertedServicesAnimation;
+export default FixedFloatingBubbles

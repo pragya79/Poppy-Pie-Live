@@ -6,7 +6,7 @@ export const brandingData = {
     },
     'logo': {
         title: 'Logo',
-        description: 'The central visual mark of your brand. A well-designed logo communicates your brand values and personality at a glance. Consider scalability, versatility, and recognition when developing your logo.',
+        description: 'The central visual mark of your brand. A well-designed logo communicates your brand values and personality at a glance. Consider scalability, versatility, and recognition when developing your logo. The central visual mark of your brand. A well-designed logo communicates your brand values and personality at a glance. Consider scalability, versatility, and recognition when developing your logo.',
         url: '/logo',
     },
     'branding': {
