@@ -71,7 +71,7 @@ const ClientLogos = () => {
                             Trusted by Leading Brands
                         </h2>
                         <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
-                            We've had the privilege of working with diverse clients across multiple industries
+                            We&apos;ve had the privilege of working with diverse clients across multiple industries
                         </p>
                     </motion.div>
 
