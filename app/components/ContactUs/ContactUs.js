@@ -41,7 +41,7 @@ import ContactInfoCard from "./ContactInfoCard"
 import Accordion from "./Acoordion"
 
 // Lazy load HeroSection for better performance
-const HeroSection = lazy(() => import('./Hero'))
+const Hero = lazy(() => import('./Hero'))
 
 // Services data for select field
 const serviceOptions = [
@@ -101,24 +101,24 @@ const staggerContainer = {
     }
 }
 
-// Contact information data
+// Contact information data with  styling
 const contactInfo = [
     {
-        icon: <Phone className="h-5 w-5 text-blue-500" />,
+        icon: <Phone className="h-5 w-5 text-gray-900" />,
         title: "Phone Number",
         info: "+1 (555) 123-4567",
         subInfo: "Monday to Friday, 9am to 6pm",
-        subIcon: <Clock className="h-4 w-4 text-gray-400" />
+        subIcon: <Clock className="h-4 w-4 text-gray-500" />
     },
     {
-        icon: <Mail className="h-5 w-5 text-blue-500" />,
+        icon: <Mail className="h-5 w-5 text-gray-900" />,
         title: "Email Address",
         info: "contact@poppypie.com",
         subInfo: "We'll respond within 24 hours",
-        subIcon: <Clock className="h-4 w-4 text-gray-400" />
+        subIcon: <Clock className="h-4 w-4 text-gray-500" />
     },
     {
-        icon: <MapPin className="h-5 w-5 text-blue-500" />,
+        icon: <MapPin className="h-5 w-5 text-gray-900" />,
         title: "Office Location",
         info: "123 Marketing Avenue",
         subInfo: "New York, NY 10001, USA",
@@ -220,8 +220,8 @@ const ContactUs = () => {
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Hero Section with Suspense fallback */}
-            <Suspense fallback={<div className="h-64 bg-gray-800" aria-hidden="true"></div>}>
-                <HeroSection />
+            <Suspense fallback={<div className="h-64 bg-gray-900" aria-hidden="true"></div>}>
+                <Hero />
             </Suspense>
 
             {/* Main content area */}
@@ -237,7 +237,7 @@ const ContactUs = () => {
                         id="contact-form"
                     >
                         <div className="mb-8">
-                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Send Us a Message</h2>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Send Us a Message</h2>
                             <p className="text-gray-600">Fill out the form below and we&apos;ll get back to you as soon as possible.</p>
                         </div>
 
@@ -247,16 +247,17 @@ const ContactUs = () => {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
-                                    className="bg-green-50 border border-green-200 rounded-lg p-6 text-center"
+                                    className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center"
                                 >
-                                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
-                                        <Check className="w-8 h-8 text-green-600" />
+                                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                                        <Check className="w-8 h-8 text-gray-900" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-800 mb-2">Message Sent Successfully!</h3>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2">Message Sent Successfully!</h3>
                                     <p className="text-gray-600 mb-6">Thank you for reaching out. We&apos;ll get back to you within 24 hours.</p>
                                     <Button
                                         onClick={() => setFormSubmitted(false)}
                                         variant="outline"
+                                        className="border-gray-300 hover:bg-gray-100 hover:text-gray-900"
                                     >
                                         Send Another Message
                                     </Button>
@@ -270,9 +271,9 @@ const ContactUs = () => {
                                                 name="name"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Full Name</FormLabel>
+                                                        <FormLabel className="text-gray-700">Full Name</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder="John Doe" {...field} />
+                                                            <Input placeholder="John Doe" {...field} className="border-gray-300" />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -283,9 +284,9 @@ const ContactUs = () => {
                                                 name="email"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Email Address</FormLabel>
+                                                        <FormLabel className="text-gray-700">Email Address</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder="john@example.com" type="email" {...field} />
+                                                            <Input placeholder="john@example.com" type="email" {...field} className="border-gray-300" />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -299,9 +300,9 @@ const ContactUs = () => {
                                                 name="phone"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Phone Number (Optional)</FormLabel>
+                                                        <FormLabel className="text-gray-700">Phone Number (Optional)</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder="+1 (555) 123-4567" type="tel" {...field} />
+                                                            <Input placeholder="+1 (555) 123-4567" type="tel" {...field} className="border-gray-300" />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -312,7 +313,7 @@ const ContactUs = () => {
                                                 name="services"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Service of Interest</FormLabel>
+                                                        <FormLabel className="text-gray-700">Service of Interest</FormLabel>
                                                         <Select
                                                             onValueChange={(value) => {
                                                                 field.onChange(value);
@@ -321,7 +322,7 @@ const ContactUs = () => {
                                                             value={field.value}
                                                         >
                                                             <FormControl>
-                                                                <SelectTrigger>
+                                                                <SelectTrigger className="border-gray-300">
                                                                     <SelectValue placeholder="Select a service" />
                                                                 </SelectTrigger>
                                                             </FormControl>
@@ -344,9 +345,9 @@ const ContactUs = () => {
                                             name="subject"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Subject</FormLabel>
+                                                    <FormLabel className="text-gray-700">Subject</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="How can we help you?" {...field} />
+                                                        <Input placeholder="How can we help you?" {...field} className="border-gray-300" />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -358,11 +359,11 @@ const ContactUs = () => {
                                             name="message"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Your Message</FormLabel>
+                                                    <FormLabel className="text-gray-700">Your Message</FormLabel>
                                                     <FormControl>
                                                         <Textarea
                                                             placeholder="Please provide details about your project or inquiry..."
-                                                            className="min-h-32 resize-y"
+                                                            className="min-h-32 resize-y border-gray-300"
                                                             {...field}
                                                         />
                                                     </FormControl>
@@ -374,7 +375,7 @@ const ContactUs = () => {
                                         <div className="pt-2">
                                             <Button
                                                 type="submit"
-                                                className="w-full sm:w-auto"
+                                                className="w-full sm:w-auto bg-gray-900 hover:bg-gray-800 text-white"
                                                 disabled={isSubmitting}
                                             >
                                                 {isSubmitting ? "Sending..." : "Send Message"}
@@ -397,7 +398,25 @@ const ContactUs = () => {
                             className="grid grid-cols-1 gap-4"
                         >
                             {contactInfo.map((item, index) => (
-                                <ContactInfoCard key={index} info={item} />
+                                <motion.div
+                                    key={index}
+                                    variants={fadeIn}
+                                    className="bg-white rounded-xl shadow-sm p-6 transition-shadow hover:shadow-md"
+                                >
+                                    <div className="flex items-start gap-4">
+                                        <div className="flex-shrink-0 rounded-full bg-gray-100 p-3">
+                                            {item.icon}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-gray-700 font-medium mb-1">{item.title}</h3>
+                                            <p className="text-gray-900 text-lg font-semibold mb-1">{item.info}</p>
+                                            <div className="flex items-center text-sm text-gray-500">
+                                                {item.subIcon && <span className="mr-1">{item.subIcon}</span>}
+                                                <span>{item.subInfo}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
                             ))}
                         </motion.div>
                     </div>
@@ -413,7 +432,7 @@ const ContactUs = () => {
                 >
                     <div className="max-w-3xl mx-auto">
                         <div className="text-center mb-8">
-                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">Frequently Asked Questions</h2>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">Frequently Asked Questions</h2>
                             <p className="text-gray-600">Find answers to common questions about our services</p>
                         </div>
 
@@ -423,10 +442,12 @@ const ContactUs = () => {
                             <p className="text-gray-600 mb-4">
                                 Don&apos;t see your question here? Reach out to us directly and we&apos;ll be happy to help.
                             </p>
-                            <Button variant="outline" onClick={() => {
-                                const element = document.getElementById('contact-form');
-                                element?.scrollIntoView({ behavior: 'smooth' });
-                            }}>
+                            <Button variant="outline"
+                                className="border-gray-300 hover:bg-gray-100 hover:text-gray-900"
+                                onClick={() => {
+                                    const element = document.getElementById('contact-form');
+                                    element?.scrollIntoView({ behavior: 'smooth' });
+                                }}>
                                 Ask Your Question
                             </Button>
                         </div>

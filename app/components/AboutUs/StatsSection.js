@@ -77,7 +77,7 @@ const StatsSection = () => {
     }
 
     return (
-        <section className="py-16 sm:py-20 md:py-24 bg-gray-800 text-white relative overflow-hidden">
+        <section className="py-16 sm:py-20 md:py-24 bg-gray-900 text-white relative overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
                 <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -102,7 +102,7 @@ const StatsSection = () => {
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
                             Our Impact by the Numbers
                         </h2>
-                        <p className="text-base sm:text-lg text-gray-300 max-w-3xl mx-auto">
+                        <p className="text-base sm:text-lg text-gray-300 mb-6 sm:mb-8 max-w-3xl mx-auto">
                             Results that speak for themselves. We&apos;ve helped businesses across industries achieve remarkable growth.
                         </p>
                     </motion.div>
@@ -115,7 +115,7 @@ const StatsSection = () => {
                         ].map((stat, index) => (
                             <motion.div
                                 key={index}
-                                className="bg-gray-700/50 backdrop-blur-sm rounded-xl p-6 sm:p-8 text-center"
+                                className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 sm:p-8 text-center"
                                 variants={itemVariants}
                                 whileHover={{ y: -5, transition: { duration: 0.2 } }}
                             >

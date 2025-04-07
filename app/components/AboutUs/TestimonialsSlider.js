@@ -135,7 +135,7 @@ const TestimonialsSlider = () => {
                     onMouseLeave={handleMouseLeave}
                 >
                     <motion.div className="text-center mb-12 sm:mb-16" variants={itemVariants}>
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                             What Our Clients Say
                         </h2>
                         <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
@@ -160,17 +160,17 @@ const TestimonialsSlider = () => {
                                     className="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-12"
                                 >
                                     <div className="md:col-span-1 flex flex-col items-center md:items-start">
-                                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-4">
+                                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-gray-100 shadow-lg mb-4">
                                             <Image
                                                 src={testimonials[activeIndex].image || "/placeholder.svg"}
                                                 alt={testimonials[activeIndex].name}
                                                 fill
-                                                className="object-cover"
+                                                className="object-cover grayscale"
                                                 sizes="(max-width: 768px) 96px, 96px"
                                                 data-placeholder={`testimonial-${testimonials[activeIndex].id}`}
                                             />
                                         </div>
-                                        <h3 className="text-lg sm:text-xl font-bold text-gray-800 text-center md:text-left">
+                                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 text-center md:text-left">
                                             {testimonials[activeIndex].name}
                                         </h3>
                                         <p className="text-gray-600 text-center md:text-left">{testimonials[activeIndex].role}</p>
@@ -195,7 +195,7 @@ const TestimonialsSlider = () => {
                                     <button
                                         key={index}
                                         onClick={() => setActiveIndex(index)}
-                                        className={`w-2.5 h-2.5 rounded-full transition-colors ${index === activeIndex ? 'bg-gray-800' : 'bg-gray-300 hover:bg-gray-400'
+                                        className={`w-2.5 h-2.5 rounded-full transition-colors ${index === activeIndex ? 'bg-gray-900' : 'bg-gray-300 hover:bg-gray-400'
                                             }`}
                                         aria-label={`Go to testimonial ${index + 1}`}
                                     />
@@ -214,7 +214,7 @@ const TestimonialsSlider = () => {
                                 </motion.button>
                                 <motion.button
                                     onClick={handleNext}
-                                    className="p-2 rounded-full bg-gray-800 text-white hover:bg-gray-700 transition-colors"
+                                    className="p-2 rounded-full bg-gray-900 text-white hover:bg-gray-800 transition-colors"
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     aria-label="Next testimonial"

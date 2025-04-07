@@ -67,7 +67,7 @@ const ClientLogos = () => {
                     variants={containerVariants}
                 >
                     <motion.div className="text-center mb-12 sm:mb-16" variants={itemVariants}>
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                             Trusted by Leading Brands
                         </h2>
                         <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
@@ -95,7 +95,7 @@ const ClientLogos = () => {
                                         src={client.logo}
                                         alt={client.name}
                                         fill
-                                        className="object-contain opacity-80 hover:opacity-100 transition-opacity filter grayscale hover:grayscale-0"
+                                        className="object-contain grayscale hover:grayscale transition-opacity"
                                         sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                                         data-placeholder={`client-${client.id}`}
                                     />

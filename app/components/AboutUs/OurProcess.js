@@ -8,7 +8,7 @@ const OurProcess = () => {
     const isInView = useInView(sectionRef, { once: true, amount: 0.2 })
     const [activeStep, setActiveStep] = useState(null)
 
-    // Process steps data
+    // Process steps data with monochrome colors
     const processSteps = [
         {
             id: 1,
@@ -20,7 +20,7 @@ const OurProcess = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             ),
-            color: "bg-blue-100 text-blue-600 border-blue-200"
+            color: "bg-gray-100 text-gray-900 border-gray-200"
         },
         {
             id: 2,
@@ -32,7 +32,7 @@ const OurProcess = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
             ),
-            color: "bg-indigo-100 text-indigo-600 border-indigo-200"
+            color: "bg-gray-200 text-gray-900 border-gray-300"
         },
         {
             id: 3,
@@ -44,7 +44,7 @@ const OurProcess = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
             ),
-            color: "bg-purple-100 text-purple-600 border-purple-200"
+            color: "bg-gray-300 text-gray-900 border-gray-400"
         },
         {
             id: 4,
@@ -56,7 +56,7 @@ const OurProcess = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
                 </svg>
             ),
-            color: "bg-pink-100 text-pink-600 border-pink-200"
+            color: "bg-gray-200 text-gray-900 border-gray-300"
         },
         {
             id: 5,
@@ -68,7 +68,7 @@ const OurProcess = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
             ),
-            color: "bg-red-100 text-red-600 border-red-200"
+            color: "bg-gray-100 text-gray-900 border-gray-200"
         }
     ]
 
@@ -123,7 +123,7 @@ const OurProcess = () => {
                     variants={containerVariants}
                 >
                     <motion.div className="text-center mb-12 sm:mb-16" variants={itemVariants}>
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                             Our Process
                         </h2>
                         <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">

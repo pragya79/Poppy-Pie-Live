@@ -79,7 +79,7 @@ const AboutUs = () => {
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Hero Section */}
-            <section className="relative bg-gray-800 text-white overflow-hidden">
+            <section className="relative bg-gray-900 text-white overflow-hidden">
                 {/* Background pattern - made responsive */}
                 <div className="absolute inset-0 opacity-10">
                     <svg
@@ -126,7 +126,7 @@ const AboutUs = () => {
                                     variants={fadeIn}
                                 >
                                     Building brands,
-                                    <span className="block sm:inline sm:ml-2 text-blue-400">Crafting experiences</span>
+                                    <span className="block sm:inline sm:ml-2 text-gray-300">Crafting experiences</span>
                                 </motion.h1>
 
                                 <motion.p
@@ -143,7 +143,7 @@ const AboutUs = () => {
                                 >
                                     <Link href="/contact-us">
                                         <motion.button
-                                            className="bg-white text-gray-800 hover:bg-blue-50 px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base w-full sm:w-auto"
+                                            className="bg-white text-gray-900 hover:bg-gray-100 px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base w-full sm:w-auto"
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.98 }}
                                         >
@@ -203,37 +203,42 @@ const AboutUs = () => {
                 </div>
             </section>
 
-            {/* Mission & Vision */}
-            <MissionVision />
+            <div className="theme-monochrome">
+                <MissionVision />
+            </div>
 
-            {/* Company History */}
+            {/* Company History - Commented out in original */}
             {/* <CompanyHistory /> */}
 
-            {/* Stats Section */}
-            <StatsSection />
+            <div className="theme-monochrome">
+                {/* <StatsSection />  will use it when we have stats data */}
+            </div>
 
-            {/* Our Process */}
-            <div id="our-process">
+            <div id="our-process" className="theme-monochrome">
                 <OurProcess />
             </div>
 
-            {/* Our Team */}
-            <TeamSection />
+            <div className="theme-monochrome">
+                <TeamSection />
+            </div>
 
-            {/* Featured Work */}
-            <FeaturedWork />
+            <div className="theme-monochrome">
+                <FeaturedWork />
+            </div>
 
-            {/* Testimonials */}
-            <TestimonialsSlider />
+            <div className="theme-monochrome">
+                <TestimonialsSlider />
+            </div>
 
-            {/* Clients Logo Section */}
-            <ClientLogos />
+            <div className="theme-monochrome">
+                <ClientLogos />
+            </div>
 
             {/* CTA Section */}
             <section className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-6">
                 <div
                     ref={ctaRef}
-                    className="max-w-4xl mx-auto bg-gray-800 rounded-2xl overflow-hidden shadow-xl"
+                    className="max-w-4xl mx-auto bg-gray-900 rounded-2xl overflow-hidden shadow-xl"
                 >
                     <motion.div
                         className="relative p-8 sm:p-10 md:p-12"
@@ -262,7 +267,7 @@ const AboutUs = () => {
                             </p>
                             <Link href="/contact-us">
                                 <motion.button
-                                    className="bg-white text-gray-800 hover:bg-gray-100 px-6 sm:px-8 py-3 rounded-lg font-medium transition-colors text-sm sm:text-base inline-flex items-center"
+                                    className="bg-white text-gray-900 hover:bg-gray-100 px-6 sm:px-8 py-3 rounded-lg font-medium transition-colors text-sm sm:text-base inline-flex items-center"
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.98 }}
                                 >

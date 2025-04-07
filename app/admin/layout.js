@@ -109,7 +109,7 @@ export default function AdminLayout({ children }) {
 
             {/* Mobile sidebar */}
             <div
-                className={`fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden transition-opacity duration-200 ${sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                className={`fixed inset-0 bg-black/50 bg-opacity-50 z-20 md:hidden transition-opacity duration-200 ${sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                     }`}
                 onClick={toggleSidebar}
             />

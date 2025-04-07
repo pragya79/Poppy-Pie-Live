@@ -29,7 +29,7 @@ const itemVariants = {
     }
 }
 
-const HeroSection = () => {
+const Hero = () => {
     // Ref for scroll animation
     const headerRef = useRef(null)
 
@@ -37,7 +37,7 @@ const HeroSection = () => {
     const isHeaderInView = useInView(headerRef, { once: true })
 
     return (
-        <section className="relative bg-gray-800 text-white overflow-hidden">
+        <section className="relative bg-gray-900 text-white overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
                 <svg
@@ -92,7 +92,7 @@ const HeroSection = () => {
                         >
                             <Button
                                 size="lg"
-                                className="bg-white text-gray-800 hover:bg-blue-50"
+                                className="bg-white text-gray-900 hover:bg-gray-100"
                                 onClick={() => {
                                     const element = document.getElementById('contact-form');
                                     element?.scrollIntoView({ behavior: 'smooth' });
@@ -103,7 +103,7 @@ const HeroSection = () => {
                             <Button
                                 size="lg"
                                 variant="outline"
-                                className="border-white text-gray-800 hover:bg-transparent hover:text-white"
+                                className="bg-white text-gray-900 hover:bg-transparent hover:text-white"
                                 asChild
                             >
                                 <Link
@@ -133,4 +133,4 @@ const HeroSection = () => {
     )
 }
 
-export default HeroSection
+export default Hero

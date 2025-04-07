@@ -54,7 +54,7 @@ const MissionVision = () => {
                     variants={containerVariants}
                 >
                     <motion.div className="text-center mb-12 sm:mb-16" variants={itemVariants}>
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                             Our Purpose & Direction
                         </h2>
                         <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
@@ -68,10 +68,10 @@ const MissionVision = () => {
                             variants={boxVariants}
                             whileHover={{ y: -5, transition: { duration: 0.2 } }}
                         >
-                            <div className="rounded-full bg-blue-100 w-16 h-16 flex items-center justify-center mb-6">
+                            <div className="rounded-full bg-gray-100 w-16 h-16 flex items-center justify-center mb-6">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
-                                    className="h-8 w-8 text-blue-600"
+                                    className="h-8 w-8 text-gray-900"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
@@ -84,7 +84,7 @@ const MissionVision = () => {
                                     />
                                 </svg>
                             </div>
-                            <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Our Mission</h3>
+                            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
                             <p className="text-gray-600 mb-4 flex-grow">
                                 To empower businesses through innovative marketing strategies, creative branding solutions, and data-driven approaches that drive sustainable growth and lasting customer relationships.
                             </p>
@@ -98,10 +98,10 @@ const MissionVision = () => {
                             variants={boxVariants}
                             whileHover={{ y: -5, transition: { duration: 0.2 } }}
                         >
-                            <div className="rounded-full bg-indigo-100 w-16 h-16 flex items-center justify-center mb-6">
+                            <div className="rounded-full bg-gray-100 w-16 h-16 flex items-center justify-center mb-6">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
-                                    className="h-8 w-8 text-indigo-600"
+                                    className="h-8 w-8 text-gray-900"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
@@ -114,7 +114,7 @@ const MissionVision = () => {
                                     />
                                 </svg>
                             </div>
-                            <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Our Vision</h3>
+                            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
                             <p className="text-gray-600 mb-4 flex-grow">
                                 To be the most trusted partner for businesses seeking transformative marketing and branding solutions, recognized for our innovation, integrity, and measurable results that help shape the future of digital marketing.
                             </p>
@@ -128,14 +128,14 @@ const MissionVision = () => {
                         className="mt-12 sm:mt-16 text-center"
                         variants={itemVariants}
                     >
-                        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Our Core Values</h3>
+                        <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Our Core Values</h3>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-6 max-w-4xl mx-auto">
                             {[
-                                { title: "Innovation", color: "bg-blue-100 text-blue-600" },
-                                { title: "Integrity", color: "bg-indigo-100 text-indigo-600" },
-                                { title: "Excellence", color: "bg-purple-100 text-purple-600" },
-                                { title: "Collaboration", color: "bg-pink-100 text-pink-600" },
-                                { title: "Impact", color: "bg-red-100 text-red-600" }
+                                { title: "Innovation", color: "bg-gray-100 text-gray-900" },
+                                { title: "Integrity", color: "bg-gray-200 text-gray-900" },
+                                { title: "Excellence", color: "bg-gray-300 text-gray-900" },
+                                { title: "Collaboration", color: "bg-gray-200 text-gray-900" },
+                                { title: "Impact", color: "bg-gray-100 text-gray-900" }
                             ].map((value, index) => (
                                 <motion.div
                                     key={index}

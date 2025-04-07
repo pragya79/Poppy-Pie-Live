@@ -150,7 +150,7 @@ const TeamSection = () => {
                     variants={containerVariants}
                 >
                     <motion.div className="text-center mb-12 sm:mb-16" variants={itemVariants}>
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                             Meet Our Team
                         </h2>
                         <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
@@ -172,7 +172,7 @@ const TeamSection = () => {
                                         src={member.image}
                                         alt={member.name}
                                         fill
-                                        className="object-cover"
+                                        className="object-cover grayscale"
                                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         data-placeholder={`team-member-${member.id}`}
                                     />
@@ -196,7 +196,7 @@ const TeamSection = () => {
                                             <div className="flex space-x-2">
                                                 <a
                                                     href={member.social.linkedin}
-                                                    className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                                                    className="p-2 rounded-full bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors"
                                                     aria-label={`LinkedIn profile of ${member.name}`}
                                                 >
                                                     <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -205,7 +205,7 @@ const TeamSection = () => {
                                                 </a>
                                                 <a
                                                     href={member.social.twitter}
-                                                    className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                                                    className="p-2 rounded-full bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors"
                                                     aria-label={`Twitter profile of ${member.name}`}
                                                 >
                                                     <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -229,7 +229,7 @@ const TeamSection = () => {
                         </p>
                         <a
                             href="/careers"
-                            className="inline-block mt-4 text-blue-600 font-medium hover:text-blue-700"
+                            className="inline-block mt-4 text-gray-900 font-medium hover:text-black"
                         >
                             View Career Opportunities →
                         </a>

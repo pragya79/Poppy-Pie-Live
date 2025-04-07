@@ -123,7 +123,7 @@ const FeaturedWork = () => {
     }
 
     return (
-        <section className="py-16 sm:py-20 md:py-24 bg-gray-800 text-white relative overflow-hidden">
+        <section className="py-16 sm:py-20 md:py-24 bg-gray-900 text-white relative overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
                 <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -161,7 +161,7 @@ const FeaturedWork = () => {
                                 initial="hidden"
                                 animate="visible"
                                 exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
-                                className="rounded-xl overflow-hidden shadow-lg bg-gray-700/50 backdrop-blur-sm"
+                                className="rounded-xl overflow-hidden shadow-lg bg-gray-800/50 backdrop-blur-sm"
                             >
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div className="relative h-64 sm:h-72 md:h-full">
@@ -169,7 +169,7 @@ const FeaturedWork = () => {
                                             src={featuredWork[activeCase].image}
                                             alt={featuredWork[activeCase].title}
                                             fill
-                                            className="object-cover"
+                                            className="object-cover grayscale"
                                             sizes="(max-width: 768px) 100vw, 50vw"
                                             data-placeholder={`case-study-${featuredWork[activeCase].id}`}
                                         />
@@ -187,7 +187,7 @@ const FeaturedWork = () => {
                                             <ul className="space-y-2">
                                                 {featuredWork[activeCase].results.map((result, index) => (
                                                     <li key={index} className="flex items-start">
-                                                        <span className="text-green-400 mr-2">✓</span>
+                                                        <span className="text-gray-300 mr-2">✓</span>
                                                         <span className="text-gray-300">{result}</span>
                                                     </li>
                                                 ))}
@@ -196,7 +196,7 @@ const FeaturedWork = () => {
 
                                         <Link href={featuredWork[activeCase].link}>
                                             <motion.button
-                                                className="flex items-center text-blue-300 hover:text-blue-200 font-medium transition-colors"
+                                                className="flex items-center text-gray-300 hover:text-white font-medium transition-colors"
                                                 whileHover={{ x: 5, transition: { duration: 0.2 } }}
                                             >
                                                 View Case Study
@@ -211,7 +211,7 @@ const FeaturedWork = () => {
                         {/* Navigation buttons */}
                         <div className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between pointer-events-none px-4">
                             <motion.button
-                                className="bg-white/90 text-gray-800 hover:bg-white rounded-full p-2 shadow-lg pointer-events-auto"
+                                className="bg-white/90 text-gray-900 hover:bg-white rounded-full p-2 shadow-lg pointer-events-auto"
                                 onClick={handlePrevCase}
                                 whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
                                 whileTap={{ scale: 0.9, transition: { duration: 0.2 } }}
@@ -221,7 +221,7 @@ const FeaturedWork = () => {
                             </motion.button>
 
                             <motion.button
-                                className="bg-white/90 text-gray-800 hover:bg-white rounded-full p-2 shadow-lg pointer-events-auto"
+                                className="bg-white/90 text-gray-900 hover:bg-white rounded-full p-2 shadow-lg pointer-events-auto"
                                 onClick={handleNextCase}
                                 whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
                                 whileTap={{ scale: 0.9, transition: { duration: 0.2 } }}
@@ -252,7 +252,7 @@ const FeaturedWork = () => {
                     >
                         <Link href="/work">
                             <motion.button
-                                className="bg-white text-gray-800 hover:bg-gray-100 px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base"
+                                className="bg-white text-gray-900 hover:bg-gray-100 px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base"
                                 whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
                                 whileTap={{ scale: 0.98, transition: { duration: 0.2 } }}
                             >

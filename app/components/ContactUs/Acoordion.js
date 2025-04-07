@@ -45,11 +45,11 @@ const Accordion = ({ items }) => {
                 >
                     <button
                         onClick={() => toggleAccordion(index)}
-                        className="w-full py-4 px-0 flex justify-between items-center text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                        className="w-full py-4 px-0 flex justify-between items-center text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500"
                         aria-expanded={activeIndex === index}
                         aria-controls={`accordion-content-${item.id}`}
                     >
-                        <span className="font-medium text-gray-800 hover:text-blue-600 transition-colors">
+                        <span className="font-medium text-gray-900 hover:text-gray-600 transition-colors">
                             {item.question}
                         </span>
                         <motion.div
@@ -57,7 +57,7 @@ const Accordion = ({ items }) => {
                             initial="closed"
                             animate={activeIndex === index ? "open" : "closed"}
                             transition={{ duration: 0.3 }}
-                            className="flex-shrink-0 text-gray-400"
+                            className="flex-shrink-0 text-gray-500"
                         >
                             <ChevronDown size={18} />
                         </motion.div>
