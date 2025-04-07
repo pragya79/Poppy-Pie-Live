@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
     CardFooter
@@ -12,10 +11,7 @@ import {
 import { Button } from "@/components/ui/button"
 import {
     Search,
-    Filter,
-    ChevronDown,
     FileText,
-    Eye,
     Edit,
     Trash2,
     Plus,
@@ -38,13 +34,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"

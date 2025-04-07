@@ -1,9 +1,9 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState } from "react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import Link from "next/link"
-import { ChevronRight, ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 
 // Import hover effect components
 import { HoverEffect } from "../components/Services/HoverEffect"
@@ -63,25 +63,6 @@ export default function ProductsAndServices() {
             transition: {
                 duration: 0.5,
                 ease: "easeOut"
-            }
-        }
-    }
-
-    const buttonVariants = {
-        initial: { scale: 1 },
-        hover: {
-            scale: 1.025,
-            x: 5,
-            transition: {
-                duration: 0.2,
-                ease: "easeInOut"
-            }
-        },
-        tap: {
-            scale: 0.98,
-            transition: {
-                duration: 0.1,
-                ease: "easeIn"
             }
         }
     }

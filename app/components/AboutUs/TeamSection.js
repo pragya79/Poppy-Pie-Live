@@ -79,7 +79,7 @@ const TeamSection = () => {
             name: "Sarah Johnson",
             role: "Founder & CEO",
             bio: "Sarah founded Poppy Pie with a vision to transform how businesses approach marketing. With over 15 years of experience in digital marketing and brand strategy, she's led campaigns for Fortune 500 companies and emerging startups alike. Sarah is passionate about combining data-driven insights with creative storytelling to deliver exceptional results.",
-            image: "/placeholder.svg",
+            image: "/logo.png",
             social: {
                 linkedin: "#",
                 twitter: "#"
@@ -90,7 +90,7 @@ const TeamSection = () => {
             name: "Michael Chen",
             role: "Creative Director",
             bio: "Michael leads our creative team with a keen eye for design and a talent for developing unique brand identities. His background in both traditional and digital design allows him to create cohesive visual experiences across all channels. Previously, Michael worked with renowned agencies in New York and London, bringing global perspective to our creative approach.",
-            image: "/placeholder.svg",
+            image: "/logo.png",
             social: {
                 linkedin: "#",
                 twitter: "#"
@@ -101,7 +101,7 @@ const TeamSection = () => {
             name: "Emily Rodriguez",
             role: "Head of Strategy",
             bio: "Emily oversees all strategic initiatives at Poppy Pie, ensuring our solutions align with client objectives and market opportunities. With a background in business consulting and digital transformation, she specializes in helping brands navigate complex challenges and capitalize on emerging trends. Emily holds an MBA from Stanford and regularly speaks at industry conferences.",
-            image: "/placeholder.svg",
+            image: "/logo.png",
             social: {
                 linkedin: "#",
                 twitter: "#"
@@ -112,7 +112,7 @@ const TeamSection = () => {
             name: "David Williams",
             role: "Technical Director",
             bio: "David brings technical expertise to our marketing solutions, bridging the gap between creative concepts and technical execution. He leads our development team in creating cutting-edge websites, applications, and AI-powered marketing tools. With a background in software engineering and digital architecture, David ensures our technical solutions are robust, scalable, and innovative.",
-            image: "/placeholder.svg",
+            image: "/logo.png",
             social: {
                 linkedin: "#",
                 twitter: "#"
@@ -123,7 +123,7 @@ const TeamSection = () => {
             name: "Aisha Patel",
             role: "Client Success Manager",
             bio: "Aisha ensures our clients receive exceptional service from strategy development through implementation. She acts as the primary liaison between our internal teams and clients, managing expectations and facilitating clear communication. Her background in customer experience and project management enables her to anticipate client needs and ensure smooth project delivery.",
-            image: "/placeholder.svg",
+            image: "/logo.png",
             social: {
                 linkedin: "#",
                 twitter: "#"
@@ -134,7 +134,7 @@ const TeamSection = () => {
             name: "James Wilson",
             role: "Analytics Director",
             bio: "James leads our data and analytics practice, transforming complex data into actionable insights. His expertise in marketing analytics, attribution modeling, and performance measurement helps clients understand the impact of their marketing initiatives and identify opportunities for optimization. James previously worked at leading tech companies and holds a Ph.D. in Statistics.",
-            image: "/placeholder.svg",
+            image: "/logo.png",
             social: {
                 linkedin: "#",
                 twitter: "#"

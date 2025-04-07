@@ -2,6 +2,13 @@
 
 import { useRef, useState } from "react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
+import {
+    Search,
+    BarChart,
+    PenTool,
+    Layout,
+    Zap
+} from "lucide-react"
 
 const OurProcess = () => {
     const sectionRef = useRef(null)
@@ -15,11 +22,7 @@ const OurProcess = () => {
             title: "Discovery",
             description: "We dive deep to understand your business, goals, target audience, and competitive landscape.",
             details: "Our discovery process involves thorough research, stakeholder interviews, and market analysis to build a solid foundation for your strategy. We identify opportunities, challenges, and key differentiators that will shape our approach.",
-            icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-            ),
+            icon: <Search className="h-6 w-6" />,
             color: "bg-gray-100 text-gray-900 border-gray-200"
         },
         {
@@ -27,11 +30,7 @@ const OurProcess = () => {
             title: "Strategy",
             description: "We develop a tailored plan that aligns with your business objectives and target audience.",
             details: "Based on insights gathered during discovery, we craft a comprehensive strategy that outlines key messaging, channel selection, tactical approaches, and measurement frameworks. Our strategies are data-informed, creative, and focused on driving measurable results.",
-            icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-            ),
+            icon: <BarChart className="h-6 w-6" />,
             color: "bg-gray-200 text-gray-900 border-gray-300"
         },
         {
@@ -39,11 +38,7 @@ const OurProcess = () => {
             title: "Creation",
             description: "Our creative team brings your strategy to life through compelling design and content.",
             details: "This is where strategy meets creativity. Our multidisciplinary team of designers, writers, and developers collaborate to create impactful assets that communicate your brand message effectively. We prioritize quality, creativity, and adherence to brand guidelines throughout the creation process.",
-            icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-            ),
+            icon: <PenTool className="h-6 w-6" />,
             color: "bg-gray-300 text-gray-900 border-gray-400"
         },
         {
@@ -51,11 +46,7 @@ const OurProcess = () => {
             title: "Implementation",
             description: "We execute the strategy across relevant channels and platforms with precision.",
             details: "With a detailed implementation plan, we roll out campaigns and initiatives across selected channels. Our execution is methodical, with proper tracking set up to monitor performance from day one. We coordinate all aspects of the launch to ensure a seamless experience.",
-            icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                </svg>
-            ),
+            icon: <Layout className="h-6 w-6" />,
             color: "bg-gray-200 text-gray-900 border-gray-300"
         },
         {
@@ -63,11 +54,7 @@ const OurProcess = () => {
             title: "Optimization",
             description: "We continuously analyze performance data and make informed improvements.",
             details: "Marketing is never static. We continuously monitor key performance indicators, gather feedback, and analyze results to identify optimization opportunities. Through A/B testing and iterative enhancements, we refine the strategy to maximize ROI and achieve better outcomes over time.",
-            icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-            ),
+            icon: <Zap className="h-6 w-6" />,
             color: "bg-gray-100 text-gray-900 border-gray-200"
         }
     ]
@@ -150,7 +137,7 @@ const OurProcess = () => {
                                                 whileHover={{ y: -3, transition: { duration: 0.2 } }}
                                             >
                                                 <div className="flex items-start">
-                                                    <div className="rounded-full bg-white p-2 mr-4">
+                                                    <div className="rounded-full bg-white p-2 mr-4 flex items-center justify-center">
                                                         {step.icon}
                                                     </div>
                                                     <div>

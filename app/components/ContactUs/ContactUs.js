@@ -1,81 +1,16 @@
 "use client"
 
-import { useRef, useState, lazy, Suspense } from "react"
-import { motion, useInView, AnimatePresence } from "framer-motion"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import {
-    Phone,
-    Mail,
-    MapPin,
-    Check,
-    Clock
-} from "lucide-react"
-
-// Import UI components
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { useRef, lazy, Suspense } from "react"
+import { motion, useInView } from "framer-motion"
+import { Phone, Mail, MapPin, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import {
-    Checkbox
-} from "@/components/ui/checkbox"
 
-// Import optimized components
-import ContactInfoCard from "./ContactInfoCard"
+// Import components
+import ContactForm from "./ContactForm"
 import Accordion from "./Acoordion"
 
 // Lazy load HeroSection for better performance
 const Hero = lazy(() => import('./Hero'))
-
-// Services data for select field
-const serviceOptions = [
-    { value: "brand-strategy", label: "Brand Strategy" },
-    { value: "visual-identity", label: "Visual Identity" },
-    { value: "digital-experience", label: "Digital Experience" },
-    { value: "content-creation", label: "Content Creation" },
-    { value: "social-media", label: "Social Media Management" },
-    { value: "email-marketing", label: "Email Marketing" },
-    { value: "seo", label: "SEO Optimization" },
-    { value: "ppc", label: "PPC Advertising" },
-    { value: "marketing-automation", label: "Marketing Automation" },
-    { value: "other", label: "Other Services" }
-]
-
-// Form validation schema
-const formSchema = z.object({
-    name: z.string().min(2, {
-        message: "Name must be at least 2 characters.",
-    }),
-    email: z.string().email({
-        message: "Please enter a valid email address.",
-    }),
-    phone: z.string().optional(),
-    services: z.string({
-        required_error: "Please select at least one service",
-    }),
-    subject: z.string().min(5, {
-        message: "Subject must be at least 5 characters.",
-    }),
-    message: z.string().min(10, {
-        message: "Message must be at least 10 characters.",
-    }),
-})
 
 // Animation variants
 const fadeIn = {
@@ -84,7 +19,7 @@ const fadeIn = {
         opacity: 1,
         y: 0,
         transition: {
-            duration: 0.5, // Slightly faster animation
+            duration: 0.5,
             ease: "easeOut"
         }
     }
@@ -95,13 +30,13 @@ const staggerContainer = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.08, // Slightly faster stagger
-            delayChildren: 0.1 // Reduced delay
+            staggerChildren: 0.08,
+            delayChildren: 0.1
         }
     }
 }
 
-// Contact information data with  styling
+// Contact information data with styling
 const contactInfo = [
     {
         icon: <Phone className="h-5 w-5 text-gray-900" />,
@@ -166,57 +101,6 @@ const ContactUs = () => {
     const isInfoInView = useInView(infoRef, { once: true, amount: 0.1 })
     const isFaqInView = useInView(faqRef, { once: true, amount: 0.1 })
 
-    // Form state
-    const [formSubmitted, setFormSubmitted] = useState(false)
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [selectedService, setSelectedService] = useState("")
-
-    // React Hook Form
-    const form = useForm({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: "",
-            email: "",
-            phone: "",
-            services: "",
-            subject: "",
-            message: "",
-        }
-    })
-
-    // Handle service selection change
-    const handleServiceChange = (value) => {
-        setSelectedService(value)
-
-        // Update subject with selected service if subject is empty
-        const currentSubject = form.getValues("subject")
-        if (!currentSubject || currentSubject === "") {
-            const serviceLabel = serviceOptions.find(option => option.value === value)?.label
-            if (serviceLabel) {
-                form.setValue("subject", `Inquiry about ${serviceLabel}`)
-            }
-        }
-    }
-
-    // Handle form submission
-    const onSubmit = async (values) => {
-        setIsSubmitting(true)
-
-        try {
-            // Simulate API call - reduced timeout for better UX
-            await new Promise(resolve => setTimeout(resolve, 600))
-
-            console.log("Form submitted:", values)
-            setFormSubmitted(true)
-            form.reset()
-            setSelectedService("")
-        } catch (error) {
-            console.error("Form submission error:", error)
-        } finally {
-            setIsSubmitting(false)
-        }
-    }
-
     return (
         <div className="bg-gray-50 min-h-screen">
             {/* Hero Section with Suspense fallback */}
@@ -236,155 +120,7 @@ const ContactUs = () => {
                         variants={fadeIn}
                         id="contact-form"
                     >
-                        <div className="mb-8">
-                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Send Us a Message</h2>
-                            <p className="text-gray-600">Fill out the form below and we&apos;ll get back to you as soon as possible.</p>
-                        </div>
-
-                        <AnimatePresence mode="wait">
-                            {formSubmitted ? (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center"
-                                >
-                                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-                                        <Check className="w-8 h-8 text-gray-900" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2">Message Sent Successfully!</h3>
-                                    <p className="text-gray-600 mb-6">Thank you for reaching out. We&apos;ll get back to you within 24 hours.</p>
-                                    <Button
-                                        onClick={() => setFormSubmitted(false)}
-                                        variant="outline"
-                                        className="border-gray-300 hover:bg-gray-100 hover:text-gray-900"
-                                    >
-                                        Send Another Message
-                                    </Button>
-                                </motion.div>
-                            ) : (
-                                <Form {...form}>
-                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                            <FormField
-                                                control={form.control}
-                                                name="name"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="text-gray-700">Full Name</FormLabel>
-                                                        <FormControl>
-                                                            <Input placeholder="John Doe" {...field} className="border-gray-300" />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="email"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="text-gray-700">Email Address</FormLabel>
-                                                        <FormControl>
-                                                            <Input placeholder="john@example.com" type="email" {...field} className="border-gray-300" />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                            <FormField
-                                                control={form.control}
-                                                name="phone"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="text-gray-700">Phone Number (Optional)</FormLabel>
-                                                        <FormControl>
-                                                            <Input placeholder="+1 (555) 123-4567" type="tel" {...field} className="border-gray-300" />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="services"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="text-gray-700">Service of Interest</FormLabel>
-                                                        <Select
-                                                            onValueChange={(value) => {
-                                                                field.onChange(value);
-                                                                handleServiceChange(value);
-                                                            }}
-                                                            value={field.value}
-                                                        >
-                                                            <FormControl>
-                                                                <SelectTrigger className="border-gray-300">
-                                                                    <SelectValue placeholder="Select a service" />
-                                                                </SelectTrigger>
-                                                            </FormControl>
-                                                            <SelectContent>
-                                                                {serviceOptions.map((option) => (
-                                                                    <SelectItem key={option.value} value={option.value}>
-                                                                        {option.label}
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-
-                                        <FormField
-                                            control={form.control}
-                                            name="subject"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-gray-700">Subject</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="How can we help you?" {...field} className="border-gray-300" />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-
-                                        <FormField
-                                            control={form.control}
-                                            name="message"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-gray-700">Your Message</FormLabel>
-                                                    <FormControl>
-                                                        <Textarea
-                                                            placeholder="Please provide details about your project or inquiry..."
-                                                            className="min-h-32 resize-y border-gray-300"
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-
-                                        <div className="pt-2">
-                                            <Button
-                                                type="submit"
-                                                className="w-full sm:w-auto bg-gray-900 hover:bg-gray-800 text-white"
-                                                disabled={isSubmitting}
-                                            >
-                                                {isSubmitting ? "Sending..." : "Send Message"}
-                                            </Button>
-                                        </div>
-                                    </form>
-                                </Form>
-                            )}
-                        </AnimatePresence>
+                        <ContactForm />
                     </motion.div>
 
                     {/* Info section */}

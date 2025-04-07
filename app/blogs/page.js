@@ -6,7 +6,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
     Calendar,
     Search,
-    Archive,
     ArrowRight,
     ChevronLeft,
     ChevronRight,

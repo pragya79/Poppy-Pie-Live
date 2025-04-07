@@ -20,7 +20,7 @@ const TestimonialsSlider = () => {
             role: "CEO, TechVision",
             company: "TechVision",
             content: "Working with Poppy Pie transformed our brand identity and market position. Their strategic approach and creative execution delivered measurable results that exceeded our expectations. The team's ability to understand our vision and translate it into compelling marketing solutions has been invaluable.",
-            image: "/images/avatar1.jpg"
+            image: "/logo.png"
         },
         {
             id: 2,
@@ -28,7 +28,7 @@ const TestimonialsSlider = () => {
             role: "Marketing Director",
             company: "EcoLife",
             content: "Poppy Pie helped us navigate a complex rebranding process with exceptional skill and insight. Their team took the time to truly understand our business objectives and audience, resulting in a brand strategy that has resonated deeply with our customers and significantly improved our market position.",
-            image: "/images/avatar2.jpg"
+            image: "/logo.png"
         },
         {
             id: 3,
@@ -36,7 +36,7 @@ const TestimonialsSlider = () => {
             role: "Founder",
             company: "StyleCo",
             content: "The expertise and creativity that Poppy Pie brings to the table is unmatched. They revamped our entire digital presence, resulting in a 156% increase in conversions and substantially improved user experience. Their data-driven approach combined with innovative design has been a game-changer for our business.",
-            image: "/images/avatar3.jpg"
+            image: "/logo.png"
         },
         {
             id: 4,
@@ -44,7 +44,7 @@ const TestimonialsSlider = () => {
             role: "Head of Growth",
             company: "FinanceHub",
             content: "From strategy development to execution, Poppy Pie delivered excellence at every step. Their content marketing strategy helped us establish thought leadership in a competitive industry and significantly increased our qualified leads. The team is responsive, creative, and truly dedicated to our success.",
-            image: "/images/avatar4.jpg"
+            image: "/logo.png"
         }
     ]
 

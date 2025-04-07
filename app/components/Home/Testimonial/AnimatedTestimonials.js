@@ -23,7 +23,7 @@ const AnimatedTestimonials = ({ testimonials }) => {
     const isSmall = useMediaQuery({ minWidth: 480, maxWidth: 639 })
     const isMedium = useMediaQuery({ minWidth: 640, maxWidth: 767 })
     const isLarge = useMediaQuery({ minWidth: 768, maxWidth: 1023 })
-    const isExtraLarge = useMediaQuery({ minWidth: 1024 })
+
 
     // Derive screen size for more precise control
     const screenSize = isExtraSmall ? "xs" : isSmall ? "sm" : isMedium ? "md" : isLarge ? "lg" : "xl"

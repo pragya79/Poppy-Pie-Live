@@ -23,7 +23,6 @@ const AboutUs = () => {
     const ctaRef = useRef(null)
 
     // Animation triggers
-    const isHeaderInView = useInView(headerRef, { once: true })
     const isHeroInView = useInView(heroRef, { once: true, amount: 0.3 })
     const isCtaInView = useInView(ctaRef, { once: true, amount: 0.5 })
 
