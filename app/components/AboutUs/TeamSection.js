@@ -1,13 +1,76 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { motion, useInView, AnimatePresence } from "framer-motion"
+import React, { useRef } from "react"
+import { motion, useInView } from "framer-motion"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
+import { useState } from "react"
+
+// TeamMember Card component that uses the focus card approach
+const TeamMemberCard = React.memo(({
+    member,
+    index,
+    hovered,
+    setHovered,
+    setActiveTeamMember,
+    activeTeamMember,
+    Variants
+}) => (
+    <motion.div
+        className={cn(
+            "rounded-xl relative overflow-hidden cursor-pointer transition-all duration-300 ease-out",
+            "h-64 sm:h-72 md:h-80 w-full",
+            hovered !== null && hovered !== index && "blur-sm scale-[0.98]"
+        )}
+        onClick={() => setActiveTeamMember(activeTeamMember === member.id ? null : member.id)}
+        onMouseEnter={() => setHovered(index)}
+        onMouseLeave={() => setHovered(null)}
+        whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)" }}
+        variants={Variants}
+    >
+        <div className="relative h-full w-full">
+            <Image
+                src={member.image}
+                alt={member.name}
+                fill
+                className={cn(
+                    "object-cover transition-all duration-500",
+                    hovered === index ? "grayscale-0" : "grayscale"
+                )}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                data-placeholder={`team-member-${member.id}`}
+            />
+
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900/70"></div>
+
+            {/* Content overlay - visible on hover */}
+            <div
+                className={cn(
+                    "absolute inset-0 bg-black/40 flex flex-col justify-end p-6 transition-opacity duration-300",
+                    hovered === index ? "opacity-100" : "opacity-0"
+                )}
+            >
+                <h3 className="text-xl font-bold text-white">{member.name}</h3>
+                <p className="text-gray-200">{member.role}</p>
+            </div>
+
+            {/* Always visible text info at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                <h3 className="text-xl font-bold text-white">{member.name}</h3>
+                <p className="text-gray-200">{member.role}</p>
+            </div>
+        </div>
+    </motion.div>
+));
+
+TeamMemberCard.displayName = "TeamMemberCard";
 
 const TeamSection = () => {
     const sectionRef = useRef(null)
     const isInView = useInView(sectionRef, { once: true, amount: 0.2 })
     const [activeTeamMember, setActiveTeamMember] = useState(null)
+    const [hovered, setHovered] = useState(null)
 
     // Team members data
     const teamMembers = [
@@ -112,14 +175,6 @@ const TeamSection = () => {
                 duration: 0.4,
                 ease: "easeOut"
             }
-        },
-        hover: {
-            y: -8,
-            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
-            transition: {
-                duration: 0.3,
-                ease: "easeOut"
-            }
         }
     }
 
@@ -135,9 +190,63 @@ const TeamSection = () => {
         }
     }
 
-    const handleMemberClick = (id) => {
-        setActiveTeamMember(activeTeamMember === id ? null : id)
-    }
+    // Bio section for selected team member
+    const SelectedBio = ({ memberId }) => {
+        if (!memberId) return null;
+
+        const member = teamMembers.find(m => m.id === memberId);
+        if (!member) return null;
+
+        return (
+            <motion.div
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={bioVariants}
+                className="bg-white shadow-lg rounded-xl p-6 sm:p-8 mb-10 max-w-3xl mx-auto"
+            >
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                    <div className="sm:w-1/4">
+                        <div className="relative h-24 w-24 rounded-full overflow-hidden border-4 border-gray-100 shadow-md mx-auto">
+                            <Image
+                                src={member.image}
+                                alt={member.name}
+                                fill
+                                className="object-cover"
+                                sizes="96px"
+                            />
+                        </div>
+                    </div>
+                    <div className="sm:w-3/4">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
+                        <p className="text-gray-600 mb-1">{member.role}</p>
+                        <p className="text-gray-700 mt-3">{member.bio}</p>
+
+                        <div className="flex space-x-3 mt-4">
+                            <a
+                                href={member.social.linkedin}
+                                className="p-2 rounded-full bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors"
+                                aria-label={`LinkedIn profile of ${member.name}`}
+                            >
+                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                                </svg>
+                            </a>
+                            <a
+                                href={member.social.twitter}
+                                className="p-2 rounded-full bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors"
+                                aria-label={`Twitter profile of ${member.name}`}
+                            >
+                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+        );
+    };
 
     return (
         <section className="py-16 sm:py-20 md:py-24 bg-white">
@@ -158,65 +267,22 @@ const TeamSection = () => {
                         </p>
                     </motion.div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-                        {teamMembers.map((member) => (
-                            <motion.div
-                                key={member.id}
-                                variants={profileVariants}
-                                whileHover="hover"
-                                className="bg-gray-50 rounded-xl overflow-hidden shadow-sm cursor-pointer"
-                                onClick={() => handleMemberClick(member.id)}
-                            >
-                                <div className="relative h-64 sm:h-72 overflow-hidden">
-                                    <Image
-                                        src={member.image}
-                                        alt={member.name}
-                                        fill
-                                        className="object-cover grayscale"
-                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                        data-placeholder={`team-member-${member.id}`}
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900/70"></div>
-                                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-                                        <h3 className="text-xl font-bold text-white">{member.name}</h3>
-                                        <p className="text-gray-200">{member.role}</p>
-                                    </div>
-                                </div>
+                    {/* Bio section */}
+                    {activeTeamMember && <SelectedBio memberId={activeTeamMember} />}
 
-                                <AnimatePresence>
-                                    {activeTeamMember === member.id && (
-                                        <motion.div
-                                            variants={bioVariants}
-                                            initial="hidden"
-                                            animate="visible"
-                                            exit="hidden"
-                                            className="p-4 sm:p-6 overflow-hidden"
-                                        >
-                                            <p className="text-gray-700 mb-4">{member.bio}</p>
-                                            <div className="flex space-x-2">
-                                                <a
-                                                    href={member.social.linkedin}
-                                                    className="p-2 rounded-full bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors"
-                                                    aria-label={`LinkedIn profile of ${member.name}`}
-                                                >
-                                                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                                                    </svg>
-                                                </a>
-                                                <a
-                                                    href={member.social.twitter}
-                                                    className="p-2 rounded-full bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors"
-                                                    aria-label={`Twitter profile of ${member.name}`}
-                                                >
-                                                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                                                    </svg>
-                                                </a>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
+                    {/* Team members grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                        {teamMembers.map((member, index) => (
+                            <TeamMemberCard
+                                key={member.id}
+                                member={member}
+                                index={index}
+                                hovered={hovered}
+                                setHovered={setHovered}
+                                setActiveTeamMember={setActiveTeamMember}
+                                activeTeamMember={activeTeamMember}
+                                Variants={profileVariants}
+                            />
                         ))}
                     </div>
 
