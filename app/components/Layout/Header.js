@@ -15,6 +15,7 @@ const Header = () => {
     const [activeTab, setActiveTab] = useState(null);
     const servicesRef = useRef(null);
     const blogsRef = useRef(null);
+    const headerRef = useRef(null);
 
     // Reduced navigation items with icons imported from IconComponents
     const navItemsLeft = [
@@ -104,7 +105,16 @@ const Header = () => {
     // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
+            // Only process click outside if we're not in mobile menu mode
             if (!isMobileMenuOpen) {
+                // If the click is outside the header entirely, close all dropdowns
+                if (headerRef.current && !headerRef.current.contains(event.target)) {
+                    setIsServicesOpen(false);
+                    setIsBlogOpen(false);
+                    return;
+                }
+
+                // Check specific dropdown refs
                 if (servicesRef.current && !servicesRef.current.contains(event.target)) {
                     setIsServicesOpen(false);
                 }
@@ -134,18 +144,41 @@ const Header = () => {
         };
     }, [isMobileMenuOpen]);
 
-    const handleDropdown = (menuType) => {
+    // Handle ESC key to close dropdown and mobile menu
+    useEffect(() => {
+        const handleEscKey = (event) => {
+            if (event.key === 'Escape') {
+                setIsServicesOpen(false);
+                setIsBlogOpen(false);
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('keydown', handleEscKey);
+        return () => {
+            document.removeEventListener('keydown', handleEscKey);
+        };
+    }, []);
+
+    const toggleDropdown = (menuType, forcedState = null) => {
         if (menuType === "services") {
-            setIsServicesOpen(prev => !prev);
-            setIsBlogOpen(false);
+            // If forcedState is provided, use it, otherwise toggle
+            const newState = forcedState !== null ? forcedState : !isServicesOpen;
+            setIsServicesOpen(newState);
+
+            // Close other dropdown if opening this one
+            if (newState) setIsBlogOpen(false);
         } else if (menuType === "blogs") {
-            setIsBlogOpen(prev => !prev);
-            setIsServicesOpen(false);
+            const newState = forcedState !== null ? forcedState : !isBlogOpen;
+            setIsBlogOpen(newState);
+
+            // Close other dropdown if opening this one
+            if (newState) setIsServicesOpen(false);
         }
     };
 
     return (
-        <header className="bg-white border-b border-gray-200 relative z-50">
+        <header className="bg-white border-b border-gray-200 relative z-50" ref={headerRef}>
             <div className="container mx-auto px-4">
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center justify-center h-20">
@@ -186,14 +219,16 @@ const Header = () => {
                                 key={index}
                                 className="relative text-black hover:text-gray-700"
                                 ref={item.label === "Services" ? servicesRef : item.label === "Blogs" ? blogsRef : null}
-                                onMouseEnter={() => item.hasDropdown && handleDropdown(item.label.toLowerCase())}
+                                onMouseEnter={() => item.hasDropdown && toggleDropdown(item.label.toLowerCase(), true)}
+                                onMouseLeave={() => item.hasDropdown && toggleDropdown(item.label.toLowerCase(), false)}
                             >
                                 <Link
-                                    href={item.href}
+                                    href={item.hasDropdown ? "#" : item.href}
                                     className="flex items-center gap-2"
-                                    onClick={() => {
+                                    onClick={(e) => {
                                         if (item.hasDropdown) {
-                                            handleDropdown(item.label.toLowerCase());
+                                            e.preventDefault(); // Prevent navigation when dropdown is available
+                                            toggleDropdown(item.label.toLowerCase());
                                         }
                                     }}
                                 >
@@ -326,7 +361,12 @@ const Header = () => {
                                 {/* Main Content Area */}
                                 <AnimatePresence mode="wait">
                                     {!activeTab && (
-                                        <div className="p-6">
+                                        <motion.div
+                                            className="p-6"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                        >
                                             <div className="space-y-4">
                                                 {/* Home Button */}
                                                 <Link
@@ -341,9 +381,9 @@ const Header = () => {
                                                 </Link>
 
                                                 {/* Mobile Navigation Links */}
-                                                {[...navItemsLeft, ...navItemsRight].map((item, index) => (
+                                                {navItemsLeft.map((item, index) => (
                                                     <Link
-                                                        key={index}
+                                                        key={`left-${index}`}
                                                         href={item.href}
                                                         className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
                                                         onClick={() => setIsMobileMenuOpen(false)}
@@ -354,8 +394,62 @@ const Header = () => {
                                                         </div>
                                                     </Link>
                                                 ))}
+
+                                                {/* Mobile Dropdown Navigation */}
+                                                {navItemsRight.map((item, index) => (
+                                                    <div key={`right-${index}`}>
+                                                        {item.hasDropdown ? (
+                                                            <div
+                                                                className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all cursor-pointer"
+                                                                onClick={() => setActiveTab(item.label)}
+                                                            >
+                                                                <div className="flex items-center gap-3">
+                                                                    {item.icon}
+                                                                    <span className="font-medium">{item.label}</span>
+                                                                </div>
+                                                                <ArrowRight size={16} />
+                                                            </div>
+                                                        ) : (
+                                                            <Link
+                                                                href={item.href}
+                                                                className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
+                                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                            >
+                                                                <div className="flex items-center gap-3">
+                                                                    {item.icon}
+                                                                    <span className="font-medium">{item.label}</span>
+                                                                </div>
+                                                            </Link>
+                                                        )}
+                                                    </div>
+                                                ))}
                                             </div>
-                                        </div>
+                                        </motion.div>
+                                    )}
+
+                                    {/* Submenu Content */}
+                                    {activeTab && (
+                                        <motion.div
+                                            className="p-6"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                        >
+                                            <h3 className="text-lg font-medium mb-4">{activeTab}</h3>
+                                            <div className="space-y-3">
+                                                {navItemsRight.find(item => item.label === activeTab)?.dropdownItems.map((subItem, subIndex) => (
+                                                    <Link
+                                                        key={subIndex}
+                                                        href={subItem.href}
+                                                        className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all"
+                                                        onClick={() => setIsMobileMenuOpen(false)}
+                                                    >
+                                                        {subItem.icon}
+                                                        <span>{subItem.label}</span>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </motion.div>
                                     )}
                                 </AnimatePresence>
 
