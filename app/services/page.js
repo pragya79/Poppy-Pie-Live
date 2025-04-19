@@ -5,7 +5,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
-// Import hover effect components
+// Import hover effect components - Using updated version with expandable cards
 import { HoverEffect } from "../components/Services/HoverEffect"
 
 // Import services data
@@ -69,10 +69,10 @@ export default function ProductsAndServices() {
 
     return (
         <div className="w-full min-h-screen bg-background" ref={scrollContainerRef}>
-            {/* Header navigation */}
+            {/* Header navigation - Increased z-index to 50 to ensure it stays above expanded cards */}
             <motion.div
                 ref={headerRef}
-                className="sticky top-0 w-full bg-background/80 backdrop-blur-sm py-3 sm:py-4 px-4 sm:px-6 shadow-sm z-10 border-b"
+                className="sticky top-0 w-full bg-background/90 backdrop-blur-sm py-3 sm:py-4 px-4 sm:px-6 shadow-sm z-50 border-b"
                 initial="hidden"
                 animate={isHeaderInView ? "visible" : "hidden"}
                 variants={headerVariants}
@@ -116,13 +116,19 @@ export default function ProductsAndServices() {
                         <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4">
                             <button
                                 onClick={() => handleSectionChange('products')}
-                                className="bg-primary text-primary-foreground hover:bg-primary/90 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base"
+                                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base ${activeSection === 'products' 
+                                    ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                                    : 'bg-transparent text-foreground border border-input hover:bg-accent hover:text-accent-foreground'
+                                }`}
                             >
                                 View Products
                             </button>
                             <button
                                 onClick={() => handleSectionChange('services')}
-                                className="bg-transparent text-foreground border border-input hover:bg-accent hover:text-accent-foreground px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base"
+                                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base ${activeSection === 'services' 
+                                    ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                                    : 'bg-transparent text-foreground border border-input hover:bg-accent hover:text-accent-foreground'
+                                }`}
                             >
                                 View Services
                             </button>

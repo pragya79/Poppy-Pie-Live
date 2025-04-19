@@ -223,11 +223,11 @@ const Header = () => {
                                 onMouseLeave={() => item.hasDropdown && toggleDropdown(item.label.toLowerCase(), false)}
                             >
                                 <Link
-                                    href={item.hasDropdown ? "#" : item.href}
+                                    href={item.href}
                                     className="flex items-center gap-2"
                                     onClick={(e) => {
                                         if (item.hasDropdown) {
-                                            e.preventDefault(); // Prevent navigation when dropdown is available
+                                            // Don't prevent default - allow navigation to the page
                                             toggleDropdown(item.label.toLowerCase());
                                         }
                                     }}
@@ -395,62 +395,25 @@ const Header = () => {
                                                     </Link>
                                                 ))}
 
-                                                {/* Mobile Dropdown Navigation */}
+                                                {/* Mobile Navigation Links (Right Items) */}
                                                 {navItemsRight.map((item, index) => (
-                                                    <div key={`right-${index}`}>
-                                                        {item.hasDropdown ? (
-                                                            <div
-                                                                className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all cursor-pointer"
-                                                                onClick={() => setActiveTab(item.label)}
-                                                            >
-                                                                <div className="flex items-center gap-3">
-                                                                    {item.icon}
-                                                                    <span className="font-medium">{item.label}</span>
-                                                                </div>
-                                                                <ArrowRight size={16} />
-                                                            </div>
-                                                        ) : (
-                                                            <Link
-                                                                href={item.href}
-                                                                className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
-                                                                onClick={() => setIsMobileMenuOpen(false)}
-                                                            >
-                                                                <div className="flex items-center gap-3">
-                                                                    {item.icon}
-                                                                    <span className="font-medium">{item.label}</span>
-                                                                </div>
-                                                            </Link>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </motion.div>
-                                    )}
-
-                                    {/* Submenu Content */}
-                                    {activeTab && (
-                                        <motion.div
-                                            className="p-6"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                        >
-                                            <h3 className="text-lg font-medium mb-4">{activeTab}</h3>
-                                            <div className="space-y-3">
-                                                {navItemsRight.find(item => item.label === activeTab)?.dropdownItems.map((subItem, subIndex) => (
                                                     <Link
-                                                        key={subIndex}
-                                                        href={subItem.href}
-                                                        className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all"
+                                                        key={`right-${index}`}
+                                                        href={item.href}
+                                                        className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
                                                         onClick={() => setIsMobileMenuOpen(false)}
                                                     >
-                                                        {subItem.icon}
-                                                        <span>{subItem.label}</span>
+                                                        <div className="flex items-center gap-3">
+                                                            {item.icon}
+                                                            <span className="font-medium">{item.label}</span>
+                                                        </div>
                                                     </Link>
                                                 ))}
                                             </div>
                                         </motion.div>
                                     )}
+
+                                    {/* We no longer need the submenu content as we're directly navigating to pages */}
                                 </AnimatePresence>
 
                                 {/* Footer with copyright */}

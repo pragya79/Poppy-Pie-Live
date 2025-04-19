@@ -3,24 +3,57 @@
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ArrowRight, X } from "lucide-react";
 
 export const HoverEffect = ({
     items,
     className
 }) => {
     let [hoveredIndex, setHoveredIndex] = useState(null);
+    let [modalOpen, setModalOpen] = useState(false);
+    let [selectedItem, setSelectedItem] = useState(null);
+
+    // Close modal when escape key is pressed
+    useEffect(() => {
+        const handleEscKey = (e) => {
+            if (e.key === 'Escape' && modalOpen) {
+                setModalOpen(false);
+            }
+        };
+
+        window.addEventListener('keydown', handleEscKey);
+
+        // Remove scroll from body when modal is open
+        if (modalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        return () => {
+            window.removeEventListener('keydown', handleEscKey);
+            document.body.style.overflow = 'unset';
+        };
+    }, [modalOpen]);
+
+    const handleKnowMore = (e, item, index) => {
+        e.preventDefault();
+        setSelectedItem(item);
+        setModalOpen(true);
+    };
 
     return (
-        <div
-            className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-10 gap-4", className)}>
+        <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-10 gap-4", className)}>
             {items.map((item, idx) => (
                 <Link
                     href={item?.link || "#"}
                     key={idx}
                     className="relative group block p-2 h-full w-full"
                     onMouseEnter={() => setHoveredIndex(idx)}
-                    onMouseLeave={() => setHoveredIndex(null)}>
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    onClick={(e) => e.preventDefault()}
+                >
                     <AnimatePresence>
                         {hoveredIndex === idx && (
                             <motion.span
@@ -34,18 +67,95 @@ export const HoverEffect = ({
                                 exit={{
                                     opacity: 0,
                                     transition: { duration: 0.15, delay: 0.2 },
-                                }} />
+                                }}
+                            />
                         )}
                     </AnimatePresence>
+
                     <Card>
                         <CardTitle>{item.title}</CardTitle>
                         <CardDescription>{item.description}</CardDescription>
                         {item.action && (
-                            <CardAction>{item.action}</CardAction>
+                            <CardAction onClick={(e) => handleKnowMore(e, item, idx)}>
+                                {item.action}
+                            </CardAction>
                         )}
                     </Card>
                 </Link>
             ))}
+
+            {/* Modal overlay */}
+            <AnimatePresence>
+                {modalOpen && selectedItem && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+                            onClick={() => setModalOpen(false)}
+                        />
+
+                        <motion.div
+                            className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-3xl max-h-[85vh] bg-card rounded-2xl shadow-lg overflow-hidden"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                        >
+                            <div className="p-6 overflow-y-auto max-h-[85vh]">
+                                <div className="flex justify-between items-start mb-4">
+                                    <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
+                                    <button
+                                        onClick={() => setModalOpen(false)}
+                                        className="p-2 hover:bg-accent rounded-full transition-colors"
+                                        aria-label="Close modal"
+                                    >
+                                        <X className="h-5 w-5" />
+                                    </button>
+                                </div>
+
+                                <div className="prose prose-gray dark:prose-invert max-w-none">
+                                    <p className="text-base text-muted-foreground leading-relaxed mb-6">
+                                        {selectedItem.description}
+                                    </p>
+
+                                    {selectedItem.details && (
+                                        <div className="mt-4">
+                                            <h3 className="text-lg font-medium mb-2">Details</h3>
+                                            <p>{selectedItem.details}</p>
+                                        </div>
+                                    )}
+
+                                    {selectedItem.features && (
+                                        <div className="mt-6">
+                                            <h3 className="text-lg font-medium mb-2">Key Features</h3>
+                                            <ul className="list-disc pl-5 space-y-1">
+                                                {selectedItem.features.map((feature, i) => (
+                                                    <li key={i} className="text-muted-foreground">{feature}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    <div className="mt-8 flex justify-end">
+                                        <Link href={'/contact-us'}>
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                className="bg-primary text-primary-foreground px-5 py-2 rounded-lg font-medium flex items-center"
+                                            >
+                                                Get Started
+                                                <ArrowRight className="ml-2 h-4 w-4" />
+                                            </motion.button>
+                                        </Link>
+                                    </div>
+                                </div>  
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
@@ -59,8 +169,9 @@ export const Card = ({
             className={cn(
                 "rounded-2xl h-full w-full p-4 overflow-hidden bg-card text-card-foreground border border-border group-hover:border-primary/20 relative z-20 shadow-sm",
                 className
-            )}>
-            <div className="relative z-50">
+            )}
+        >
+            <div className="relative z-20">
                 <div className="p-4">{children}</div>
             </div>
         </div>
@@ -84,7 +195,8 @@ export const CardDescription = ({
 }) => {
     return (
         <p
-            className={cn("mt-4 text-muted-foreground tracking-wide leading-relaxed text-sm line-clamp-4", className)}>
+            className={cn("mt-4 text-muted-foreground tracking-wide leading-relaxed text-sm line-clamp-4", className)}
+        >
             {children}
         </p>
     );
@@ -92,22 +204,20 @@ export const CardDescription = ({
 
 export const CardAction = ({
     className,
-    children
+    children,
+    onClick
 }) => {
     return (
-        <div
-            className={cn("mt-8 text-primary font-medium flex items-center text-sm", className)}>
+        <motion.button
+            onClick={onClick}
+            className={cn(
+                "mt-8 text-primary font-medium flex items-center text-sm cursor-pointer",
+                className
+            )}
+            whileHover={{ x: 4 }}
+        >
             {children}
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-            >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-        </div>
+            <ArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" />
+        </motion.button>
     );
 };
