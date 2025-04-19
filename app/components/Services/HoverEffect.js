@@ -84,7 +84,7 @@ export const HoverEffect = ({
                 </Link>
             ))}
 
-            {/* Modal overlay */}
+            {/* Modal overlay - Updated z-index to 100 (higher than header's z-index of 50) */}
             <AnimatePresence>
                 {modalOpen && selectedItem && (
                     <>
@@ -92,12 +92,12 @@ export const HoverEffect = ({
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100]"
                             onClick={() => setModalOpen(false)}
                         />
 
                         <motion.div
-                            className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-3xl max-h-[85vh] bg-card rounded-2xl shadow-lg overflow-hidden"
+                            className="fixed z-[101] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-3xl max-h-[85vh] bg-card rounded-2xl shadow-lg overflow-hidden"
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
@@ -150,7 +150,7 @@ export const HoverEffect = ({
                                             </motion.button>
                                         </Link>
                                     </div>
-                                </div>  
+                                </div>
                             </div>
                         </motion.div>
                     </>

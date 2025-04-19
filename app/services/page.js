@@ -72,7 +72,7 @@ export default function ProductsAndServices() {
             {/* Header navigation - Increased z-index to 50 to ensure it stays above expanded cards */}
             <motion.div
                 ref={headerRef}
-                className="sticky top-0 w-full bg-background/90 backdrop-blur-sm py-3 sm:py-4 px-4 sm:px-6 shadow-sm z-50 border-b"
+                className="sticky top-0 w-full bg-background/90 backdrop-blur-sm py-3 sm:py-4 px-4 sm:px-6 shadow-sm z-40 border-b"
                 initial="hidden"
                 animate={isHeaderInView ? "visible" : "hidden"}
                 variants={headerVariants}
