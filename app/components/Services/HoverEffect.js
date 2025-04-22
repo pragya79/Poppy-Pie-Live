@@ -116,29 +116,32 @@ export const HoverEffect = ({
                                 </div>
 
                                 <div className="prose prose-gray dark:prose-invert max-w-none">
-                                    <p className="text-base text-muted-foreground leading-relaxed mb-6">
-                                        {selectedItem.description}
-                                    </p>
-
-                                    {selectedItem.details && (
-                                        <div className="mt-4">
-                                            <h3 className="text-lg font-medium mb-2">Details</h3>
-                                            <p>{selectedItem.details}</p>
-                                        </div>
-                                    )}
+                                    {/* Improved description rendering with proper paragraph breaks */}
+                                    <div className="text-base text-muted-foreground leading-relaxed mb-6">
+                                        {selectedItem.description.split('\n').map((paragraph, index) => (
+                                            paragraph.trim() ? (
+                                                <p key={index} className="mb-4 last:mb-0">
+                                                    {paragraph}
+                                                </p>
+                                            ) : <div key={index} className="h-4" /> // Empty line spacer
+                                        ))}
+                                    </div>
 
                                     {selectedItem.features && (
-                                        <div className="mt-6">
-                                            <h3 className="text-lg font-medium mb-2">Key Features</h3>
-                                            <ul className="list-disc pl-5 space-y-1">
+                                        <div className="mt-6 pt-6 border-t border-border">
+                                            <h3 className="text-lg font-medium mb-3">Key Features</h3>
+                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-0 mt-4">
                                                 {selectedItem.features.map((feature, i) => (
-                                                    <li key={i} className="text-muted-foreground">{feature}</li>
+                                                    <li key={i} className="flex items-start">
+                                                        <div className="mr-2 mt-1 h-1.5 w-1.5 rounded-full bg-primary flex-shrink-0" />
+                                                        <span className="text-muted-foreground text-sm">{feature}</span>
+                                                    </li>
                                                 ))}
                                             </ul>
                                         </div>
                                     )}
 
-                                    <div className="mt-8 flex justify-end">
+                                    <div className="mt-8 pt-4 flex justify-end">
                                         <Link href={'/contact-us'}>
                                             <motion.button
                                                 whileHover={{ scale: 1.05 }}

@@ -126,120 +126,148 @@ export const products = [
 export const services = [
     {
         id: "service-1",
-        title: "Brand Management",
+        title: "Content Creation",
         description:
-            "Comprehensive brand management services to maintain consistency and strengthen your market position through strategic planning and execution.",
-        details:
-            "Our dedicated team works to ensure your brand identity remains cohesive across all touchpoints while adapting to market changes and evolving consumer preferences. We provide ongoing brand health monitoring, competitive analysis, and strategic recommendations to maintain your brand's relevance and competitive edge in today's dynamic marketplace.",
+            `We offer content suggestions personalized to your social media plan for your brand, both in 
+            posts and videos. Our process starts with in-depth research-studying competitors, market 
+            trends, and audience behavior.
+            For posts, we create personalized blogs with SEO-friendly content and collaborate with talented 
+            graphic designers to craft visuals that grab attention.
+            For videos, we go through the same research process, followed by scripting, editing, and 
+            perfecting based on your desired audience.
+            If required, we can also handle your social media and post the content directly. Whether 
+            dynamic or static, we ensure everything is according to your brand and effectively engages your 
+            community.
+            `,
         features: [
-            "Brand identity development and refinement",
-            "Brand guidelines creation and management",
-            "Brand consistency monitoring across channels",
-            "Competitor analysis and positioning strategy",
-            "Regular brand health assessments",
-            "Crisis management and reputation protection"
+            "In-depth market and competitor research",
+            "SEO-friendly blog post creation",
+            "Custom graphic design for visual content",
+            "Video scripting and production",
+            "Direct social media management and posting",
+            "Dynamic and static content creation"
         ],
         action: "Know More",
     },
     {
         id: "service-2",
-        title: "Re-Branding",
+        title: "SEO Content Writer",
         description:
-            "Transform your brand identity with our expert rebranding service that preserves your core values while modernizing your market presence.",
-        details:
-            "We begin with a thorough brand audit to identify strengths, weaknesses, and opportunities, then develop a comprehensive strategy for evolution or revolution depending on your specific needs. Our collaborative approach ensures stakeholder buy-in at every stage, from concept development through implementation.",
+            `We provide SEO content writing services to enhance new as well as current website or blog content.
+
+            You may either be beginning from the ground up or have topics you'd like to focus on already; we thoroughly research and compose top-quality, keyword-optimized content specific to your audience.
+
+            For new websites, we write content and blogs from scratch. We use the most reliable SEO tools, new data, and improved structure to enhance search rankings.
+
+            Our aim to make your content rank higher, reach the target audience, and enhance your online presence with relevant and clear SEO-friendly writing.
+`,
         features: [
-            "Comprehensive brand audit and analysis",
-            "Market positioning strategy development",
-            "Visual identity redesign (logo, colors, typography)",
-            "Messaging framework development",
-            "Implementation planning and rollout strategy",
-            "Employee and stakeholder alignment training"
+            "Comprehensive keyword research",
+            "New website content creation",
+            "Existing content optimization",
+            "SEO-friendly structure implementation",
+            "Target audience-specific writing",
+            "Search ranking improvement strategies"
         ],
         action: "Know More",
     },
     {
         id: "service-3",
-        title: "Marketing Services",
+        title: "Sales & Marketing Automation",
         description:
-            "Tailored marketing solutions designed to grow your business through targeted campaigns, content creation, and performance optimization.",
-        details:
-            "Our full-service marketing team develops customized strategies aligned with your business objectives, target audience, and competitive landscape. From campaign ideation and execution to performance analysis and optimization, we deliver measurable results that drive business growth.",
+            `We assist companies in saving time and growing more quickly by streamlining repetitive workflows on platforms such as LinkedIn, email, SMS, WhatsApp, and websites.
+
+            Our solutions cover LinkedIn outreach, tailored email workflows, scheduling campaigns, chatbot setup, and instant messaging automation. We develop intelligent, bespoke automation solutions from lead generation to customer care that increase engagement and deliver results. 
+
+            No matter if you desire auto-connect with prospects or provide 24/7 support, we provide consistent and smooth communication. Concentrate on growing your business while we process it seamlessly to align with your objectives.
+`,
         features: [
-            "Integrated marketing strategy development",
-            "Multi-channel campaign execution",
-            "Content creation and distribution",
-            "Performance tracking and optimization",
-            "Marketing technology stack implementation",
-            "ROI analysis and reporting"
+            "LinkedIn outreach automation",
+            "Custom email workflow development",
+            "Campaign scheduling and management",
+            "Chatbot implementation and configuration",
+            "Instant messaging automation",
+            "24/7 customer support systems"
         ],
         action: "Know More",
     },
     {
         id: "service-4",
-        title: "Funnel Creation",
+        title: "Market Research",
         description:
-            "Design and implement optimized sales and marketing funnels that convert prospects into loyal customers through personalized experiences.",
-        details:
-            "We architect end-to-end customer journeys that guide prospects from awareness to advocacy, with strategic touchpoints that address specific needs at each stage. Our data-driven approach ensures continuous refinement of your funnel to maximize conversion rates and customer lifetime value.",
+            `We begin by learning how your business operates, its organization, business model, and how it generates revenue.
+
+            Once we know the fundamentals, we determine who your audience is and how to effectively reach them. We also research your competitors to understand what they're doing and how they engage with their audience.
+
+            Guided by all of these considerations, we design unique strategies incorporating data gathering, outreach planning, and audience creation. We want to assist you in reaching the ideal people in the most intelligent way possible.
+            `,
         features: [
-            "Customer journey mapping and analysis",
-            "Multi-stage funnel architecture",
-            "Conversion point optimization",
-            "Marketing and sales alignment strategy",
-            "Automation workflow implementation",
-            "Funnel performance analytics"
+            "Business model and operations analysis",
+            "Target audience identification",
+            "Competitor research and analysis",
+            "Strategic data gathering methodologies",
+            "Outreach planning frameworks",
+            "Audience segmentation strategies"
         ],
         action: "Know More",
     },
     {
         id: "service-5",
-        title: "Content Management",
+        title: "Social Media Management",
         description:
-            "End-to-end content management services that keep your platforms fresh, engaging, and aligned with your brand voice and business objectives.",
-        details:
-            "Our content management service handles everything from strategy development and content creation to publication, distribution, and performance analysis. We ensure your content remains consistent, relevant, and effective across all platforms while adapting to changing market trends and audience preferences.",
+            `We will assist in growing on all major social media platforms with a sound & strategic planning. It's not merely about posting–it’s about planning the correct content, studying trends, crafting keyword rich captions, and creating scroll stopping visuals. 
+
+            Our service incorporate content planning, channel management, performance analysis, and targeted growth strategies. 
+
+            From creating a content calendar to scheduling daily posts and tracking engagement, we keep your brand active, consistent, and effective online. Whether you're looking for a fresh start or thinking to scale, we manage every detail to enable you to engage with your audience and expand your online presence. 
+`,
         features: [
-            "Content strategy development",
-            "Editorial calendar management",
-            "Content creation and optimization",
-            "Multi-platform content distribution",
-            "Content performance analysis",
-            "Evergreen content maintenance"
+            "Strategic content planning and calendar creation",
+            "Multi-channel platform management",
+            "Trend analysis and implementation",
+            "Keyword-optimized caption writing",
+            "Performance analysis and reporting",
+            "Audience engagement and growth strategies"
         ],
         action: "Know More",
     },
     {
         id: "service-6",
-        title: "Social Media Strategy",
+        title: "Offline Sales",
         description:
-            "Develop and execute effective social media strategies that increase brand awareness, engagement, and conversions across multiple platforms.",
-        details:
-            "Our social media experts create tailored strategies that align with your brand identity and business goals, identifying the right platforms, content types, and posting schedules to reach and engage your target audience. We continuously monitor performance and adjust tactics to maximize results.",
+            `If your company requires assistance with offline sales, we've got you covered! On a fixed compensation basis, we can offer you a trained salesperson from our team who will generate leads for you.
+
+            Our sales expert will take the time to learn about your business, services, and objectives in detail before they begin. This enables them to represent your brand appropriately and communicate with potential customers with confidence and ease.
+
+            Our sales professionals are seasoned and skilled at delivering results. It is an excellent alternative if you want someone to scale your sales using direct face-to-face relationships!
+`,
         features: [
-            "Platform-specific strategy development",
-            "Content calendar creation and management",
-            "Community engagement and management",
-            "Paid social campaign execution",
-            "Influencer partnership management",
-            "Social listening and reputation monitoring"
+            "Dedicated sales professional assignment",
+            "Comprehensive business and service training",
+            "Lead generation and qualification",
+            "Face-to-face customer relationship building",
+            "Brand representation and advocacy",
+            "Performance-based compensation structure"
         ],
         action: "Know More",
     },
     {
         id: "service-7",
-        title: "SEO Optimization",
+        title: "Social Media Ads",
         description:
-            "Improve your website's search engine visibility and organic traffic with our comprehensive SEO services tailored to your industry and goals.",
-        details:
-            "Our data-driven SEO service combines technical expertise, content optimization, and strategic link building to improve your search rankings for relevant keywords. We conduct thorough audits, implement best practices, and provide regular reporting on your site's performance and competitive position.",
+            `We design and run top-performing ad campaigns across platforms such as Facebook, Instagram, and LinkedIn. We handle campaign setup, budgeting, audience targeting, and on-going optimization.
+
+            We perform A/B tests, monitor conversions through Meta Pixel, and create custom and lookalike audiences for improved reach. We also offer strategic ad creatives and persuasive copy, together with clear performance reporting to ensure you are always up-to-date.
+
+            From conceptualization to execution, we do it all, making your ads reach the correct audience, spark engagement, and drive results.
+`,
         features: [
-            "Comprehensive SEO audit and analysis",
-            "Keyword research and strategy development",
-            "On-page optimization implementation",
-            "Technical SEO improvements",
-            "Content gap analysis and creation",
-            "Link building and authority development"
+            "Campaign setup and configuration",
+            "Budget management and optimization",
+            "A/B testing and performance analysis",
+            "Custom and lookalike audience creation",
+            "Strategic ad creative development",
+            "Comprehensive performance reporting"
         ],
         action: "Know More",
     },
