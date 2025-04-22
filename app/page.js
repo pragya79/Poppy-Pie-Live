@@ -29,7 +29,7 @@ const COLLECTIONS = [
       "Contributed to a project in association with Harvard University.",
       "Strong understanding of branding implementation in real scenarios.",
     ],
-    img: '/images/work-with.jpeg', // Updated path
+    img: '/images/work-with.jpeg',
     alt: "A collage of various brand logos we've collaborated with including Business Enablers and Harvard University",
   },
   {
@@ -41,7 +41,7 @@ const COLLECTIONS = [
       "Built a community of 500+ marketing enthusiasts.",
       "Wrote a blog for Business Enablers, which was read by nearly 1,000 people.",
     ],
-    img: '/images/content.jpeg', // Updated path
+    img: '/images/content.jpeg',
     alt: "Visual display of content statistics showcasing video views and reader engagement metrics",
     dark: true,
   },
@@ -56,7 +56,7 @@ const COLLECTIONS = [
       "Email Automation using Python",
       "Worked on 25+ such projects",
     ],
-    img: '/images/technology.jpeg', // Updated path
+    img: '/images/technology.jpeg',
     alt: "Screenshot collage of various websites and technological solutions developed for clients",
   },
   {
@@ -69,7 +69,7 @@ const COLLECTIONS = [
       "Launched Airbnb and built a community for Culinary Crescendo, resulting in ₹80K in sales within one month.",
       "Developed strategic campaigns for various other brands as well.",
     ],
-    img: '/images/marketing.jpeg', // Updated path
+    img: '/images/marketing.jpeg',
     alt: "Visual representation of brand strategy implementations and campaign results across multiple projects",
   },
 ];
@@ -183,7 +183,7 @@ const CollectionCard = ({ title, text, img, alt, dark }) => {
         className="object-cover"
         onError={(e) => {
           console.error(`Failed to load image: ${img}`);
-          e.target.src = '/images/fallback.jpeg'; // Fallback image
+          e.target.src = '/images/fallback.jpeg';
         }}
       />
       {/* Overlay */}
@@ -418,14 +418,14 @@ const HomePage = () => {
   useEffect(() => {
     // Preload testimonial images
     TESTIMONIAL_IMAGES.forEach(card => {
-      console.log(`Preloading testimonial image: ${card.bgImage}`); // Debug
+      console.log(`Preloading testimonial image: ${card.bgImage}`);
       const imgEl = document.createElement('img');
       imgEl.src = card.bgImage;
     });
 
     // Preload collection images
     COLLECTIONS.forEach(collection => {
-      console.log(`Preloading collection image: ${collection.img}`); // Debug
+      console.log(`Preloading collection image: ${collection.img}`);
       const imgEl = document.createElement('img');
       imgEl.src = collection.img;
     });
@@ -606,7 +606,7 @@ const HomePage = () => {
             animate={ctaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
             transition={{ duration: 0.5 }}
           >
-            Don't just go with the crowd,
+            Don’t just go with the crowd,
           </motion.h2>
           <motion.h3
             id="cta-heading"
