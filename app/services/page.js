@@ -1,11 +1,12 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 
-// Import hover effect components - Using updated version with expandable cards
+// Import hover effect components
 import { HoverEffect } from "../components/Services/HoverEffect"
 
 // Import services data
@@ -13,7 +14,12 @@ import { products, services } from "./servicesData"
 
 export default function ProductsAndServices() {
     // State for active section and card
-    const [activeSection, setActiveSection] = useState("products")
+    const [activeSection, setActiveSection] = useState("services")
+    const [selectedItem, setSelectedItem] = useState(null)
+    const [modalOpen, setModalOpen] = useState(false)
+
+    // Get URL query parameters
+    const searchParams = useSearchParams()
 
     // Refs for animation targets
     const headerRef = useRef(null)
@@ -24,11 +30,42 @@ export default function ProductsAndServices() {
     // Using Framer Motion's useInView for scroll-based animations
     const isHeaderInView = useInView(headerRef, { once: true })
 
+    // Handle URL parameters on load
+    useEffect(() => {
+        // Check if a service ID was passed in the URL
+        const serviceId = searchParams.get('service')
+        const productId = searchParams.get('product')
+
+        if (serviceId) {
+            // Set active section to services
+            setActiveSection('services')
+
+            // Find the corresponding service
+            const service = services.find(item => item.id === serviceId)
+            if (service) {
+                setSelectedItem(service)
+                setModalOpen(true)
+            }
+        } else if (productId) {
+            // Set active section to products
+            setActiveSection('products')
+
+            // Find the corresponding product
+            const product = products.find(item => item.id === productId)
+            if (product) {
+                setSelectedItem(product)
+                setModalOpen(true)
+            }
+        }
+    }, [searchParams])
+
     // Format the data for hover effect component
     const formatItemsForHoverEffect = (items) => {
         return items.map(item => ({
+            id: item.id,
             title: item.title,
             description: item.description,
+            features: item.features,
             action: item.action,
             link: "#" // You can set actual links if needed
         }))
@@ -40,6 +77,19 @@ export default function ProductsAndServices() {
     // Handle section tab changes
     const handleSectionChange = (section) => {
         setActiveSection(section)
+    }
+
+    // Handle "Know More" button clicks
+    const handleKnowMore = (e, item) => {
+        e.preventDefault()
+        setSelectedItem(item)
+        setModalOpen(true)
+    }
+
+    // Handle modal close
+    const handleModalClose = () => {
+        setModalOpen(false)
+        setSelectedItem(null)
     }
 
     // Animation variants
@@ -116,19 +166,19 @@ export default function ProductsAndServices() {
                         <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4">
                             <button
                                 onClick={() => handleSectionChange('products')}
-                                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base ${activeSection === 'products' 
-                                    ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base ${activeSection === 'products'
+                                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                                     : 'bg-transparent text-foreground border border-input hover:bg-accent hover:text-accent-foreground'
-                                }`}
+                                    }`}
                             >
                                 View Products
                             </button>
                             <button
                                 onClick={() => handleSectionChange('services')}
-                                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base ${activeSection === 'services' 
-                                    ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg font-medium transition-colors text-xs sm:text-sm md:text-base ${activeSection === 'services'
+                                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                                     : 'bg-transparent text-foreground border border-input hover:bg-accent hover:text-accent-foreground'
-                                }`}
+                                    }`}
                             >
                                 View Services
                             </button>
@@ -198,8 +248,14 @@ export default function ProductsAndServices() {
                                 </motion.h2>
                             </div>
 
-                            {/* Products with hover effect */}
-                            <HoverEffect items={productItems} />
+                            {/* Pass modal state and handlers to HoverEffect component */}
+                            <HoverEffect
+                                items={productItems}
+                                onKnowMore={handleKnowMore}
+                                externalModalOpen={modalOpen}
+                                externalSelectedItem={selectedItem}
+                                onModalClose={handleModalClose}
+                            />
                         </motion.section>
                     )}
 
@@ -226,8 +282,14 @@ export default function ProductsAndServices() {
                                 </motion.h2>
                             </div>
 
-                            {/* Services with hover effect */}
-                            <HoverEffect items={serviceItems} />
+                            {/* Pass modal state and handlers to HoverEffect component */}
+                            <HoverEffect
+                                items={serviceItems}
+                                onKnowMore={handleKnowMore}
+                                externalModalOpen={modalOpen}
+                                externalSelectedItem={selectedItem}
+                                onModalClose={handleModalClose}
+                            />
                         </motion.section>
                     )}
                 </AnimatePresence>

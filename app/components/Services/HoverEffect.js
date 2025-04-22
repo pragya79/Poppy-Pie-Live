@@ -8,39 +8,53 @@ import { ArrowRight, X } from "lucide-react";
 
 export const HoverEffect = ({
     items,
-    className
+    className,
+    onKnowMore,
+    // Add these props to coordinate modal state with parent component
+    externalModalOpen = false,
+    externalSelectedItem = null,
+    onModalClose = () => { }
 }) => {
+    // Local state for hover effects
     let [hoveredIndex, setHoveredIndex] = useState(null);
+
+    // Modal state - can be controlled internally or by parent
     let [modalOpen, setModalOpen] = useState(false);
     let [selectedItem, setSelectedItem] = useState(null);
 
-    // Close modal when escape key is pressed
+    // Sync with external modal state
     useEffect(() => {
-        const handleEscKey = (e) => {
-            if (e.key === 'Escape' && modalOpen) {
-                setModalOpen(false);
-            }
-        };
-
-        window.addEventListener('keydown', handleEscKey);
-
-        // Remove scroll from body when modal is open
-        if (modalOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
+        if (externalModalOpen !== undefined) {
+            setModalOpen(externalModalOpen);
         }
+    }, [externalModalOpen]);
 
-        return () => {
-            window.removeEventListener('keydown', handleEscKey);
-            document.body.style.overflow = 'unset';
-        };
-    }, [modalOpen]);
+    // Sync with external selected item
+    useEffect(() => {
+        if (externalSelectedItem) {
+            setSelectedItem(externalSelectedItem);
+        }
+    }, [externalSelectedItem]);
 
-    const handleKnowMore = (e, item, index) => {
+    // Handle modal close
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        // Notify parent component
+        if (onModalClose) {
+            onModalClose();
+        }
+    };
+
+    // Event handlers
+    const handleKnowMore = (e, item) => {
         e.preventDefault();
         setSelectedItem(item);
         setModalOpen(true);
+
+        // If external handler provided, call it too
+        if (onKnowMore) {
+            onKnowMore(e, item);
+        }
     };
 
     return (
@@ -76,7 +90,7 @@ export const HoverEffect = ({
                         <CardTitle>{item.title}</CardTitle>
                         <CardDescription>{item.description}</CardDescription>
                         {item.action && (
-                            <CardAction onClick={(e) => handleKnowMore(e, item, idx)}>
+                            <CardAction onClick={(e) => handleKnowMore(e, item)}>
                                 {item.action}
                             </CardAction>
                         )}
@@ -84,7 +98,7 @@ export const HoverEffect = ({
                 </Link>
             ))}
 
-            {/* Modal overlay - Updated z-index to 100 (higher than header's z-index of 50) */}
+            {/* Modal overlay */}
             <AnimatePresence>
                 {modalOpen && selectedItem && (
                     <>
@@ -93,7 +107,7 @@ export const HoverEffect = ({
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100]"
-                            onClick={() => setModalOpen(false)}
+                            onClick={handleCloseModal}
                         />
 
                         <motion.div
@@ -107,7 +121,7 @@ export const HoverEffect = ({
                                 <div className="flex justify-between items-start mb-4">
                                     <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
                                     <button
-                                        onClick={() => setModalOpen(false)}
+                                        onClick={handleCloseModal}
                                         className="p-2 hover:bg-accent rounded-full transition-colors"
                                         aria-label="Close modal"
                                     >

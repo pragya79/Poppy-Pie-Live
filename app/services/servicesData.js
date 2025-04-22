@@ -1,6 +1,3 @@
-// Enhanced data for products and services with details for modals
-// Includes additional information to display when "Know More" is clicked
-
 export const products = [
     {
         id: "product-1",
@@ -126,18 +123,16 @@ export const products = [
 export const services = [
     {
         id: "service-1",
-        title: "Content Creation",
+        title: "Content Creation for Social Media Marketing",
         description:
-            `We offer content suggestions personalized to your social media plan for your brand, both in 
-            posts and videos. Our process starts with in-depth research-studying competitors, market 
-            trends, and audience behavior.
-            For posts, we create personalized blogs with SEO-friendly content and collaborate with talented 
-            graphic designers to craft visuals that grab attention.
-            For videos, we go through the same research process, followed by scripting, editing, and 
-            perfecting based on your desired audience.
-            If required, we can also handle your social media and post the content directly. Whether 
-            dynamic or static, we ensure everything is according to your brand and effectively engages your 
-            community.
+            `We offer content suggestions based on personalized social media marketing strategy for your brand, both in posts and videos. Our process starts with in-depth research-studying competitors, market trends, and audience behavior.
+
+            For posts, we create personalized blogs with SEO friendly content and collaborate with talented graphic designers for content creation ideas which have visuals that grab attention.
+
+            For videos, we go through the same research process, followed by scripting, editing, and perfecting based on your audience engagement strategy.
+
+            If required, we can also handle content planning for social media and post the content directly. Whether dynamic or static, we ensure everything is according to your brand and effectively engages your community.
+
             `,
         features: [
             "In-depth market and competitor research",
@@ -151,15 +146,15 @@ export const services = [
     },
     {
         id: "service-2",
-        title: "SEO Content Writer",
+        title: "SEO Content Writing Services",
         description:
             `We provide SEO content writing services to enhance new as well as current website or blog content.
 
-            You may either be beginning from the ground up or have topics you'd like to focus on already; we thoroughly research and compose top-quality, keyword-optimized content specific to your audience.
+            You may either be beginning from the ground up or have topics you'd like to focus on already; we thoroughly research and compose high quality SEO blogs with keyword optimized content specific to your audience.
 
-            For new websites, we write content and blogs from scratch. We use the most reliable SEO tools, new data, and improved structure to enhance search rankings.
+            For new websites, we write content and blogs from scratch. We use the most reliable SEO blog writing tool, new data, and improved structure to enhance search rankings.
 
-            Our aim to make your content rank higher, reach the target audience, and enhance your online presence with relevant and clear SEO-friendly writing.
+            Our aim is to make your content rank higher with high quality SEO blog writing, reach the target audience, and enhance your online presence with relevant and clear SEO friendly writing.
 `,
         features: [
             "Comprehensive keyword research",
@@ -173,13 +168,13 @@ export const services = [
     },
     {
         id: "service-3",
-        title: "Sales & Marketing Automation",
+        title: "Sales & Marketing Automation Services",
         description:
             `We assist companies in saving time and growing more quickly by streamlining repetitive workflows on platforms such as LinkedIn, email, SMS, WhatsApp, and websites.
 
-            Our solutions cover LinkedIn outreach, tailored email workflows, scheduling campaigns, chatbot setup, and instant messaging automation. We develop intelligent, bespoke automation solutions from lead generation to customer care that increase engagement and deliver results. 
+            Our solutions cover LinkedIn outreach, tailored email workflows, scheduling campaigns, chatbot setup, and instant messaging for customer engagement automation. We develop intelligent, bespoke custom automation solutions from lead generation to customer care that increase engagement and deliver results. 
 
-            No matter if you desire auto-connect with prospects or provide 24/7 support, we provide consistent and smooth communication. Concentrate on growing your business while we process it seamlessly to align with your objectives.
+            No matter if you desire auto-connect with prospects or provide 24/7 support, we provide consistent and smooth communication. Concentrate on growing your business while we process it seamlessly to align with your objectives with our custom automation services.
 `,
         features: [
             "LinkedIn outreach automation",
@@ -193,13 +188,13 @@ export const services = [
     },
     {
         id: "service-4",
-        title: "Market Research",
+        title: "Market Research Services",
         description:
-            `We begin by learning how your business operates, its organization, business model, and how it generates revenue.
+            `We begin by learning how your business operates, its organization, business model, and how it generates revenue with market analysis and research.
 
-            Once we know the fundamentals, we determine who your audience is and how to effectively reach them. We also research your competitors to understand what they're doing and how they engage with their audience.
+            Once we know the fundamentals, we determine who your audience is and how to effectively reach them. We also use a competitor analysis framework to understand what your competitors are doing and how they engage with their audience.
 
-            Guided by all of these considerations, we design unique strategies incorporating data gathering, outreach planning, and audience creation. We want to assist you in reaching the ideal people in the most intelligent way possible.
+            Guided by all of these considerations, we design unique marketing strategies incorporating data gathering, outreach planning, and audience creation so that you can reach your target audience in the best way possible!
             `,
         features: [
             "Business model and operations analysis",
@@ -213,13 +208,13 @@ export const services = [
     },
     {
         id: "service-5",
-        title: "Social Media Management",
+        title: "Social Media Management Services (Social Media Management Agency)",
         description:
             `We will assist in growing on all major social media platforms with a sound & strategic planning. It's not merely about posting–it’s about planning the correct content, studying trends, crafting keyword rich captions, and creating scroll stopping visuals. 
 
-            Our service incorporate content planning, channel management, performance analysis, and targeted growth strategies. 
+            Our service incorporates content planning ideas, channel management, performance analysis, and targeted growth strategies. 
 
-            From creating a content calendar to scheduling daily posts and tracking engagement, we keep your brand active, consistent, and effective online. Whether you're looking for a fresh start or thinking to scale, we manage every detail to enable you to engage with your audience and expand your online presence. 
+            From creating a content calendar to scheduling daily posts, tracking engagement, and content planning for social media we keep your brand active, consistent, and effective online. Whether you're looking for a fresh start or thinking to scale, we manage every detail with our custom social media strategy to enable you to engage with your target audience and expand your online presence.
 `,
         features: [
             "Strategic content planning and calendar creation",
@@ -233,13 +228,14 @@ export const services = [
     },
     {
         id: "service-6",
-        title: "Offline Sales",
+        title: "Offline Sales Services",
         description:
-            `If your company requires assistance with offline sales, we've got you covered! On a fixed compensation basis, we can offer you a trained salesperson from our team who will generate leads for you.
+            `If your company requires assistance with offline sales strategy, we've got you covered! Wondering how to get clients offline? We've got the answer for you. On a fixed compensation basis, we can offer you a trained salesperson from our team who will generate leads for you.
 
             Our sales expert will take the time to learn about your business, services, and objectives in detail before they begin. This enables them to represent your brand appropriately and communicate with potential customers with confidence and ease.
 
             Our sales professionals are seasoned and skilled at delivering results. It is an excellent alternative if you want someone to scale your sales using direct face-to-face relationships!
+
 `,
         features: [
             "Dedicated sales professional assignment",
@@ -255,11 +251,11 @@ export const services = [
         id: "service-7",
         title: "Social Media Ads",
         description:
-            `We design and run top-performing ad campaigns across platforms such as Facebook, Instagram, and LinkedIn. We handle campaign setup, budgeting, audience targeting, and on-going optimization.
+            `We design and run top-performing ad campaigns across platforms such as Facebook, Instagram, and LinkedIn. We can handle social media advertising, campaign setup, budgeting, audience targeting, and on-going optimization.
 
-            We perform A/B tests, monitor conversions through Meta Pixel, and create custom and lookalike audiences for improved reach. We also offer strategic ad creatives and persuasive copy, together with clear performance reporting to ensure you are always up-to-date.
+            Our social media marketing strategy also includes performing A/B tests, monitor conversions through Meta Pixel, and creating custom and lookalike audiences for improved reach. We also offer strategic ad creatives and persuasive copy, together with clear performance reporting to ensure you are always up-to-date.
 
-            From conceptualization to execution, we do it all, making your ads reach the correct audience, spark engagement, and drive results.
+            From conceptualization to execution, we do it all, making your online ad campaigns reach the target audience, spark engagement, and drive results.
 `,
         features: [
             "Campaign setup and configuration",
