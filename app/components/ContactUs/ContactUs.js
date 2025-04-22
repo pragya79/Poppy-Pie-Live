@@ -41,7 +41,7 @@ const contactInfo = [
     {
         icon: <Phone className="h-5 w-5 text-gray-900" />,
         title: "Phone Number",
-        info: "+1 (555) 123-4567",
+        info: "+91 7696834279",
         subInfo: "Monday to Friday, 9am to 6pm",
         subIcon: <Clock className="h-4 w-4 text-gray-500" />
     },
@@ -55,8 +55,8 @@ const contactInfo = [
     {
         icon: <MapPin className="h-5 w-5 text-gray-900" />,
         title: "Office Location",
-        info: "123 Marketing Avenue",
-        subInfo: "New York, NY 10001, USA",
+        info: "Mohali",
+        subInfo: "Punjab, India",
         subIcon: null
     }
 ]

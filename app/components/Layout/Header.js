@@ -31,11 +31,13 @@ const Header = () => {
             icon: <IconComponents.Layout />,
             hasDropdown: true,
             dropdownItems: [
-                { label: "Marketing Services", href: "/services/marketing", icon: <IconComponents.Zap /> },
-                { label: "Funnel Creation", href: "/services/funnel-creation", icon: <IconComponents.Layout /> },
-                { label: "Branding", href: "/services/branding", icon: <IconComponents.PenTool /> },
-                { label: "Re-Branding", href: "/services/rebranding", icon: <IconComponents.Coffee /> },
-                { label: "Customer-Relations", href: "/services/customer-relations", icon: <IconComponents.Users /> },
+                { label: "Content Creation", href: "/services?service=service-1", icon: <IconComponents.Zap /> },
+                { label: "SEO Content Writer", href: "/services?service=service-2", icon: <IconComponents.Layout /> },
+                { label: "Sales & Marketing Automation", href: "/services?service=service-3", icon: <IconComponents.PenTool /> },
+                { label: "Market Research", href: "/services?service=service-4", icon: <IconComponents.Coffee /> },
+                { label: "Social Media Management", href: "/services?service=service-5", icon: <IconComponents.Users /> },
+                { label: "Offline Sales", href: "/services?service=service-6", icon: <IconComponents.TrendingUp /> },
+                { label: "Social Media Ads", href: "/services?service=service-7", icon: <IconComponents.Globe /> },
             ]
         },
         {
@@ -395,25 +397,94 @@ const Header = () => {
                                                     </Link>
                                                 ))}
 
-                                                {/* Mobile Navigation Links (Right Items) */}
-                                                {navItemsRight.map((item, index) => (
+                                                {/* Services Link - Opens submenu on click */}
+                                                <div
+                                                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all cursor-pointer"
+                                                    onClick={() => setActiveTab('services')}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <IconComponents.Layout className="text-black" />
+                                                        <span className="font-medium">Services</span>
+                                                    </div>
+                                                    <ArrowRight size={18} />
+                                                </div>
+
+                                                {/* Blogs Link - Opens submenu on click */}
+                                                <div
+                                                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all cursor-pointer"
+                                                    onClick={() => setActiveTab('blogs')}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <IconComponents.PenTool className="text-black" />
+                                                        <span className="font-medium">Blogs</span>
+                                                    </div>
+                                                    <ArrowRight size={18} />
+                                                </div>
+
+                                                {/* Login Link */}
+                                                <Link
+                                                    href="/login"
+                                                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <LogIn size={18} className="text-black" />
+                                                        <span className="font-medium">Login</span>
+                                                    </div>
+                                                </Link>
+                                            </div>
+                                        </motion.div>
+                                    )}
+
+                                    {/* Services Submenu */}
+                                    {activeTab === 'services' && (
+                                        <motion.div
+                                            className="p-6"
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                        >
+                                            <h3 className="font-medium text-lg mb-4">Services</h3>
+                                            <div className="space-y-3">
+                                                {navItemsRight[0].dropdownItems.map((item, index) => (
                                                     <Link
-                                                        key={`right-${index}`}
+                                                        key={index}
                                                         href={item.href}
-                                                        className="flex items-center justify-between p-4 rounded-lg border border-gray-200 text-black hover:bg-gray-50 transition-all"
+                                                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
                                                         onClick={() => setIsMobileMenuOpen(false)}
                                                     >
-                                                        <div className="flex items-center gap-3">
-                                                            {item.icon}
-                                                            <span className="font-medium">{item.label}</span>
-                                                        </div>
+                                                        {item.icon}
+                                                        <span>{item.label}</span>
                                                     </Link>
                                                 ))}
                                             </div>
                                         </motion.div>
                                     )}
 
-                                    {/* We no longer need the submenu content as we're directly navigating to pages */}
+                                    {/* Blogs Submenu */}
+                                    {activeTab === 'blogs' && (
+                                        <motion.div
+                                            className="p-6"
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                        >
+                                            <h3 className="font-medium text-lg mb-4">Blogs</h3>
+                                            <div className="space-y-3">
+                                                {navItemsRight[1].dropdownItems.map((item, index) => (
+                                                    <Link
+                                                        key={index}
+                                                        href={item.href}
+                                                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+                                                        onClick={() => setIsMobileMenuOpen(false)}
+                                                    >
+                                                        {item.icon}
+                                                        <span>{item.label}</span>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+                                    )}
                                 </AnimatePresence>
 
                                 {/* Footer with copyright */}

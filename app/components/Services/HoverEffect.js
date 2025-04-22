@@ -8,39 +8,53 @@ import { ArrowRight, X } from "lucide-react";
 
 export const HoverEffect = ({
     items,
-    className
+    className,
+    onKnowMore,
+    // Add these props to coordinate modal state with parent component
+    externalModalOpen = false,
+    externalSelectedItem = null,
+    onModalClose = () => { }
 }) => {
+    // Local state for hover effects
     let [hoveredIndex, setHoveredIndex] = useState(null);
+
+    // Modal state - can be controlled internally or by parent
     let [modalOpen, setModalOpen] = useState(false);
     let [selectedItem, setSelectedItem] = useState(null);
 
-    // Close modal when escape key is pressed
+    // Sync with external modal state
     useEffect(() => {
-        const handleEscKey = (e) => {
-            if (e.key === 'Escape' && modalOpen) {
-                setModalOpen(false);
-            }
-        };
-
-        window.addEventListener('keydown', handleEscKey);
-
-        // Remove scroll from body when modal is open
-        if (modalOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
+        if (externalModalOpen !== undefined) {
+            setModalOpen(externalModalOpen);
         }
+    }, [externalModalOpen]);
 
-        return () => {
-            window.removeEventListener('keydown', handleEscKey);
-            document.body.style.overflow = 'unset';
-        };
-    }, [modalOpen]);
+    // Sync with external selected item
+    useEffect(() => {
+        if (externalSelectedItem) {
+            setSelectedItem(externalSelectedItem);
+        }
+    }, [externalSelectedItem]);
 
-    const handleKnowMore = (e, item, index) => {
+    // Handle modal close
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        // Notify parent component
+        if (onModalClose) {
+            onModalClose();
+        }
+    };
+
+    // Event handlers
+    const handleKnowMore = (e, item) => {
         e.preventDefault();
         setSelectedItem(item);
         setModalOpen(true);
+
+        // If external handler provided, call it too
+        if (onKnowMore) {
+            onKnowMore(e, item);
+        }
     };
 
     return (
@@ -76,7 +90,7 @@ export const HoverEffect = ({
                         <CardTitle>{item.title}</CardTitle>
                         <CardDescription>{item.description}</CardDescription>
                         {item.action && (
-                            <CardAction onClick={(e) => handleKnowMore(e, item, idx)}>
+                            <CardAction onClick={(e) => handleKnowMore(e, item)}>
                                 {item.action}
                             </CardAction>
                         )}
@@ -84,7 +98,7 @@ export const HoverEffect = ({
                 </Link>
             ))}
 
-            {/* Modal overlay - Updated z-index to 100 (higher than header's z-index of 50) */}
+            {/* Modal overlay */}
             <AnimatePresence>
                 {modalOpen && selectedItem && (
                     <>
@@ -93,7 +107,7 @@ export const HoverEffect = ({
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100]"
-                            onClick={() => setModalOpen(false)}
+                            onClick={handleCloseModal}
                         />
 
                         <motion.div
@@ -107,7 +121,7 @@ export const HoverEffect = ({
                                 <div className="flex justify-between items-start mb-4">
                                     <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
                                     <button
-                                        onClick={() => setModalOpen(false)}
+                                        onClick={handleCloseModal}
                                         className="p-2 hover:bg-accent rounded-full transition-colors"
                                         aria-label="Close modal"
                                     >
@@ -116,29 +130,32 @@ export const HoverEffect = ({
                                 </div>
 
                                 <div className="prose prose-gray dark:prose-invert max-w-none">
-                                    <p className="text-base text-muted-foreground leading-relaxed mb-6">
-                                        {selectedItem.description}
-                                    </p>
-
-                                    {selectedItem.details && (
-                                        <div className="mt-4">
-                                            <h3 className="text-lg font-medium mb-2">Details</h3>
-                                            <p>{selectedItem.details}</p>
-                                        </div>
-                                    )}
+                                    {/* Improved description rendering with proper paragraph breaks */}
+                                    <div className="text-base text-muted-foreground leading-relaxed mb-6">
+                                        {selectedItem.description.split('\n').map((paragraph, index) => (
+                                            paragraph.trim() ? (
+                                                <p key={index} className="mb-4 last:mb-0">
+                                                    {paragraph}
+                                                </p>
+                                            ) : <div key={index} className="h-4" /> // Empty line spacer
+                                        ))}
+                                    </div>
 
                                     {selectedItem.features && (
-                                        <div className="mt-6">
-                                            <h3 className="text-lg font-medium mb-2">Key Features</h3>
-                                            <ul className="list-disc pl-5 space-y-1">
+                                        <div className="mt-6 pt-6 border-t border-border">
+                                            <h3 className="text-lg font-medium mb-3">Key Features</h3>
+                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-0 mt-4">
                                                 {selectedItem.features.map((feature, i) => (
-                                                    <li key={i} className="text-muted-foreground">{feature}</li>
+                                                    <li key={i} className="flex items-start">
+                                                        <div className="mr-2 mt-1 h-1.5 w-1.5 rounded-full bg-primary flex-shrink-0" />
+                                                        <span className="text-muted-foreground text-sm">{feature}</span>
+                                                    </li>
                                                 ))}
                                             </ul>
                                         </div>
                                     )}
 
-                                    <div className="mt-8 flex justify-end">
+                                    <div className="mt-8 pt-4 flex justify-end">
                                         <Link href={'/contact-us'}>
                                             <motion.button
                                                 whileHover={{ scale: 1.05 }}
