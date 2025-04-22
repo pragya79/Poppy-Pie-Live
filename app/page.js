@@ -29,7 +29,7 @@ const COLLECTIONS = [
       "Contributed to a project in association with Harvard University.",
       "Strong understanding of branding implementation in real scenarios.",
     ],
-    img: '/marketing-images/image1.jpg',
+    img: '/images/work-with.jpeg', // Updated path
     alt: "A collage of various brand logos we've collaborated with including Business Enablers and Harvard University",
   },
   {
@@ -41,7 +41,7 @@ const COLLECTIONS = [
       "Built a community of 500+ marketing enthusiasts.",
       "Wrote a blog for Business Enablers, which was read by nearly 1,000 people.",
     ],
-    img: '/marketing-images/image2.jpg',
+    img: '/images/content.jpeg', // Updated path
     alt: "Visual display of content statistics showcasing video views and reader engagement metrics",
     dark: true,
   },
@@ -56,7 +56,7 @@ const COLLECTIONS = [
       "Email Automation using Python",
       "Worked on 25+ such projects",
     ],
-    img: '/marketing-images/image3.jpg',
+    img: '/images/technology.jpeg', // Updated path
     alt: "Screenshot collage of various websites and technological solutions developed for clients",
   },
   {
@@ -69,7 +69,7 @@ const COLLECTIONS = [
       "Launched Airbnb and built a community for Culinary Crescendo, resulting in ₹80K in sales within one month.",
       "Developed strategic campaigns for various other brands as well.",
     ],
-    img: '/marketing-images/image4.jpg',
+    img: '/images/marketing.jpeg', // Updated path
     alt: "Visual representation of brand strategy implementations and campaign results across multiple projects",
   },
 ];
@@ -168,14 +168,24 @@ const CollectionCard = ({ title, text, img, alt, dark }) => {
   return (
     <motion.div
       ref={ref}
-      className={`relative group h-96 bg-cover bg-center overflow-hidden ${dark ? "text-white" : "text-black"}`}
-      style={{ backgroundImage: `url(${img})` }}
+      className={`relative group h-96 overflow-hidden ${dark ? "text-white" : "text-black"}`}
       role="region"
       aria-labelledby={`collection-title-${title.replace(/\s+/g, '-').toLowerCase()}`}
       initial={{ opacity: 0.8 }}
       animate={isInView ? { opacity: 1 } : { opacity: 0.8 }}
       transition={{ duration: 0.7 }}
     >
+      <Image
+        src={img}
+        alt={alt}
+        fill
+        sizes="100vw"
+        className="object-cover"
+        onError={(e) => {
+          console.error(`Failed to load image: ${img}`);
+          e.target.src = '/images/fallback.jpeg'; // Fallback image
+        }}
+      />
       {/* Overlay */}
       <div
         className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-70 transition-all duration-500 ease-in-out"
@@ -408,12 +418,14 @@ const HomePage = () => {
   useEffect(() => {
     // Preload testimonial images
     TESTIMONIAL_IMAGES.forEach(card => {
+      console.log(`Preloading testimonial image: ${card.bgImage}`); // Debug
       const imgEl = document.createElement('img');
       imgEl.src = card.bgImage;
     });
 
     // Preload collection images
     COLLECTIONS.forEach(collection => {
+      console.log(`Preloading collection image: ${collection.img}`); // Debug
       const imgEl = document.createElement('img');
       imgEl.src = collection.img;
     });
@@ -594,7 +606,7 @@ const HomePage = () => {
             animate={ctaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
             transition={{ duration: 0.5 }}
           >
-            Don&apos;t just go with the crowd,
+            Don't just go with the crowd,
           </motion.h2>
           <motion.h3
             id="cta-heading"
