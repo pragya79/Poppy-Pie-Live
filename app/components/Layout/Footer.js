@@ -316,7 +316,7 @@ const Footer = () => {
                                 <FooterLink href="/about-us">About Us</FooterLink>
                                 <FooterLink href="/contact-us">Contact Us</FooterLink>
                                 <FooterLink href="/blogs">Blogs</FooterLink>
-                                <FooterLink href="#">Careers</FooterLink>
+                                <FooterLink href="careers">Careers</FooterLink>
                                 <FooterLink href="#">FAQ</FooterLink>
                             </motion.ul>
 

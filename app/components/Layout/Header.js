@@ -21,7 +21,7 @@ const Header = () => {
     const navItemsLeft = [
         { label: "Contact Us", href: "/contact-us", icon: <IconComponents.MessageSquare /> },
         { label: "About Us", href: "/about-us", icon: <IconComponents.Users /> },
-        { label: "Carriers", href: "/carriers", icon: <IconComponents.Users /> },
+        { label: "Careers", href: "/careers", icon: <IconComponents.Users /> },
     ];
 
     const navItemsRight = [
