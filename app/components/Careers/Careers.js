@@ -62,12 +62,12 @@ const Careers = () => {
                     <PositionsList />
                 </motion.section>
 
-                {/* Two-column layout with form and values */}
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10">
-                    {/* Form section - wider column */}
+                {/* Modified layout: Flex instead of Grid for better height handling */}
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">
+                    {/* Form section - adjust width for lg screens */}
                     <motion.div
                         ref={formRef}
-                        className="lg:col-span-3 bg-white rounded-xl shadow-md p-6 sm:p-8"
+                        className="lg:w-3/5 bg-white rounded-xl shadow-md p-6 sm:p-8 self-start"
                         initial="hidden"
                         animate={isFormInView ? "visible" : "hidden"}
                         variants={fadeIn}
@@ -76,10 +76,10 @@ const Careers = () => {
                         <CareerForm />
                     </motion.div>
 
-                    {/* Values and Culture Section - narrower column */}
+                    {/* Values and Culture Section - adjust width for lg screens */}
                     <motion.div
                         ref={valuesRef}
-                        className="lg:col-span-2 space-y-6"
+                        className="lg:w-2/5 space-y-6 self-start"
                         initial="hidden"
                         animate={isValuesInView ? "visible" : "hidden"}
                         variants={staggerContainer}

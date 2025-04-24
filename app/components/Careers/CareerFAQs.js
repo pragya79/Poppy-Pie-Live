@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Info } from "lucide-react"
 import {
     Accordion,
     AccordionContent,
@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/accordion"
 
 const CareerFAQs = () => {
+    // State for tracking which FAQ is currently active
+    const [activeItem, setActiveItem] = useState(null)
+
     // FAQ items
     const faqItems = [
         {
@@ -50,45 +53,165 @@ const CareerFAQs = () => {
         }
     ]
 
-    return (
-        <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-8">
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-                <p className="text-gray-600">Answers to common questions about joining our team</p>
-            </div>
+    // Handle accordion value change to update activeItem
+    const handleValueChange = (value) => {
+        setActiveItem(value);
+    }
 
+    // Container animation variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.3,
+            }
+        }
+    }
+
+    // Item animation variants
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                stiffness: 260,
+                damping: 20
+            }
+        }
+    }
+
+    // Title animation variants
+    const titleVariants = {
+        hidden: { opacity: 0, y: -20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                stiffness: 300,
+                damping: 25,
+                delay: 0.2
+            }
+        }
+    }
+
+    return (
+        <motion.div
+            className="max-w-3xl mx-auto py-8"
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+        >
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                className="text-center mb-8"
+                variants={titleVariants}
             >
-                <Accordion type="single" collapsible className="space-y-4">
-                    {faqItems.map((item) => (
-                        <AccordionItem
-                            key={item.id}
-                            value={item.id}
-                            className="border border-gray-200 rounded-lg shadow-sm overflow-hidden"
-                        >
-                            <AccordionTrigger className="px-6 py-4 hover:bg-gray-50 text-left font-medium text-gray-900">
-                                {item.question}
-                            </AccordionTrigger>
-                            <AccordionContent className="px-6 pb-4 pt-2 text-gray-600">
-                                {item.answer}
-                            </AccordionContent>
-                        </AccordionItem>
-                    ))}
-                </Accordion>
+                <motion.h2
+                    className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    Frequently Asked Questions
+                </motion.h2>
+                <motion.p
+                    className="text-gray-600"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                    Answers to common questions about joining our team
+                </motion.p>
             </motion.div>
 
-            <div className="mt-10 text-center">
-                <p className="text-gray-600">
-                    Have a question that&apos;s not answered here? Email us at{" "}
-                    <a href="mailto:careers@poppypie.com" className="text-gray-900 font-medium hover:underline">
-                        careers@poppypie.com
-                    </a>
-                </p>
-            </div>
-        </div>
+            <Accordion
+                type="single"
+                collapsible
+                className="space-y-4"
+                onValueChange={handleValueChange}
+            >
+                <AnimatePresence>
+                    {faqItems.map((item, index) => (
+                        <motion.div
+                            key={item.id}
+                            variants={itemVariants}
+                            custom={index}
+                            layout
+                        >
+                            <AccordionItem
+                                value={item.id}
+                                className="border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+                            >
+                                <motion.div
+                                    whileHover={{ backgroundColor: "rgba(243, 244, 246, 0.8)" }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <AccordionTrigger className="px-6 py-4 text-left font-medium text-gray-900 group">
+                                        <motion.span
+                                            className="flex-1"
+                                            whileHover={{ x: 4 }}
+                                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                        >
+                                            {item.question}
+                                        </motion.span>
+                                    </AccordionTrigger>
+                                </motion.div>
+                                <AccordionContent>
+                                    <motion.div
+                                        className="px-6 pb-4 pt-2 text-gray-600"
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        {item.answer}
+                                    </motion.div>
+                                </AccordionContent>
+                            </AccordionItem>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            </Accordion>
+
+            <motion.div
+                className="mt-10 text-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                    duration: 0.5,
+                    delay: 0.8,
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 20
+                }}
+            >
+                <motion.div
+                    className="inline-flex items-center justify-center gap-2 p-4 rounded-lg bg-gray-50"
+                    whileHover={{
+                        scale: 1.02,
+                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                    }}
+                    transition={{ duration: 0.2 }}
+                >
+                    <Info className="h-5 w-5 text-gray-500" />
+                    <p className="text-gray-600">
+                        Have a question that&apos;s not answered here? Email us at{" "}
+                        <motion.a
+                            href="mailto:careers@poppypie.com"
+                            className="text-gray-900 font-medium hover:underline"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            careers@poppypie.com
+                        </motion.a>
+                    </p>
+                </motion.div>
+            </motion.div>
+        </motion.div>
     )
 }
 

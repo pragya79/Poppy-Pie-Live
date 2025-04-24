@@ -143,8 +143,8 @@ const CareerForm = () => {
 
     return (
         <>
-            <div className="mb-8">
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Join Our Team</h2>
+            <div className="mb-6">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">Join Our Team</h2>
                 <p className="text-gray-600">Fill out the form below to apply for a position at Poppy Pie</p>
             </div>
 
@@ -173,20 +173,49 @@ const CareerForm = () => {
                     <Form {...form}>
                         <motion.form
                             onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-6"
+                            className="space-y-5"
                             initial="hidden"
                             animate="visible"
                             variants={fadeIn}
                         >
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <FormField
                                     control={form.control}
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
+                                            <FormLabel className="text-gray-700">Full Name</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="John Doe" {...field} className="border-gray-300" />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="phone"
+                                    render={({ field }) => (
+                                        <FormItem>
                                             <FormLabel className="text-gray-700">Phone Number</FormLabel>
                                             <FormControl>
                                                 <Input placeholder="+91 XXXXX-XXXXX" type="tel" {...field} className="border-gray-300" />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-gray-700">Email Address</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="john@example.com" type="email" {...field} className="border-gray-300" />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -223,7 +252,7 @@ const CareerForm = () => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <FormField
                                     control={form.control}
                                     name="experience"
@@ -231,7 +260,11 @@ const CareerForm = () => {
                                         <FormItem>
                                             <FormLabel className="text-gray-700">Years of Experience</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="e.g. 2" {...field} className="border-gray-300" />
+                                                <Input
+                                                    placeholder="e.g. 2"
+                                                    {...field}
+                                                    className="border-gray-300"
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -242,25 +275,29 @@ const CareerForm = () => {
                                     name="portfolio"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-gray-700">
-                                                Portfolio URL
+                                            <FormLabel className="text-gray-700 flex items-center">
+                                                Portfolio URL (Optional)
                                                 <TooltipProvider>
-                                                    <Tooltip>
+                                                    <Tooltip delayDuration={300}>
                                                         <TooltipTrigger asChild>
-                                                            <Info className="h-4 w-4 text-gray-400 ml-1 inline cursor-help" />
+                                                            <button type="button" className="ml-1 focus:outline-none">
+                                                                <Info className="h-3 w-3 text-gray-400 inline cursor-help" />
+                                                            </button>
                                                         </TooltipTrigger>
-                                                        <TooltipContent className="max-w-xs">
-                                                            <p>Optional: Include a link to your portfolio, LinkedIn, or other professional profile</p>
+                                                        <TooltipContent className="max-w-xs text-xs p-2 bg-gray-800 text-white">
+                                                            <p>Include a link to your portfolio, LinkedIn, or other professional profile</p>
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </TooltipProvider>
                                             </FormLabel>
                                             <FormControl>
-                                                <Input placeholder="https://yourportfolio.com" type="url" {...field} className="border-gray-300" />
+                                                <Input
+                                                    placeholder="https://yourportfolio.com"
+                                                    type="url"
+                                                    {...field}
+                                                    className="border-gray-300"
+                                                />
                                             </FormControl>
-                                            <FormDescription className="text-xs text-gray-500">
-                                                Optional: Include a link to your portfolio or professional profile
-                                            </FormDescription>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -312,7 +349,7 @@ const CareerForm = () => {
                                         <FormControl>
                                             <Textarea
                                                 placeholder="Describe why you're interested in this position and how your experience makes you a good fit..."
-                                                className="min-h-32 resize-y border-gray-300"
+                                                className="min-h-24 resize-y border-gray-300"
                                                 {...field}
                                             />
                                         </FormControl>
