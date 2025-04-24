@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowRight, ExternalLink } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowRight, ExternalLink, Youtube } from 'lucide-react';
 
 const Footer = () => {
     // Animation variants
@@ -35,7 +35,7 @@ const Footer = () => {
     // Services with query parameters for direct modal opening
     const serviceLinks = [
         { name: "Content Creation", href: "/services?service=service-1" },
-        { name: "SEO Content Writer", href: "/services?service=service-2" },
+        { name: "SEO Content Writing", href: "/services?service=service-2" },
         { name: "Sales & Marketing", href: "/services?service=service-3" },
         { name: "Market Research", href: "/services?service=service-4" },
         { name: "Social Media Management", href: "/services?service=service-5" },
@@ -108,7 +108,7 @@ const Footer = () => {
 
                             <div className="mt-4 pt-4 border-t border-gray-300 inline-block">
                                 <a
-                                    href="#"
+                                    href="/contact-us"
                                     className="inline-flex items-center text-sm font-medium text-gray-800 hover:text-gray-600 transition-colors"
                                 >
                                     <span>Get a free consultation</span>
@@ -141,40 +141,136 @@ const Footer = () => {
                         {/* Company Information */}
                         <div>
                             <ColumnHeader>Contact Us</ColumnHeader>
-                            <motion.ul variants={itemVariants} className="space-y-3 mb-6">
-                                <li className="flex items-start">
+                            <motion.ul variants={itemVariants} className="space-y-4 mb-6">
+                                <li className="flex items-start bg-white/50 p-2 rounded-md">
                                     <MapPin className="h-5 w-5 mr-3 text-gray-500 mt-0.5 flex-shrink-0" />
                                     <span className="text-sm text-gray-600">
                                         Mohali, Punjab, India
                                     </span>
                                 </li>
-                                <li className="flex items-center">
-                                    <Phone className="h-5 w-5 mr-3 text-gray-500 flex-shrink-0" />
-                                    <span className="text-sm text-gray-600">+91 7696834279</span>
+
+                                {/* Copyable Phone Number */}
+                                <li>
+                                    <motion.div
+                                        className="flex items-center group relative bg-white p-3 rounded-md hover:shadow-md transition-all duration-200 border border-transparent hover:border-gray-200"
+                                        whileHover={{ y: -2 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        <Phone className="h-5 w-5 mr-3 text-gray-500 flex-shrink-0" />
+                                        <div className="flex-grow">
+                                            <button
+                                                onClick={(e) => {
+                                                    navigator.clipboard.writeText("+91 7696834279");
+                                                    const btn = e.currentTarget;
+                                                    const originalContent = btn.innerHTML;
+                                                    btn.innerHTML = `<span class="text-sm text-green-600 font-medium">+91 7696834279</span>
+                                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded flex items-center">
+                                            Copied!
+                                        </span>`;
+                                                    setTimeout(() => {
+                                                        btn.innerHTML = originalContent;
+                                                    }, 2000);
+                                                }}
+                                                className="flex items-center w-full justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 rounded-sm"
+                                                aria-label="Copy phone number to clipboard"
+                                            >
+                                                <span className="text-sm text-gray-700 font-medium">+91 7696834279</span>
+                                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-1">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-copy">
+                                                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                                                    </svg>
+                                                    Copy
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </motion.div>
                                 </li>
-                                <li className="flex items-center">
-                                    <Mail className="h-5 w-5 mr-3 text-gray-500 flex-shrink-0" />
-                                    <span className="text-sm text-gray-600">contact@poppypie.com</span>
+
+                                {/* Copyable Email Address */}
+                                <li>
+                                    <motion.div
+                                        className="flex items-center group relative bg-white p-3 rounded-md hover:shadow-md transition-all duration-200 border border-transparent hover:border-gray-200"
+                                        whileHover={{ y: -2 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        <Mail className="h-5 w-5 mr-3 text-gray-500 flex-shrink-0" />
+                                        <div className="flex-grow overflow-hidden">
+                                            <button
+                                                onClick={(e) => {
+                                                    navigator.clipboard.writeText("contact@poppypie.com");
+                                                    // Show temporary feedback in the button
+                                                    const btn = e.currentTarget;
+                                                    const originalContent = btn.innerHTML;
+                                                    btn.innerHTML = `<div class="flex items-center justify-between w-full">
+                        <span class="text-sm text-green-600 font-medium truncate mr-2">contact@poppypie.com</span>
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded flex items-center flex-shrink-0">
+                            Copied!
+                        </span>
+                    </div>`;
+                                                    setTimeout(() => {
+                                                        btn.innerHTML = originalContent;
+                                                    }, 2000);
+                                                }}
+                                                className="flex items-center w-full justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 rounded-sm"
+                                                aria-label="Copy email address to clipboard"
+                                            >
+                                                <div className="flex items-center justify-between w-full">
+                                                    <span className="text-sm text-gray-700 font-medium truncate mr-2">contact@poppypie.com</span>
+                                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-copy">
+                                                            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                                            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                                                        </svg>
+                                                        Copy
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </motion.div>
                                 </li>
                             </motion.ul>
 
-                            <div className="mt-4 bg-white p-4 rounded-lg shadow-sm">
-                                <p className="text-sm text-gray-700 mb-3 font-medium">Follow us</p>
+                            {/* Social Media Section - Improved */}
+                            <motion.div
+                                className="mt-6 bg-white p-5 rounded-lg shadow-sm border border-gray-100"
+                                variants={itemVariants}
+                                whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                            >
+                                <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                    <span className="w-8 h-1 bg-gray-800 mr-2 rounded-full"></span>
+                                    Follow Us On Social Media
+                                </h4>
                                 <div className="flex space-x-3">
-                                    <a href="#" className="bg-gray-100 hover:bg-gray-200 p-2 rounded-full text-gray-600 hover:text-gray-900 transition-colors duration-200">
-                                        <Facebook className="h-4 w-4" />
-                                    </a>
-                                    <a href="#" className="bg-gray-100 hover:bg-gray-200 p-2 rounded-full text-gray-600 hover:text-gray-900 transition-colors duration-200">
-                                        <Twitter className="h-4 w-4" />
-                                    </a>
-                                    <a href="#" className="bg-gray-100 hover:bg-gray-200 p-2 rounded-full text-gray-600 hover:text-gray-900 transition-colors duration-200">
-                                        <Instagram className="h-4 w-4" />
-                                    </a>
-                                    <a href="#" className="bg-gray-100 hover:bg-gray-200 p-2 rounded-full text-gray-600 hover:text-gray-900 transition-colors duration-200">
-                                        <Linkedin className="h-4 w-4" />
-                                    </a>
+                                    <motion.a
+                                        href="https://www.youtube.com/@ThePoppyPie-nt"
+                                        className="bg-gray-100 hover:bg-red-50 p-2 rounded-full text-gray-600 hover:text-red-600 transition-colors duration-200 flex items-center justify-center"
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                    >
+                                        <Youtube className="h-5 w-5" />
+                                    </motion.a>
+                                    <motion.a
+                                        href="https://www.instagram.com/thepoppypie"
+                                        className="bg-gray-100 hover:bg-purple-50 p-2 rounded-full text-gray-600 hover:text-purple-600 transition-colors duration-200 flex items-center justify-center"
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                    >
+                                        <Instagram className="h-5 w-5" />
+                                    </motion.a>
+                                    <motion.a
+                                        href="https://www.linkedin.com/company/the-poppy-pie/"
+                                        className="bg-gray-100 hover:bg-blue-50 p-2 rounded-full text-gray-600 hover:text-blue-600 transition-colors duration-200 flex items-center justify-center"
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                    >
+                                        <Linkedin className="h-5 w-5" />
+                                    </motion.a>
                                 </div>
-                            </div>
+                                <p className="text-xs text-gray-500 mt-3">
+                                    Stay updated with our latest news and offerings
+                                </p>
+                            </motion.div>
                         </div>
 
                         {/* Products Column */}

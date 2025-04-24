@@ -208,7 +208,7 @@ export const services = [
     },
     {
         id: "service-5",
-        title: "Social Media Management Services (Social Media Management Agency)",
+        title: "Social Media Management Services",
         description:
             `We will assist in growing on all major social media platforms with a sound & strategic planning. It's not merely about posting–it’s about planning the correct content, studying trends, crafting keyword rich captions, and creating scroll stopping visuals. 
 
