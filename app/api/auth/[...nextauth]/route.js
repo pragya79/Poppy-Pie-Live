@@ -1,45 +1,55 @@
-import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import GoogleProvider from 'next-auth/providers/google'; // Add Google Provider
-import GitHubProvider from 'next-auth/providers/github'; // Add GitHub Provider
-import connectToDatabase from '../../../../lib/mongodb';
-import User from '../../../../models/User';
-import bcrypt from 'bcryptjs';
+// app/api/[...nextauth]/route.js
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
+import connectToDatabase from "../../../../lib/mongodb";
+import User from "../../../../models/User";
+import bcrypt from "bcryptjs";
 
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         await connectToDatabase();
 
-        const allowedEmail = 'tpoppypie@gmail.com';
-        const allowedPassword = 'PoppyPie123';
+        // Optional: Keep hardcoded admin for testing
+        const allowedEmail = "tpoppypie@gmail.com";
+        const allowedPassword = "PoppyPie123";
 
         if (
           credentials?.email === allowedEmail &&
           credentials?.password === allowedPassword
         ) {
           return {
-            id: '1',
-            name: 'Poppy Pie',
+            id: "1",
+            name: "Poppy Pie",
             email: allowedEmail,
           };
         }
 
+        // Check database users
         const user = await User.findOne({ email: credentials?.email });
         if (user) {
-          const isValid = await bcrypt.compare(credentials?.password, user.password);
+          const isValid = await bcrypt.compare(
+            credentials?.password,
+            user.password
+          );
           if (isValid) {
-            return null; // Block DB users
+            return {
+              id: user._id.toString(),
+              name: `${user.firstName} ${user.lastName}`,
+              email: user.email,
+            };
           }
         }
 
-        throw new Error('Invalid credentials or unauthorized access');
+        throw new Error("Invalid credentials");
       },
     }),
     GoogleProvider({
@@ -52,7 +62,7 @@ const handler = NextAuth({
     }),
   ],
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -71,7 +81,7 @@ const handler = NextAuth({
     },
   },
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 });

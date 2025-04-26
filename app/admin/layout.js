@@ -3,6 +3,8 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { signOut } from "next-auth/react"
+
 import {
     Inbox,
     Edit,
@@ -23,7 +25,8 @@ export default function AdminLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const pathname = usePathname()
 
-    const logout = () => console.log("Logout clicked")
+    const { logout } = useAuth()
+    
 
     const navItems = [
         {
