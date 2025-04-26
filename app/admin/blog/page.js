@@ -100,7 +100,7 @@ export default function AdminBlog() {
                 setIsLoading(false)
             }
         }
-    
+
         fetchBlogPosts()
     }, [])
 
