@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Poppy Pie Live
 
-## Getting Started
+Welcome to the **Poppy Pie Live** repository!  
+This project is a **Next.js-based frontend application** for managing blog posts, deployed live at [https://www.thepoppypie.com](https://www.thepoppypie.com).  
+It features **user authentication, CRUD operations, and a responsive UI**, integrating with a **MongoDB backend** via API routes using modern web technologies.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Table of Contents
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- [Overview](#overview)
+- [Features](#features)
+- [Folder Structure](#folder-structure)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the Application](#running-the-application)
+- [Git Commands](#git-commands)
+- [Usage](#usage)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Overview
 
-## Learn More
+This repository hosts the **frontend codebase for Poppy Pie Live**, a blog management system.  
+It provides an admin interface to **Create, Read, Update, and Delete** blog posts, with features like **search**, **filtering**, and **image support**.  
+Built using **Next.js**, **React**, and **Tailwind CSS**, with authentication handled via a custom `AuthProvider`.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **User authentication** with login redirection.
+- **CRUD operations** for blog posts.
+- **Search and filter functionality** by status, category, and keywords.
+- **Responsive layout** for displaying blog posts.
+- **Support for featured images** with URL input.
+- **Real-time state management** with React hooks.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Folder Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```plaintext
+Poppy-Pie-Live/
+├── .next/                  # Next.js build output (generated on build)
+├── app/                    # Next.js app directory
+│   ├── admin/              # Admin section
+│   │   └── blog/           # Blog management page
+│   │       └── page.js     # Admin blog component
+│   ├── api/                # API routes
+│   │   ├── posts/          # Blog post API endpoints
+│   │   │   ├── route.js    # GET/POST for all posts
+│   │   │   └── [id]/       # PUT/DELETE for individual posts
+│   │   └── auth/           # Authentication routes
+│   │       └── [...nextauth]/
+│   │           └── route.js # NextAuth configuration
+│   └── components/         # Reusable UI components
+│       └── context/        # Context providers
+│           └── AuthProvider.js
+├── components/             # Additional reusable components
+├── lib/                    # Utility libraries or configurations
+├── models/                 # Mongoose models
+│   └── Blog.js             # Blog post schema
+├── public/                 # Static assets
+├── .env.local              # Environment variables
+├── .gitignore              # Git ignore file
+├── components.json         # Component configuration
+├── eslint.config.mjs       # ESLint configuration
+├── jsconfig.json           # JavaScript path aliases
+├── next.config.mjs         # Next.js configuration
+├── package-lock.json       # Dependency tree
+├── package.json            # Project metadata and dependencies
+├── postcss.config.mjs      # PostCSS configuration
+└── README.md               # This file
