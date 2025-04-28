@@ -10,10 +10,6 @@ const blogSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    excerpt: {
-        type: String,
-        required: true
-    },
     content: {
         type: String,
         required: true

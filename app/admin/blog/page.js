@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import {
     Card,
     CardContent,
@@ -18,7 +18,8 @@ import {
     Calendar,
     User,
     Image as ImageIcon,
-    Tag
+    Tag,
+    Eye
 } from "lucide-react"
 import {
     Select,
@@ -36,11 +37,16 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/app/components/context/AuthProvider"
 import { useRouter } from "next/navigation"
+import dynamic from 'next/dynamic'
+const ReactQuill = dynamic(() => import('react-quill-new'), {
+    ssr: false,
+    loading: () => <p>Loading editor...</p>,
+})
+import 'react-quill-new/dist/quill.snow.css'
 
 // Categories
 const categories = [
@@ -66,21 +72,78 @@ export default function AdminBlog() {
     const [isNewPost, setIsNewPost] = useState(false)
     const [confirmDeleteId, setConfirmDeleteId] = useState(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [error, setError] = useState(null)
+    const [previewPost, setPreviewPost] = useState(null)
 
     // Form state
     const [formData, setFormData] = useState({
         title: "",
         slug: "",
-        excerpt: "",
         content: "",
         featuredImage: "",
         category: "",
         tags: "",
-        status: "draft"
+        status: "draft",
+        publicUrl: ""
     })
 
     const { user, isAuthenticated, loading } = useAuth()
     const router = useRouter()
+
+    // Quill toolbar modules with custom image handler
+    const quillModules = useMemo(() => ({
+        toolbar: {
+            container: [
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['link', 'image'],
+                ['clean']
+            ],
+            handlers: {
+                image: handleImageUpload
+            }
+        }
+    }), [])
+
+    // Custom image upload handler for Cloudinary
+    function handleImageUpload() {
+        const editor = this.quill
+        const input = document.createElement('input')
+        input.setAttribute('type', 'file')
+        input.setAttribute('accept', 'image/*')
+        input.click()
+
+        input.onchange = async () => {
+            const file = input.files[0]
+            if (file) {
+                try {
+                    const formData = new FormData()
+                    formData.append('file', file)
+                    formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET)
+
+                    const response = await fetch(
+                        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                        {
+                            method: 'POST',
+                            body: formData
+                        }
+                    )
+
+                    const data = await response.json()
+                    if (data.secure_url) {
+                        const range = editor.getSelection()
+                        editor.insertEmbed(range.index, 'image', data.secure_url)
+                    } else {
+                        throw new Error('Failed to upload image')
+                    }
+                } catch (error) {
+                    console.error('Image upload failed:', error)
+                    setError('Failed to upload image to Cloudinary')
+                }
+            }
+        }
+    }
 
     // Fetch blog posts from API
     useEffect(() => {
@@ -95,14 +158,19 @@ export default function AdminBlog() {
                 setBlogPosts(data)
                 setFilteredPosts(data)
             } catch (error) {
+                setError(error.message)
                 console.error('Failed to fetch blog posts:', error)
             } finally {
                 setIsLoading(false)
             }
         }
 
-        fetchBlogPosts()
-    }, [])
+        if (!loading && isAuthenticated) {
+            fetchBlogPosts()
+        } else if (!loading && !isAuthenticated) {
+            router.push('/login')
+        }
+    }, [loading, isAuthenticated, router])
 
     // Handle filtering and searching
     useEffect(() => {
@@ -120,7 +188,6 @@ export default function AdminBlog() {
             const term = searchTerm.toLowerCase()
             result = result.filter(post =>
                 post.title.toLowerCase().includes(term) ||
-                post.excerpt.toLowerCase().includes(term) ||
                 post.content.toLowerCase().includes(term) ||
                 (post.tags && post.tags.some(tag => tag.toLowerCase().includes(term)))
             )
@@ -136,12 +203,12 @@ export default function AdminBlog() {
         setFormData({
             title: post.title,
             slug: post.slug,
-            excerpt: post.excerpt,
             content: post.content,
             featuredImage: post.featuredImage,
             category: post.category,
             tags: post.tags ? post.tags.join(", ") : "",
-            status: post.status
+            status: post.status,
+            publicUrl: post.publicUrl || ""
         })
         setIsEditorOpen(true)
     }
@@ -153,12 +220,12 @@ export default function AdminBlog() {
         setFormData({
             title: "",
             slug: "",
-            excerpt: "",
             content: "",
             featuredImage: "",
             category: categories[0],
             tags: "",
-            status: "draft"
+            status: "draft",
+            publicUrl: ""
         })
         setIsEditorOpen(true)
     }
@@ -183,24 +250,35 @@ export default function AdminBlog() {
         }
     }
 
+    // Handle content change in Quill editor
+    const handleContentChange = (content) => {
+        setFormData(prev => ({
+            ...prev,
+            content
+        }))
+    }
+
     // Handle save post
     const handleSavePost = async () => {
         if (!formData.title || !formData.content) {
-            console.error("Title and content are required")
+            setError("Title and content are required")
             return
         }
 
         setIsSubmitting(true)
+        setError(null)
 
         try {
             const processedTags = formData.tags
                 ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
                 : []
 
+            const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
             const postData = {
                 ...formData,
                 tags: processedTags,
-                author: "Admin"
+                author: "Admin",
+                publicUrl: formData.status === "published" ? `${baseUrl}/blog/${formData.slug}.html` : ""
             }
 
             let response;
@@ -213,7 +291,7 @@ export default function AdminBlog() {
                     body: JSON.stringify(postData)
                 })
             } else {
-                response = await fetch(`/api/posts/${editingPost.id}`, {
+                response = await fetch(`/api/posts/${editingPost._id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -228,17 +306,47 @@ export default function AdminBlog() {
 
             const updatedPost = await response.json()
 
+            // If the post is published, notify the backend to make it public and request indexing
+            if (postData.status === "published") {
+                try {
+                    const publishResponse = await fetch('/api/publish', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            url: postData.publicUrl,
+                            title: postData.title,
+                            content: postData.content,
+                            featuredImage: postData.featuredImage,
+                            category: postData.category,
+                            tags: postData.tags,
+                            author: postData.author,
+                            publishedDate: updatedPost.publishedDate || new Date().toISOString()
+                        })
+                    })
+
+                    if (!publishResponse.ok) {
+                        throw new Error('Failed to publish post publicly')
+                    }
+                } catch (error) {
+                    console.error('Failed to notify backend for public publishing:', error)
+                    setError('Post saved, but failed to publish publicly')
+                }
+            }
+
             if (isNewPost) {
                 setBlogPosts(prev => [updatedPost, ...prev])
             } else {
                 setBlogPosts(prev => prev.map(post =>
-                    post.id === updatedPost.id ? updatedPost : post
+                    post._id === updatedPost._id ? updatedPost : post
                 ))
             }
 
             setIsEditorOpen(false)
             console.log(`Post ${isNewPost ? 'created' : 'updated'} successfully!`)
         } catch (error) {
+            setError(error.message)
             console.error(`Failed to ${isNewPost ? 'create' : 'update'} post:`, error)
         } finally {
             setIsSubmitting(false)
@@ -252,14 +360,15 @@ export default function AdminBlog() {
                 method: 'DELETE'
             })
 
-            if (!response.ok && response.status !== 204) {
+            if (!response.ok) {
                 throw new Error('Failed to delete post')
             }
 
-            setBlogPosts(prev => prev.filter(post => post.id !== id))
+            setBlogPosts(prev => prev.filter(post => post._id !== id))
             setConfirmDeleteId(null)
             console.log("Post deleted successfully!")
         } catch (error) {
+            setError(error.message)
             console.error("Failed to delete post:", error)
         }
     }
@@ -267,14 +376,16 @@ export default function AdminBlog() {
     // Handle publish/unpublish post
     const handleStatusChange = async (id, newStatus) => {
         try {
-            const post = blogPosts.find(post => post.id === id)
+            const post = blogPosts.find(post => post._id === id)
+            const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
             const updatedPostData = {
                 ...post,
                 status: newStatus,
                 publishedDate: newStatus === 'published' && !post.publishedDate
                     ? new Date().toISOString()
                     : post.publishedDate,
-                tags: post.tags || []
+                tags: post.tags || [],
+                publicUrl: newStatus === "published" ? `${baseUrl}/blog/${post.slug}.html` : ""
             }
 
             const response = await fetch(`/api/posts/${id}`, {
@@ -290,12 +401,43 @@ export default function AdminBlog() {
             }
 
             const updatedPost = await response.json()
+
+            // If the post is published, notify the backend to make it public and request indexing
+            if (newStatus === "published") {
+                try {
+                    const publishResponse = await fetch('/api/publish', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            url: updatedPostData.publicUrl,
+                            title: updatedPostData.title,
+                            content: updatedPostData.content,
+                            featuredImage: updatedPostData.featuredImage,
+                            category: updatedPostData.category,
+                            tags: updatedPostData.tags,
+                            author: updatedPostData.author,
+                            publishedDate: updatedPostData.publishedDate
+                        })
+                    })
+
+                    if (!publishResponse.ok) {
+                        throw new Error('Failed to publish post publicly')
+                    }
+                } catch (error) {
+                    console.error('Failed to notify backend for public publishing:', error)
+                    setError('Post published, but failed to make it public')
+                }
+            }
+
             setBlogPosts(prev => prev.map(post =>
-                post.id === id ? updatedPost : post
+                post._id === id ? updatedPost : post
             ))
 
             console.log(`Post ${newStatus === 'published' ? 'published' : 'unpublished'} successfully!`)
         } catch (error) {
+            setError(error.message)
             console.error(`Failed to ${newStatus === 'published' ? 'publish' : 'unpublish'} post:`, error)
         }
     }
@@ -314,6 +456,11 @@ export default function AdminBlog() {
         })
     }
 
+    // Handle preview post
+    const handlePreviewPost = (post) => {
+        setPreviewPost(post)
+    }
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -324,6 +471,7 @@ export default function AdminBlog() {
 
     return (
         <div className="space-y-6">
+            {error && <div className="text-red-500 text-center">{error}</div>}
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Blog Posts</h1>
@@ -409,11 +557,19 @@ export default function AdminBlog() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredPosts.map((post) => (
-                            <Card key={post.id} className="overflow-hidden flex flex-col h-full">
-                                <div className="relative aspect-video bg-gray-100">
-                                    <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                                        <ImageIcon className="h-10 w-10" />
-                                    </div>
+                            <Card key={post._id} className="overflow-hidden flex flex-col h-full transition-all hover:shadow-lg">
+                                <div className="relative aspect-video">
+                                    {post.featuredImage ? (
+                                        <img
+                                            src={post.featuredImage}
+                                            alt={post.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400">
+                                            <ImageIcon className="h-10 w-10" />
+                                        </div>
+                                    )}
                                     <div className="absolute top-2 right-2">
                                         <span
                                             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
@@ -424,27 +580,30 @@ export default function AdminBlog() {
                                     </div>
                                 </div>
                                 <CardHeader className="pb-0">
-                                    <div className="flex items-center gap-1 text-sm text-gray-500 mb-2">
-                                        <Tag className="h-3 w-3" />
+                                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                                        <Tag className="h-4 w-4" />
                                         <span>{post.category}</span>
                                     </div>
-                                    <CardTitle className="line-clamp-2 h-14">{post.title}</CardTitle>
+                                    <CardTitle className="text-base font-semibold line-clamp-2 h-12">{post.title}</CardTitle>
                                 </CardHeader>
-                                <CardContent>
-                                    <p className="text-sm text-gray-500 line-clamp-3 h-[4.5rem]">{post.excerpt}</p>
-                                    <div className="flex items-center gap-1 text-xs text-gray-500 mt-4">
-                                        <Calendar className="h-3 w-3" />
-                                        <span>{formatDate(post.publishedDate)}</span>
+                                <CardContent className="flex-1">
+                                    <div
+                                        className="text-sm text-gray-600 line-clamp-3 h-[4.5rem]"
+                                        dangerouslySetInnerHTML={{ __html: post.content }}
+                                    />
+                                    <div className="flex items-center gap-2 text-xs text-gray-500 mt-4">
+                                        <Calendar className="h-4 w-4" />
+                                        <span>{formatDate(post.publishedDate || post.createdAt)}</span>
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between border-t pt-4 mt-auto">
-                                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                                        <User className="h-3 w-3" />
+                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                        <User className="h-4 w-4" />
                                         <span>{post.author}</span>
                                         {post.status === 'published' && (
                                             <>
                                                 <span className="mx-1">•</span>
-                                                <span>{post.views} views</span>
+                                                <span>{post.views || 0} views</span>
                                             </>
                                         )}
                                     </div>
@@ -459,10 +618,17 @@ export default function AdminBlog() {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="text-red-500"
-                                            onClick={() => setConfirmDeleteId(post.id)}
+                                            className="text-red-500 hover:text-red-700"
+                                            onClick={() => setConfirmDeleteId(post._id)}
                                         >
                                             <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handlePreviewPost(post)}
+                                        >
+                                            <Eye className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </CardFooter>
@@ -473,8 +639,8 @@ export default function AdminBlog() {
             </div>
 
             <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
+                <DialogContent className="w-screen h-screen p-0">
+                    <DialogHeader className="p-6">
                         <DialogTitle className="text-xl">
                             {isNewPost ? "Create New Post" : "Edit Post"}
                         </DialogTitle>
@@ -486,7 +652,7 @@ export default function AdminBlog() {
                         </DialogDescription>
                     </DialogHeader>
 
-                    <Tabs defaultValue="content" className="w-full">
+                    <Tabs defaultValue="content" className="w-full px-6">
                         <TabsList className="grid w-full grid-cols-2 mb-4">
                             <TabsTrigger value="content">Content</TabsTrigger>
                             <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -507,26 +673,13 @@ export default function AdminBlog() {
                                 </div>
 
                                 <div>
-                                    <Label htmlFor="excerpt">Excerpt</Label>
-                                    <Textarea
-                                        id="excerpt"
-                                        name="excerpt"
-                                        placeholder="Brief summary of the post"
-                                        value={formData.excerpt}
-                                        onChange={handleInputChange}
-                                        className="mt-1 h-20"
-                                    />
-                                </div>
-
-                                <div>
                                     <Label htmlFor="content">Content</Label>
-                                    <Textarea
-                                        id="content"
-                                        name="content"
-                                        placeholder="Write your post content here... (Markdown supported)"
+                                    <ReactQuill
+                                        theme="snow"
                                         value={formData.content}
-                                        onChange={handleInputChange}
-                                        className="mt-1 h-64 font-mono"
+                                        onChange={handleContentChange}
+                                        modules={quillModules}
+                                        className="mt-1 h-64"
                                     />
                                 </div>
                             </div>
@@ -583,15 +736,18 @@ export default function AdminBlog() {
                             </div>
 
                             <div>
-                                <Label htmlFor="featuredImage">Featured Image URL</Label>
+                                <Label htmlFor="featuredImage">Thumbnail Image URL</Label>
                                 <Input
                                     id="featuredImage"
                                     name="featuredImage"
-                                    placeholder="https://example.com/image.jpg"
+                                    placeholder="https://example.com/thumbnail.jpg"
                                     value={formData.featuredImage}
                                     onChange={handleInputChange}
                                     className="mt-1"
                                 />
+                                <p className="text-xs text-gray-500 mt-1">
+                                    This image will be used as the post thumbnail
+                                </p>
                             </div>
 
                             <div>
@@ -612,7 +768,7 @@ export default function AdminBlog() {
                         </TabsContent>
                     </Tabs>
 
-                    <DialogFooter>
+                    <DialogFooter className="p-6">
                         <Button variant="outline" onClick={() => setIsEditorOpen(false)}>
                             Cancel
                         </Button>
@@ -643,6 +799,43 @@ export default function AdminBlog() {
                             onClick={() => handleDeletePost(confirmDeleteId)}
                         >
                             Delete
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={!!previewPost} onOpenChange={() => setPreviewPost(null)}>
+                <DialogContent className="max-w-3xl">
+                    <DialogHeader>
+                        <DialogTitle>Post Preview</DialogTitle>
+                        <DialogDescription>
+                            This is how your post would appear on a search result or PoppyPie blog page.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="p-4">
+                        <div className="bg-white shadow-md p-4 rounded-lg">
+                            <h3 className="text-lg font-bold">{previewPost?.title}</h3>
+                            <p className="text-sm text-gray-600 line-clamp-2" dangerouslySetInnerHTML={{ __html: previewPost?.content }} />
+                            {previewPost?.status === "published" && previewPost?.publicUrl ? (
+                                <a
+                                    href={previewPost.publicUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-500 hover:underline mt-2 block"
+                                >
+                                    View on PoppyPie
+                                </a>
+                            ) : (
+                                <p className="text-sm text-gray-500 mt-2">Not published yet</p>
+                            )}
+                            <p className="text-xs text-gray-500 mt-2">
+                                URL: {previewPost?.publicUrl || "Not available"}
+                            </p>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setPreviewPost(null)}>
+                            Close
                         </Button>
                     </DialogFooter>
                 </DialogContent>

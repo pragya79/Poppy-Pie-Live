@@ -45,7 +45,7 @@ export async function GET() {
 export async function POST(request) {
     try {
         await dbConnect();
-        const { title, slug, excerpt, content, featuredImage, category, tags, status, author } = await request.json();
+        const { title, slug, content, featuredImage, category, tags, status, author } = await request.json();
 
         if (!title || !content) {
             return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
@@ -54,7 +54,6 @@ export async function POST(request) {
         const newPost = new Blog({
             title,
             slug,
-            excerpt,
             content,
             featuredImage: featuredImage || '',
             category,

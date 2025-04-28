@@ -28,7 +28,7 @@ export async function PUT(request, { params }) {
         await dbConnect();
         const { id } = await params;
 
-        const { title, slug, excerpt, content, featuredImage, category, tags, status } = await request.json();
+        const { title, slug, content, featuredImage, category, tags, status } = await request.json();
 
         if (!title || !content) {
             return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
@@ -41,7 +41,6 @@ export async function PUT(request, { params }) {
 
         post.title = title;
         post.slug = slug;
-        post.excerpt = excerpt;
         post.content = content;
         post.featuredImage = featuredImage || '';
         post.category = category;

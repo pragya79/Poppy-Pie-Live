@@ -45,6 +45,11 @@ export default function AdminLayout({ children }) {
             icon: <Edit className="w-5 h-5" />
         },
         {
+            name: "Job Posts",
+            path: "/admin/jobs",
+            icon: <Edit className="w-5 h-5" />
+        },
+        {
             name: "Analytics",
             path: "/admin/analytics",
             icon: <BarChart className="w-5 h-5" />
