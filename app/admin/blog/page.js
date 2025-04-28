@@ -36,11 +36,9 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/app/components/context/AuthProvider"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 // Mock data for blog posts
 const mockBlogPosts = [
@@ -135,23 +133,7 @@ export default function AdminBlog() {
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [categoryFilter, setCategoryFilter] = useState("all")
-    const [editingPost, setEditingPost] = useState(null)
-    const [isEditorOpen, setIsEditorOpen] = useState(false)
-    const [isNewPost, setIsNewPost] = useState(false)
     const [confirmDeleteId, setConfirmDeleteId] = useState(null)
-    const [isSubmitting, setIsSubmitting] = useState(false)
-
-    // Form state
-    const [formData, setFormData] = useState({
-        title: "",
-        slug: "",
-        excerpt: "",
-        content: "",
-        featuredImage: "",
-        category: "",
-        tags: "",
-        status: "draft"
-    })
 
     const { user, isAuthenticated, loading } = useAuth()
     const router = useRouter()
@@ -212,122 +194,9 @@ export default function AdminBlog() {
         setFilteredPosts(result)
     }, [blogPosts, statusFilter, categoryFilter, searchTerm])
 
-    // Handle edit post
+    // Handle edit post - redirect to edit page
     const handleEditPost = (post) => {
-        setEditingPost(post)
-        setIsNewPost(false)
-        setFormData({
-            title: post.title,
-            slug: post.slug,
-            excerpt: post.excerpt,
-            content: post.content,
-            featuredImage: post.featuredImage,
-            category: post.category,
-            tags: post.tags ? post.tags.join(", ") : "",
-            status: post.status
-        })
-        setIsEditorOpen(true)
-    }
-
-    // Handle new post
-    const handleNewPost = () => {
-        setEditingPost(null)
-        setIsNewPost(true)
-        setFormData({
-            title: "",
-            slug: "",
-            excerpt: "",
-            content: "",
-            featuredImage: "",
-            category: categories[0],
-            tags: "",
-            status: "draft"
-        })
-        setIsEditorOpen(true)
-    }
-
-    // Handle form input change
-    const handleInputChange = (e) => {
-        const { name, value } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }))
-
-        // Auto-generate slug from title if it's a new post
-        if (name === 'title' && isNewPost) {
-            const slug = value
-                .toLowerCase()
-                .replace(/[^\w\s]/gi, '')
-                .replace(/\s+/g, '-')
-
-            setFormData(prev => ({
-                ...prev,
-                slug
-            }))
-        }
-    }
-
-    // Handle save post
-    const handleSavePost = async () => {
-        if (!formData.title || !formData.content) {
-            // Show validation error (you could use toast here)
-            console.error("Title and content are required")
-            return
-        }
-
-        setIsSubmitting(true)
-
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000))
-
-            // Process tags from comma-separated string to array
-            const processedTags = formData.tags
-                ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
-                : []
-
-            if (isNewPost) {
-                // Create new post
-                const newPost = {
-                    id: `POST-${Math.floor(Math.random() * 10000).toString().padStart(3, '0')}`,
-                    ...formData,
-                    tags: processedTags,
-                    author: "Admin",
-                    publishedDate: formData.status === 'published' ? new Date().toISOString() : null,
-                    views: 0
-                }
-
-                setBlogPosts(prev => [newPost, ...prev])
-            } else {
-                // Update existing post
-                const updatedPosts = blogPosts.map(post => {
-                    if (post.id === editingPost.id) {
-                        return {
-                            ...post,
-                            ...formData,
-                            tags: processedTags,
-                            publishedDate: formData.status === 'published' && !post.publishedDate
-                                ? new Date().toISOString()
-                                : post.publishedDate
-                        }
-                    }
-                    return post
-                })
-
-                setBlogPosts(updatedPosts)
-            }
-
-            // Close editor
-            setIsEditorOpen(false)
-
-            // Show success message (you could use toast here)
-            console.log(`Post ${isNewPost ? 'created' : 'updated'} successfully!`)
-        } catch (error) {
-            console.error(`Failed to ${isNewPost ? 'create' : 'update'} post:`, error)
-        } finally {
-            setIsSubmitting(false)
-        }
+        router.push(`/admin/blog/edit/${post.id}`)
     }
 
     // Handle delete post
@@ -407,10 +276,12 @@ export default function AdminBlog() {
                     <h1 className="text-2xl font-bold tracking-tight">Blog Posts</h1>
                     <p className="text-muted-foreground">Create and manage your blog content</p>
                 </div>
-                <Button onClick={handleNewPost} className="flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
-                    <span>New Post</span>
-                </Button>
+                <Link href="/admin/blog/create">
+                    <Button className="flex items-center gap-2">
+                        <Plus className="h-4 w-4" />
+                        <span>New Post</span>
+                    </Button>
+                </Link>
             </div>
 
             {/* Filters and Search */}
@@ -552,161 +423,6 @@ export default function AdminBlog() {
                     </div>
                 )}
             </div>
-
-            {/* Post Editor Dialog */}
-            <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle className="text-xl">
-                            {isNewPost ? "Create New Post" : "Edit Post"}
-                        </DialogTitle>
-                        <DialogDescription>
-                            {isNewPost
-                                ? "Add a new blog post to your website"
-                                : "Make changes to your existing blog post"
-                            }
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <Tabs defaultValue="content" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2 mb-4">
-                            <TabsTrigger value="content">Content</TabsTrigger>
-                            <TabsTrigger value="settings">Settings</TabsTrigger>
-                        </TabsList>
-
-                        <TabsContent value="content" className="space-y-4">
-                            <div className="space-y-4">
-                                <div>
-                                    <Label htmlFor="title">Post Title</Label>
-                                    <Input
-                                        id="title"
-                                        name="title"
-                                        placeholder="Enter post title"
-                                        value={formData.title}
-                                        onChange={handleInputChange}
-                                        className="mt-1"
-                                    />
-                                </div>
-
-                                <div>
-                                    <Label htmlFor="excerpt">Excerpt</Label>
-                                    <Textarea
-                                        id="excerpt"
-                                        name="excerpt"
-                                        placeholder="Brief summary of the post"
-                                        value={formData.excerpt}
-                                        onChange={handleInputChange}
-                                        className="mt-1 h-20"
-                                    />
-                                </div>
-
-                                <div>
-                                    <Label htmlFor="content">Content</Label>
-                                    <Textarea
-                                        id="content"
-                                        name="content"
-                                        placeholder="Write your post content here... (Markdown supported)"
-                                        value={formData.content}
-                                        onChange={handleInputChange}
-                                        className="mt-1 h-64 font-mono"
-                                    />
-                                </div>
-                            </div>
-                        </TabsContent>
-
-                        <TabsContent value="settings" className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <Label htmlFor="slug">URL Slug</Label>
-                                    <Input
-                                        id="slug"
-                                        name="slug"
-                                        placeholder="post-url-slug"
-                                        value={formData.slug}
-                                        onChange={handleInputChange}
-                                        className="mt-1"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        This will be used in the post URL
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <Label htmlFor="category">Category</Label>
-                                    <Select
-                                        value={formData.category}
-                                        onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-                                    >
-                                        <SelectTrigger className="mt-1">
-                                            <SelectValue placeholder="Select category" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {categories.map(category => (
-                                                <SelectItem key={category} value={category}>{category}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-
-                            <div>
-                                <Label htmlFor="tags">Tags</Label>
-                                <Input
-                                    id="tags"
-                                    name="tags"
-                                    placeholder="Enter tags separated by commas"
-                                    value={formData.tags}
-                                    onChange={handleInputChange}
-                                    className="mt-1"
-                                />
-                                <p className="text-xs text-gray-500 mt-1">
-                                    Example: marketing, social media, branding
-                                </p>
-                            </div>
-
-                            <div>
-                                <Label htmlFor="featuredImage">Featured Image URL</Label>
-                                <Input
-                                    id="featuredImage"
-                                    name="featuredImage"
-                                    placeholder="https://example.com/image.jpg"
-                                    value={formData.featuredImage}
-                                    onChange={handleInputChange}
-                                    className="mt-1"
-                                />
-                            </div>
-
-                            <div>
-                                <Label htmlFor="status">Publication Status</Label>
-                                <Select
-                                    value={formData.status}
-                                    onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
-                                >
-                                    <SelectTrigger className="mt-1">
-                                        <SelectValue placeholder="Select status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="draft">Draft</SelectItem>
-                                        <SelectItem value="published">Published</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </TabsContent>
-                    </Tabs>
-
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsEditorOpen(false)}>
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={handleSavePost}
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? "Saving..." : "Save Post"}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
 
             {/* Delete Confirmation Dialog */}
             <Dialog open={!!confirmDeleteId} onOpenChange={() => setConfirmDeleteId(null)}>
