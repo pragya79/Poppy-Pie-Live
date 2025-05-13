@@ -19,6 +19,7 @@ import {
     Menu,
     X
 } from 'lucide-react';
+import Link from 'next/link';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -458,25 +459,27 @@ const Blogs = () => {
                                                 </div>
                                                 <h3 className="font-bold text-lg mb-2 text-gray-800 hover:text-blue-600 transition-colors line-clamp-2">{blog.title}</h3>
                                                 <p className="text-sm text-gray-600 mb-3 line-clamp-2 flex-grow">{blog.excerpt}</p>
-                                                <button
-                                                    className="text-blue-500 text-sm font-medium flex items-center group mt-auto"
-                                                    onMouseEnter={(e) => {
-                                                        gsap.to(e.currentTarget, {
-                                                            x: 5,
-                                                            duration: 0.3,
-                                                            ease: "power2.out"
-                                                        });
-                                                    }}
-                                                    onMouseLeave={(e) => {
-                                                        gsap.to(e.currentTarget, {
-                                                            x: 0,
-                                                            duration: 0.3,
-                                                            ease: "power2.out"
-                                                        });
-                                                    }}
-                                                >
-                                                    Read more <ArrowRight className="h-3 w-3 ml-1 group-hover:ml-2 transition-all duration-300" />
-                                                </button>
+                                                <Link href={`/blogs/${blog.id}`} className="mt-auto">
+                                                    <button
+                                                        className="text-blue-500 text-sm font-medium flex items-center group mt-auto"
+                                                        onMouseEnter={(e) => {
+                                                            gsap.to(e.currentTarget, {
+                                                                x: 5,
+                                                                duration: 0.3,
+                                                                ease: "power2.out"
+                                                            });
+                                                        }}
+                                                        onMouseLeave={(e) => {
+                                                            gsap.to(e.currentTarget, {
+                                                                x: 0,
+                                                                duration: 0.3,
+                                                                ease: "power2.out"
+                                                            });
+                                                        }}
+                                                    >
+                                                        Read more <ArrowRight className="h-3 w-3 ml-1 group-hover:ml-2 transition-all duration-300" />
+                                                    </button>
+                                                </Link>
                                             </div>
                                         </div>
                                     ))}

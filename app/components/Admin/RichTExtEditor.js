@@ -201,7 +201,15 @@ const RichTextEditor = forwardRef(
   ({ value, onChange, placeholder = "Start writing...", minHeight = "300px", readOnly = false }, ref) => {
     const editor = useEditor({
       extensions: [
-        StarterKit,
+        StarterKit.configure({
+          // Ensure that heading, blockquote, bulletList, and orderedList are enabled
+          heading: {
+            levels: [1, 2]
+          },
+          blockquote: true,
+          bulletList: true,
+          orderedList: true
+        }),
         Placeholder.configure({
           placeholder,
         }),
@@ -211,6 +219,8 @@ const RichTextEditor = forwardRef(
         }),
         TextAlign.configure({
           types: ["heading", "paragraph"],
+          // Explicitly exclude these node types from text align to avoid conflicts
+          // This way the list and blockquote formatting won't be affected
         }),
       ],
       content: value,
