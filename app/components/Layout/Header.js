@@ -31,13 +31,13 @@ const Header = () => {
             icon: <IconComponents.Layout />,
             hasDropdown: true,
             dropdownItems: [
-                { label: "Content Creation", href: "/services?service=service-1", icon: <IconComponents.Zap /> },
-                { label: "SEO Content Writer", href: "/services?service=service-2", icon: <IconComponents.Layout /> },
-                { label: "Sales & Marketing Automation", href: "/services?service=service-3", icon: <IconComponents.PenTool /> },
-                { label: "Market Research", href: "/services?service=service-4", icon: <IconComponents.Coffee /> },
-                { label: "Social Media Management", href: "/services?service=service-5", icon: <IconComponents.Users /> },
-                { label: "Offline Sales", href: "/services?service=service-6", icon: <IconComponents.TrendingUp /> },
-                { label: "Social Media Ads", href: "/services?service=service-7", icon: <IconComponents.Globe /> },
+                { label: "Content Creation", href: "/services/service-1", icon: <IconComponents.Zap /> },
+                { label: "SEO Content Writer", href: "/services/service-2", icon: <IconComponents.Layout /> },
+                { label: "Sales & Marketing Automation", href: "/services/service-3", icon: <IconComponents.PenTool /> },
+                { label: "Market Research", href: "/services/service-4", icon: <IconComponents.Coffee /> },
+                { label: "Social Media Management", href: "/services/service-5", icon: <IconComponents.Users /> },
+                { label: "Offline Sales", href: "/services/service-6", icon: <IconComponents.TrendingUp /> },
+                { label: "Social Media Ads", href: "/services/service-7", icon: <IconComponents.Globe /> },
             ]
         },
         {
