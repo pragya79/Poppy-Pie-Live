@@ -223,30 +223,28 @@ const BlogEditor = ({ editMode = false, postData = null }) => {
     }
 
     // Handle form submission
+    // When admin submits the blog form
     const handleSubmit = async (e, saveAsDraft = false) => {
-        e.preventDefault()
-        setIsSubmitting(true)
-        setErrorMessage("")
-        setSuccessMessage("")
+        e.preventDefault();
+        setIsSubmitting(true);
+        setErrorMessage("");
+        setSuccessMessage("");
 
         try {
             // Basic validation
             if (!formData.title || !formData.content) {
-                setErrorMessage("Title and content are required")
-                setIsSubmitting(false)
-                return
+                setErrorMessage("Title and content are required");
+                setIsSubmitting(false);
+                return;
             }
 
-            // Process tags from comma-separated string to array
+            // Process tags
             const processedTags = formData.tags
-                ? formData.tags
-                    .split(",")
-                    .map((tag) => tag.trim())
-                    .filter((tag) => tag !== "")
-                : []
+                ? formData.tags.split(",").map((tag) => tag.trim()).filter((tag) => tag !== "")
+                : [];
 
             // Set the status based on the saveAsDraft parameter
-            const status = saveAsDraft ? "draft" : formData.status
+            const status = saveAsDraft ? "draft" : formData.status;
 
             // Create the post object
             const postToSave = {
@@ -257,24 +255,40 @@ const BlogEditor = ({ editMode = false, postData = null }) => {
                 publishedDate: status === "published" ? new Date().toISOString() : null,
                 seoTitle: formData.seoTitle || formData.title,
                 seoDescription: formData.seoDescription || formData.excerpt,
-            }
+            };
 
             // If editing, include the post ID
             if (editMode && postData) {
-                postToSave.id = postData.id
+                postToSave.id = postData.id;
             } else {
-                // Generate a random ID for new posts
-                postToSave.id = `POST-${Math.floor(Math.random() * 10000)
-                    .toString()
-                    .padStart(3, "0")}`
-                postToSave.views = 0
+                // Generate a unique ID for new posts
+                postToSave.id = `POST-${Math.floor(Math.random() * 10000).toString().padStart(3, "0")}`;
+                postToSave.views = 0;
             }
 
-            // In a real app, you'd send this to your API
-            console.log("Saving post:", postToSave)
+            // In a real app, this would be an API call to save to a database
+            console.log("Saving post:", postToSave);
 
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            // Here you would make an API call to save the blog post
+            // For example:
+            // const response = await fetch('/api/blogs', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(postToSave)
+            // });
+
+            // For now, simulate saving by storing in localStorage
+            const existingPosts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+
+            // Update if exists, otherwise add
+            const postIndex = existingPosts.findIndex(post => post.id === postToSave.id);
+            if (postIndex >= 0) {
+                existingPosts[postIndex] = postToSave;
+            } else {
+                existingPosts.push(postToSave);
+            }
+
+            localStorage.setItem('blogPosts', JSON.stringify(existingPosts));
 
             // Show success message
             setSuccessMessage(
@@ -282,25 +296,25 @@ const BlogEditor = ({ editMode = false, postData = null }) => {
                     ? "Draft saved successfully!"
                     : editMode
                         ? "Post updated successfully!"
-                        : "Post published successfully!",
-            )
+                        : "Post published successfully!"
+            );
 
-            setUnsavedChanges(false)
-            setLastSaved(new Date())
+            setUnsavedChanges(false);
+            setLastSaved(new Date());
 
             // Redirect after a short delay if publishing
             if (!saveAsDraft) {
                 setTimeout(() => {
-                    router.push("/admin/blog")
-                }, 1500)
+                    router.push("/admin/blog");
+                }, 1500);
             }
         } catch (error) {
-            console.error("Error saving post:", error)
-            setErrorMessage(`Failed to ${editMode ? "update" : "create"} post. Please try again.`)
+            console.error("Error saving post:", error);
+            setErrorMessage(`Failed to ${editMode ? "update" : "create"} post. Please try again.`);
         } finally {
-            setIsSubmitting(false)
+            setIsSubmitting(false);
         }
-    }
+    };
 
     // Preview the blog post
     const handlePreview = () => {

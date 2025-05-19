@@ -40,80 +40,6 @@ import { useAuth } from "@/app/components/context/AuthProvider"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
-// Mock data for blog posts
-const mockBlogPosts = [
-    {
-        id: "POST-001",
-        title: "Digital Marketing Trends for 2025",
-        slug: "digital-marketing-trends-2025",
-        excerpt: "Discover the emerging digital marketing trends that will shape your strategy in 2025.",
-        content: "# Digital Marketing Trends for 2025\n\nThe digital marketing landscape continues to evolve at a rapid pace. As we move into 2025, businesses need to adapt their strategies to stay competitive and effectively reach their target audiences.\n\n## 1. AI-Powered Personalization\n\nArtificial intelligence is revolutionizing how marketers personalize content and offers. In 2025, we'll see even more sophisticated AI tools that can analyze vast amounts of customer data to create hyper-personalized experiences.\n\n## 2. Voice Search Optimization\n\nWith the growing popularity of smart speakers and voice assistants, optimizing for voice search will be essential. This means focusing on natural language queries and creating content that directly answers specific questions.\n\n## 3. Immersive AR/VR Experiences\n\nAugmented reality (AR) and virtual reality (VR) are moving beyond gaming and entertainment into marketing. Brands that create immersive experiences will stand out and drive higher engagement.\n\n## 4. Sustainability Marketing\n\nConsumers are increasingly concerned about environmental issues, leading to the rise of sustainability marketing. Brands that authentically communicate their environmental initiatives will connect more deeply with conscious consumers.\n\n## 5. Privacy-First Marketing\n\nAs privacy regulations tighten and third-party cookies phase out, marketers need to develop strategies that respect user privacy while still delivering personalized experiences through first-party data.\n\n## Conclusion\n\nStaying ahead of these trends will help your business navigate the evolving digital landscape and maintain a competitive edge in 2025 and beyond.",
-        featuredImage: "/images/blog1.jpg",
-        category: "Digital Marketing",
-        tags: ["AI", "Voice Search", "AR/VR", "Sustainability", "Privacy"],
-        author: "Admin",
-        publishedDate: "2025-04-01T10:30:00",
-        status: "published",
-        views: 428
-    },
-    {
-        id: "POST-002",
-        title: "How to Build a Strong Brand Identity",
-        slug: "build-strong-brand-identity",
-        excerpt: "Learn how to create a cohesive and compelling brand identity that resonates with your target audience.",
-        content: "# How to Build a Strong Brand Identity\n\nA strong brand identity is crucial for standing out in today's crowded marketplace. It helps establish recognition, build trust, and create emotional connections with your audience.\n\n## Understanding Brand Identity\n\nBrand identity encompasses the visible elements of a brand, such as color, design, and logo, that identify and distinguish it in consumers' minds. It's the tangible expression of your brand's personality, values, and promise.\n\n## Key Elements of Brand Identity\n\n### 1. Brand Purpose and Values\n\nClearly define why your brand exists beyond making money. What impact do you want to have? What values drive your business decisions?\n\n### 2. Brand Personality\n\nIs your brand serious or playful? Luxurious or accessible? Define the human characteristics that describe your brand's tone and style.\n\n### 3. Visual Identity\n\nDevelop a cohesive visual system including your logo, color palette, typography, imagery style, and design elements.\n\n### 4. Voice and Messaging\n\nEstablish how your brand communicates across platforms, from the words you use to the tone you adopt.\n\n## Steps to Create a Strong Brand Identity\n\n1. **Research your audience**: Understand their preferences, needs, and values\n2. **Analyze competitors**: Identify how to differentiate your brand\n3. **Define your unique value proposition**: What makes your offering special?\n4. **Develop your visual identity**: Create logos, select colors, and define design principles\n5. **Establish brand guidelines**: Document rules for consistent application\n6. **Implement consistently**: Apply your identity across all touchpoints\n\n## Maintaining Brand Consistency\n\nConsistency is key to building recognition and trust. Create comprehensive brand guidelines and ensure everyone representing your brand understands and follows them.\n\n## Evolving Your Brand\n\nStrong brands evolve over time while maintaining their core identity. Regularly review your brand identity and make thoughtful updates to stay relevant without losing recognition.\n\n## Conclusion\n\nBuilding a strong brand identity requires strategic thinking, creativity, and consistency. When done right, it becomes a powerful asset that drives business growth and creates lasting customer relationships.",
-        featuredImage: "/images/blog2.jpg",
-        category: "Branding",
-        tags: ["Brand Strategy", "Visual Identity", "Brand Guidelines", "Brand Voice"],
-        author: "Admin",
-        publishedDate: "2025-03-28T14:45:00",
-        status: "published",
-        views: 356
-    },
-    {
-        id: "POST-003",
-        title: "The Power of Content Marketing",
-        slug: "power-of-content-marketing",
-        excerpt: "Explore how content marketing can drive traffic, build authority, and convert prospects into customers.",
-        content: "# The Power of Content Marketing\n\nContent marketing has become a cornerstone of modern marketing strategies. By creating and distributing valuable, relevant content, businesses can attract and engage a clearly defined audience, ultimately driving profitable customer action.\n\n## Why Content Marketing Works\n\nUnlike traditional advertising that interrupts consumers, content marketing provides value before asking for anything in return. This builds trust, establishes authority, and creates a positive brand association.\n\n## Key Benefits of Content Marketing\n\n### 1. Builds Brand Awareness and Recognition\n\nConsistent, high-quality content helps more people become familiar with your brand. The more value you provide, the more likely your audience will remember you.\n\n### 2. Establishes Authority and Expertise\n\nThoughtful, informative content demonstrates your knowledge and positions your brand as an authority in your industry.\n\n### 3. Supports Search Engine Optimization\n\nQuality content that addresses topics your audience searches for improves your search engine rankings, driving organic traffic to your website.\n\n### 4. Nurtures Relationships Throughout the Customer Journey\n\nFrom awareness to consideration to decision, the right content helps move prospects through your sales funnel.\n\n### 5. Generates Qualified Leads\n\nContent tailored to your ideal customer attracts more qualified prospects to your business.\n\n## Creating an Effective Content Marketing Strategy\n\n1. **Define clear objectives**: What do you want your content to achieve?\n2. **Understand your audience**: Create detailed buyer personas to guide content creation\n3. **Audit existing content**: Evaluate what's working and identify gaps\n4. **Plan your content calendar**: Organize topics, formats, and publishing schedule\n5. **Create compelling content**: Focus on quality, relevance, and value\n6. **Distribute strategically**: Share across appropriate channels\n7. **Measure and optimize**: Track performance against objectives\n\n## Content Formats to Consider\n\n- Blog posts and articles\n- Ebooks and whitepapers\n- Infographics and visual content\n- Videos and webinars\n- Podcasts\n- Case studies and testimonials\n- Email newsletters\n- Social media content\n\n## Conclusion\n\nContent marketing is no longer optional for businesses looking to thrive in the digital landscape. By consistently providing valuable content that addresses your audience's needs and challenges, you can build lasting relationships that drive sustainable business growth.",
-        featuredImage: "/images/blog3.jpg",
-        category: "Content Marketing",
-        tags: ["Content Strategy", "SEO", "Lead Generation", "Audience Engagement"],
-        author: "Admin",
-        publishedDate: "2025-03-25T09:15:00",
-        status: "published",
-        views: 279
-    },
-    {
-        id: "POST-004",
-        title: "Social Media Strategies for B2B Companies",
-        slug: "social-media-strategies-b2b",
-        excerpt: "Discover effective social media approaches specifically designed for B2B audience engagement and lead generation.",
-        content: "# Social Media Strategies for B2B Companies\n\nWhile social media is often associated with B2C marketing, it offers tremendous opportunities for B2B companies when approached strategically. This guide explores how B2B organizations can leverage social platforms to build relationships, establish thought leadership, and generate quality leads.\n\n## LinkedIn: The B2B Powerhouse\n\nLinkedIn remains the most important social platform for B2B marketers. Strategies for maximizing LinkedIn include:\n\n- Optimizing company pages with complete information\n- Sharing industry insights and thought leadership content\n- Leveraging employee advocacy for wider reach\n- Using LinkedIn Groups to establish expertise\n- Implementing targeted advertising campaigns\n\n## Other Valuable Platforms for B2B\n\n### Twitter\n- Engage in industry conversations using relevant hashtags\n- Share timely updates and news\n- Participate in Twitter chats relevant to your industry\n\n### YouTube\n- Create educational content showcasing your expertise\n- Develop case studies and client testimonials\n- Produce product demonstrations and tutorials\n\n### Facebook and Instagram\n- Showcase company culture and values\n- Highlight team members and behind-the-scenes content\n- Share event updates and industry conference participation\n\n## Content Strategies for B2B Social Media\n\n1. **Educational Content**: Provide valuable insights that help your audience solve problems\n2. **Case Studies**: Demonstrate real-world applications and results\n3. **Industry Research and Reports**: Position your company as a knowledge leader\n4. **Employee Spotlights**: Humanize your brand and showcase expertise\n5. **Event Content**: Promote participation in and insights from industry events\n\n## Measuring B2B Social Media Success\n\nTrack these metrics to evaluate your B2B social media effectiveness:\n\n- Website traffic from social channels\n- Lead generation and conversion rates\n- Engagement metrics (shares, comments, saves)\n- Follower growth and quality\n- Share of voice compared to competitors\n\n## Common B2B Social Media Challenges and Solutions\n\n### Challenge: Long Sales Cycles\n**Solution**: Use social media for ongoing nurturing and relationship building through multiple touchpoints\n\n### Challenge: Multiple Decision Makers\n**Solution**: Create content tailored to different stakeholders and their specific concerns\n\n### Challenge: Measuring ROI\n**Solution**: Implement proper tracking from social engagement through to closed deals\n\n## Conclusion\n\nEffective B2B social media marketing requires strategic thinking, consistent execution, and patience. By focusing on providing value to your professional audience and building meaningful relationships, B2B companies can achieve significant results through social channels.",
-        featuredImage: "/images/blog4.jpg",
-        category: "Social Media",
-        tags: ["LinkedIn", "B2B Marketing", "Thought Leadership", "Lead Generation"],
-        author: "Admin",
-        publishedDate: "2025-03-20T11:30:00",
-        status: "draft",
-        views: 0
-    },
-    {
-        id: "POST-005",
-        title: "Email Marketing Best Practices for 2025",
-        slug: "email-marketing-best-practices-2025",
-        excerpt: "Stay ahead of the curve with these cutting-edge email marketing strategies for 2025 and beyond.",
-        content: "# Email Marketing Best Practices for 2025\n\n*Draft content in progress...*",
-        featuredImage: "/images/blog5.jpg",
-        category: "Email Marketing",
-        tags: ["Email Automation", "Personalization", "Deliverability"],
-        author: "Admin",
-        publishedDate: null,
-        status: "draft",
-        views: 0
-    }
-]
-
 // Categories
 const categories = [
     "Digital Marketing",
@@ -151,8 +77,24 @@ export default function AdminBlog() {
             try {
                 // Simulate API call
                 await new Promise(resolve => setTimeout(resolve, 800))
-                setBlogPosts(mockBlogPosts)
-                setFilteredPosts(mockBlogPosts)
+
+                // In a real app, you would fetch from your API
+                // const response = await fetch('/api/admin/blogs');
+                // const data = await response.json();
+
+                // For now, get from localStorage
+                const storedBlogs = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+
+                // Sort by date (newest first)
+                storedBlogs.sort((a, b) => {
+                    // Handle null dates (drafts)
+                    if (!a.publishedDate) return 1;
+                    if (!b.publishedDate) return -1;
+                    return new Date(b.publishedDate) - new Date(a.publishedDate);
+                });
+
+                setBlogPosts(storedBlogs)
+                setFilteredPosts(storedBlogs)
             } catch (error) {
                 console.error('Failed to fetch blog posts:', error)
             } finally {
@@ -203,49 +145,28 @@ export default function AdminBlog() {
     const handleDeletePost = async (id) => {
         try {
             // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 500))
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // In a real app, you would call your API
+            // await fetch(`/api/blogs/${id}`, { method: 'DELETE' });
+
+            // For now, update localStorage
+            const storedBlogs = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+            const updatedBlogs = storedBlogs.filter(post => post.id !== id);
+            localStorage.setItem('blogPosts', JSON.stringify(updatedBlogs));
 
             // Remove post from state
-            setBlogPosts(prev => prev.filter(post => post.id !== id))
+            setBlogPosts(prev => prev.filter(post => post.id !== id));
 
             // Close confirmation dialog
-            setConfirmDeleteId(null)
+            setConfirmDeleteId(null);
 
-            // Show success message (you could use toast here)
-            console.log("Post deleted successfully!")
+            // Show success message
+            console.log("Post deleted successfully!");
         } catch (error) {
-            console.error("Failed to delete post:", error)
+            console.error("Failed to delete post:", error);
         }
-    }
-
-    // Handle publish/unpublish post
-    const handleStatusChange = async (id, newStatus) => {
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 500))
-
-            // Update post status in state
-            const updatedPosts = blogPosts.map(post => {
-                if (post.id === id) {
-                    return {
-                        ...post,
-                        status: newStatus,
-                        publishedDate: newStatus === 'published' && !post.publishedDate
-                            ? new Date().toISOString()
-                            : post.publishedDate
-                    }
-                }
-                return post
-            })
-
-            setBlogPosts(updatedPosts)
-
-            // Show success message (you could use toast here)
-            console.log(`Post ${newStatus === 'published' ? 'published' : 'unpublished'} successfully!`)
-        } catch (error) {
-            console.error(`Failed to ${newStatus === 'published' ? 'publish' : 'unpublish'} post:`, error)
-        }
-    }
+    };
 
     // Format date
     const formatDate = (dateString) => {
