@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/app/components/context/AuthProvider"
+import { Toaster } from "sonner"
 
 export default function AdminLayout({ children }) {
     // const { logout } = useAuth()
@@ -74,8 +75,8 @@ export default function AdminLayout({ children }) {
                                 <Link
                                     href={item.path}
                                     className={`flex items-center px-4 py-2.5 rounded-md transition-colors ${pathname === item.path
-                                            ? "bg-blue-50 text-blue-600"
-                                            : "text-gray-700 hover:bg-gray-100"
+                                        ? "bg-blue-50 text-blue-600"
+                                        : "text-gray-700 hover:bg-gray-100"
                                         }`}
                                 >
                                     {item.icon}
@@ -139,8 +140,8 @@ export default function AdminLayout({ children }) {
                                 <Link
                                     href={item.path}
                                     className={`flex items-center px-4 py-2.5 rounded-md transition-colors ${pathname === item.path
-                                            ? "bg-blue-50 text-blue-600"
-                                            : "text-gray-700 hover:bg-gray-100"
+                                        ? "bg-blue-50 text-blue-600"
+                                        : "text-gray-700 hover:bg-gray-100"
                                         }`}
                                     onClick={toggleSidebar}
                                 >
@@ -197,6 +198,7 @@ export default function AdminLayout({ children }) {
 
                 {/* Page Content */}
                 <main className="flex-1 overflow-auto p-4 md:p-6">
+                    <Toaster position="top-right" />
                     {children}
                 </main>
             </div>
