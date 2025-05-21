@@ -47,6 +47,7 @@ const ReactQuill = dynamic(() => import('react-quill-new'), {
     loading: () => <p>Loading editor...</p>,
 })
 import 'react-quill-new/dist/quill.snow.css'
+import Link from "next/link"
 
 // Categories
 const categories = [
@@ -67,9 +68,6 @@ export default function AdminBlog() {
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [categoryFilter, setCategoryFilter] = useState("all")
-    const [editingPost, setEditingPost] = useState(null)
-    const [isEditorOpen, setIsEditorOpen] = useState(false)
-    const [isNewPost, setIsNewPost] = useState(false)
     const [confirmDeleteId, setConfirmDeleteId] = useState(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState(null)
@@ -196,7 +194,7 @@ export default function AdminBlog() {
         setFilteredPosts(result)
     }, [blogPosts, statusFilter, categoryFilter, searchTerm])
 
-    // Handle edit post
+    // Handle edit post - redirect to edit page
     const handleEditPost = (post) => {
         setEditingPost(post)
         setIsNewPost(false)
@@ -477,10 +475,12 @@ export default function AdminBlog() {
                     <h1 className="text-2xl font-bold tracking-tight">Blog Posts</h1>
                     <p className="text-muted-foreground">Create and manage your blog content</p>
                 </div>
-                <Button onClick={handleNewPost} className="flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
-                    <span>New Post</span>
-                </Button>
+                <Link href="/admin/blog/create">
+                    <Button className="flex items-center gap-2">
+                        <Plus className="h-4 w-4" />
+                        <span>New Post</span>
+                    </Button>
+                </Link>
             </div>
 
             <Card>
