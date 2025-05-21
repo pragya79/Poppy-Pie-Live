@@ -47,6 +47,7 @@ const ReactQuill = dynamic(() => import('react-quill-new'), {
     loading: () => <p>Loading editor...</p>,
 })
 import 'react-quill-new/dist/quill.snow.css'
+import Link from "next/link"
 
 // Categories
 const categories = [
