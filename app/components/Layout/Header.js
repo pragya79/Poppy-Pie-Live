@@ -446,6 +446,23 @@ const Header = () => {
                                         >
                                             <h3 className="font-medium text-lg mb-4">Services</h3>
                                             <div className="space-y-3">
+                                                {/* Add main services page link first */}
+                                                <Link
+                                                    href="/services"
+                                                    className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border-2 border-gray-200 hover:bg-gray-100 transition-colors"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                >
+                                                    <IconComponents.Layout className="text-black" />
+                                                    <div>
+                                                        <span className="font-medium">All Services</span>
+                                                        <p className="text-sm text-gray-600">View our complete service portfolio</p>
+                                                    </div>
+                                                </Link>
+
+                                                {/* Divider */}
+                                                <div className="border-t border-gray-200 my-3"></div>
+
+                                                {/* Individual service categories */}
                                                 {navItemsRight[0].dropdownItems.map((item, index) => (
                                                     <Link
                                                         key={index}
@@ -471,6 +488,23 @@ const Header = () => {
                                         >
                                             <h3 className="font-medium text-lg mb-4">Blogs</h3>
                                             <div className="space-y-3">
+                                                {/* Add main blogs page link first */}
+                                                <Link
+                                                    href="/blogs"
+                                                    className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border-2 border-gray-200 hover:bg-gray-100 transition-colors"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                >
+                                                    <IconComponents.PenTool className="text-black" />
+                                                    <div>
+                                                        <span className="font-medium">All Blogs</span>
+                                                        <p className="text-sm text-gray-600">Browse all our blog posts</p>
+                                                    </div>
+                                                </Link>
+
+                                                {/* Divider */}
+                                                <div className="border-t border-gray-200 my-3"></div>
+
+                                                {/* Blog categories */}
                                                 {navItemsRight[1].dropdownItems.map((item, index) => (
                                                     <Link
                                                         key={index}

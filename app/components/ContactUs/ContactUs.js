@@ -102,7 +102,7 @@ const ContactUs = () => {
     const isFaqInView = useInView(faqRef, { once: true, amount: 0.1 })
 
     return (
-        <div className="bg-gray-50 min-h-screen">
+        <div className="bg-gray-50 min-h-screen overflow-hidden">
             {/* Hero Section with Suspense fallback */}
             <Suspense fallback={<div className="h-64 bg-gray-900" aria-hidden="true"></div>}>
                 <Hero />
