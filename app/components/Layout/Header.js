@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, ArrowRight, LogIn } from 'lucide-react';
+import { Menu, X, ChevronDown, ArrowRight, LogIn, Briefcase } from 'lucide-react';
 
 // Preloading icons to avoid layout shifts
 import IconComponents from '../IconComponents';
@@ -17,10 +17,11 @@ const Header = () => {
     const blogsRef = useRef(null);
     const headerRef = useRef(null);
 
-    // Reduced navigation items with icons imported from IconComponents
+    // Updated navigation items with Our Work added
     const navItemsLeft = [
         { label: "Contact Us", href: "/contact-us", icon: <IconComponents.MessageSquare /> },
         { label: "About Us", href: "/about-us", icon: <IconComponents.Users /> },
+        { label: "Our Work", href: "/our-work", icon: <Briefcase size={18} /> }, // Added Our Work
         { label: "Careers", href: "/careers", icon: <IconComponents.Users /> },
     ];
 
@@ -185,7 +186,7 @@ const Header = () => {
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center justify-center h-20">
                     {/* Left Side Navigation */}
-                    <ul className="flex space-x-16">
+                    <ul className="flex space-x-12"> {/* Reduced spacing to accommodate Our Work */}
                         {navItemsLeft.map((item, index) => (
                             <motion.li
                                 key={index}
@@ -193,7 +194,7 @@ const Header = () => {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
-                                <Link href={item.href} className="flex items-center gap-2">
+                                <Link href={item.href} className="flex items-center gap-2 font-medium">
                                     {item.label}
                                 </Link>
                             </motion.li>
@@ -201,7 +202,7 @@ const Header = () => {
                     </ul>
 
                     {/* Logo (centered) */}
-                    <div className="mx-24 relative h-16 w-16">
+                    <div className="mx-16 relative h-16 w-16"> {/* Reduced margin to fit more nav items */}
                         <Link href="/">
                             <Image
                                 src="/logo.png"
@@ -215,7 +216,7 @@ const Header = () => {
                     </div>
 
                     {/* Right Side Navigation */}
-                    <ul className="flex space-x-16">
+                    <ul className="flex space-x-12"> {/* Reduced spacing */}
                         {navItemsRight.map((item, index) => (
                             <li
                                 key={index}
@@ -226,7 +227,7 @@ const Header = () => {
                             >
                                 <Link
                                     href={item.href}
-                                    className="flex items-center gap-2"
+                                    className="flex items-center gap-2 font-medium"
                                     onClick={(e) => {
                                         if (item.hasDropdown) {
                                             // Don't prevent default - allow navigation to the page
@@ -254,6 +255,21 @@ const Header = () => {
                                             exit="hidden"
                                             variants={dropdownVariants}
                                         >
+                                            {/* Main page link at top of dropdown */}
+                                            <div className="bg-gray-50 border-b border-gray-200">
+                                                <Link
+                                                    href={item.href}
+                                                    className="flex items-center gap-2 w-full px-4 py-3 text-black hover:text-gray-700 font-medium"
+                                                    onClick={() => {
+                                                        setIsServicesOpen(false);
+                                                        setIsBlogOpen(false);
+                                                    }}
+                                                >
+                                                    {item.icon}
+                                                    All {item.label}
+                                                </Link>
+                                            </div>
+
                                             <ul className="py-1">
                                                 {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
                                                     <motion.li
@@ -446,7 +462,7 @@ const Header = () => {
                                         >
                                             <h3 className="font-medium text-lg mb-4">Services</h3>
                                             <div className="space-y-3">
-                                                {/* Add main services page link first */}
+                                                {/* Main services page link */}
                                                 <Link
                                                     href="/services"
                                                     className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border-2 border-gray-200 hover:bg-gray-100 transition-colors"
@@ -488,7 +504,7 @@ const Header = () => {
                                         >
                                             <h3 className="font-medium text-lg mb-4">Blogs</h3>
                                             <div className="space-y-3">
-                                                {/* Add main blogs page link first */}
+                                                {/* Main blogs page link */}
                                                 <Link
                                                     href="/blogs"
                                                     className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border-2 border-gray-200 hover:bg-gray-100 transition-colors"
