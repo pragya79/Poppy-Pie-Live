@@ -36,7 +36,7 @@
     "cloudinary": "^2.6.0",
     "clsx": "^2.1.1",
     "crypto": "^1.0.1",
-    "framer-motion": "^12.4.7",
+    "framer-motion": "^12.23.12",
     "fs": "^0.0.1-security",
     "gsap": "^3.12.7",
     "lucide": "^0.476.0",

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { motion } from "framer-motion"
-import { ArrowLeft, Check, ArrowRight, Mail } from "lucide-react"
+import { ArrowLeft, Check, ArrowRight, Mail, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
 import { products, services } from "@/app/components/Services/servicesData"
@@ -159,6 +159,41 @@ export default function ServiceDetailPage() {
                                 </p>
                             ))}
 
+                            {/* Live Site Link for Fitness API */}
+                            {item.id === 'fitness-api' && item.liveUrl && (
+                                <div className="mt-8 mb-8 p-6 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl border border-primary/10">
+                                    <h3 className="text-xl font-bold mb-4 text-foreground">🚀 Live Product</h3>
+                                    <p className="text-foreground/80 mb-4">
+                                        Experience our AI-powered fitness platform in action. Click below to visit the full application.
+                                    </p>
+                                    <div className="flex flex-col sm:flex-row gap-4 items-start">
+                                        <a
+                                            href={item.liveUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                                        >
+                                            <ExternalLink className="mr-2 h-4 w-4" />
+                                            Visit Fitness API Live
+                                        </a>
+                                        <div className="text-sm text-foreground/60">
+                                            <p>🏋️‍♂️ AI-Powered Fitness Platform</p>
+                                            <p>📱 Mobile-First Design</p>
+                                            <p>⚡ Real-time APIs</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Additional Details for Live Products */}
+                            {item.details && (
+                                <div className="mt-8 mb-8">
+                                    <p className="text-foreground/80 leading-relaxed">
+                                        {item.details}
+                                    </p>
+                                </div>
+                            )}
+
                             {/* Key Features */}
                             {item.features && (
                                 <div className="mt-12 pt-8 border-t border-border">
@@ -184,25 +219,53 @@ export default function ServiceDetailPage() {
             <section className="py-12 sm:py-16 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6">
                     <div className="max-w-3xl mx-auto text-center">
-                        <h2 className="text-2xl sm:text-3xl font-bold mb-6">Ready to get started?</h2>
+                        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
+                            {item.id === 'fitness-api' ? 'Ready to revolutionize your gym?' : 'Ready to get started?'}
+                        </h2>
                         <p className="text-foreground/80 mb-8 max-w-xl mx-auto">
-                            Let&apos;s discuss how our {item.id.includes('product') ? 'product' : 'service'} can help your business grow. Contact us today for a free consultation.
+                            {item.id === 'fitness-api'
+                                ? 'Join the fitness technology revolution with our AI-powered platform. Contact us to see how Fitness API can transform your gym operations.'
+                                : `Let's discuss how our ${item.id.includes('product') ? 'product' : 'service'} can help your business grow. Contact us today for a free consultation.`
+                            }
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link
-                                href="/contact-us"
-                                className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
-                            >
-                                Contact Us
-                                <ArrowRight className="ml-2 h-4 w-4" />
-                            </Link>
-                            <Link
-                                href="mailto:contact@poppypie.com"
-                                className="inline-flex items-center justify-center px-6 py-3 bg-background text-foreground rounded-lg font-medium border border-border hover:bg-accent transition-colors"
-                            >
-                                <Mail className="mr-2 h-4 w-4" />
-                                Email Us
-                            </Link>
+                            {item.id === 'fitness-api' && item.liveUrl ? (
+                                <>
+                                    <a
+                                        href={item.liveUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                                    >
+                                        <ExternalLink className="mr-2 h-4 w-4" />
+                                        Explore Live Platform
+                                    </a>
+                                    <Link
+                                        href="/contact-us"
+                                        className="inline-flex items-center justify-center px-6 py-3 bg-background text-foreground rounded-lg font-medium border border-border hover:bg-accent transition-colors"
+                                    >
+                                        Request Demo
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Link
+                                        href="/contact-us"
+                                        className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                                    >
+                                        Contact Us
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Link>
+                                    <Link
+                                        href="mailto:contact@poppypie.com"
+                                        className="inline-flex items-center justify-center px-6 py-3 bg-background text-foreground rounded-lg font-medium border border-border hover:bg-accent transition-colors"
+                                    >
+                                        <Mail className="mr-2 h-4 w-4" />
+                                        Email Us
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

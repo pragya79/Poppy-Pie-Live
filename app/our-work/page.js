@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Filter, Sparkles, Plus, Search, X } from "lucide-react"
 import { portfolioItems, categories, categoryMap } from "./DataUtility"
 import Link from "next/link"
+import { ThreeDMarquee } from "@/components/ui/3d-marquee"
 
 // Enhanced Loading Component
 const CreativeLoader = () => {
@@ -128,6 +129,11 @@ const OurWorkPage = () => {
         })
     }, [activeCategory, searchTerm])
 
+    const featuredProjectImages = portfolioItems
+        .slice(0, 20)
+        .map(item => item.image);
+
+
     // Reset visible count when filters change
     useEffect(() => {
         setIsLoading(true)
@@ -205,6 +211,14 @@ const OurWorkPage = () => {
                     }
                 }
             `}</style>
+
+            <section className="py-16">
+                <h2 className="text-4xl font-bold text-center mb-12">Featured Projects</h2>
+                <ThreeDMarquee
+                    images={featuredProjectImages}
+                    className="h-[600px] mx-auto"
+                />
+            </section>
 
             <div className="min-h-screen bg-white">
                 {/* Hero Section with Background Image */}
