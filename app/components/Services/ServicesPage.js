@@ -67,7 +67,9 @@ export default function ProductsAndServices() {
             description: item.description,
             features: item.features,
             action: item.action,
-            link: "#" // You can set actual links if needed
+            link: "#", // You can set actual links if needed
+            liveUrl: item.liveUrl, // Add liveUrl for products with live sites
+            isLiveProduct: item.isLiveProduct // Add flag for live products
         }))
     }
 

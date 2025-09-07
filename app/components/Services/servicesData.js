@@ -118,6 +118,27 @@ export const products = [
         ],
         action: "Know More",
     },
+    {
+        id: "fitness-api",
+        title: "Fitness API - AI Fitness Platform",
+        description:
+            "Enterprise-grade fitness tracking APIs and platform designed for modern gyms, featuring AI-powered workout planning, nutrition management, and comprehensive member analytics.",
+        details:
+            "Fitness API is a comprehensive fitness API platform that empowers gyms with AI-driven solutions. Built with Next.js 15, TypeScript, and Google Gemini AI, it provides complete fitness tracking, personalized workout planning, nutrition management, and advanced progress analytics. The platform features a mobile-first responsive design, multi-tenant architecture, and real-time integration capabilities.",
+        features: [
+            "AI-powered workout planning with Google Gemini",
+            "Comprehensive nutrition and diet management APIs",
+            "Real-time progress tracking and analytics",
+            "Multi-tenant architecture for gym chains",
+            "Mobile-first responsive design (320px to 1600px+)",
+            "Enterprise security with JWT authentication",
+            "RESTful API endpoints for easy integration",
+            "Custom member management system"
+        ],
+        action: "Visit Live Site",
+        liveUrl: "https://gym-project-pied-eta.vercel.app/",
+        isLiveProduct: true,
+    },
 ];
 
 export const services = [
