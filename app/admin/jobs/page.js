@@ -1,25 +1,20 @@
-"use client"
+﻿"use client"
 
-import { useState, useEffect, useMemo } from "react"
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-    CardFooter
-} from "@/components/ui/card"
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
+    Plus,
     Search,
-    FileText,
+    Briefcase,
+    MapPin,
+    Calendar,
+    Users,
+    Eye,
     Edit,
     Trash2,
-    Plus,
-    Calendar,
-    User,
-    Image as ImageIcon,
-    Tag,
-    Eye
+    Filter
 } from "lucide-react"
 import {
     Select,
@@ -36,429 +31,118 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/app/components/context/AuthProvider"
 import { useRouter } from "next/navigation"
-import dynamic from 'next/dynamic'
-const ReactQuill = dynamic(() => import('react-quill-new'), {
-    ssr: false,
-    loading: () => <p>Loading editor...</p>,
-})
-import 'react-quill-new/dist/quill.snow.css'
 
-// Categories
-const categories = [
-    "Digital Marketing",
-    "Branding",
-    "Content Marketing",
-    "Social Media",
-    "Email Marketing",
-    "SEO",
-    "PPC",
-    "Analytics"
-]
-
-export default function AdminBlog() {
-    const [blogPosts, setBlogPosts] = useState([])
-    const [filteredPosts, setFilteredPosts] = useState([])
+export default function JobsManagement() {
+    const [jobs, setJobs] = useState([])
+    const [filteredJobs, setFilteredJobs] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [categoryFilter, setCategoryFilter] = useState("all")
-    const [editingPost, setEditingPost] = useState(null)
-    const [isEditorOpen, setIsEditorOpen] = useState(false)
-    const [isNewPost, setIsNewPost] = useState(false)
-    const [confirmDeleteId, setConfirmDeleteId] = useState(null)
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [error, setError] = useState(null)
-    const [previewPost, setPreviewPost] = useState(null)
+    const [deleteJobId, setDeleteJobId] = useState(null)
+    const [isDeleting, setIsDeleting] = useState(false)
 
-    // Form state
-    const [formData, setFormData] = useState({
-        title: "",
-        slug: "",
-        content: "",
-        featuredImage: "",
-        category: "",
-        tags: "",
-        status: "draft",
-        publicUrl: ""
-    })
-
-    const { user, isAuthenticated, loading } = useAuth()
+    const { isAuthenticated, loading, isAdmin } = useAuth()
     const router = useRouter()
 
-    // Quill toolbar modules with custom image handler
-    const quillModules = useMemo(() => ({
-        toolbar: {
-            container: [
-                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                ['link', 'image'],
-                ['clean']
-            ],
-            handlers: {
-                image: handleImageUpload
-            }
-        }
-    }), [])
-
-    // Custom image upload handler for Cloudinary
-    function handleImageUpload() {
-        const editor = this.quill
-        const input = document.createElement('input')
-        input.setAttribute('type', 'file')
-        input.setAttribute('accept', 'image/*')
-        input.click()
-
-        input.onchange = async () => {
-            const file = input.files[0]
-            if (file) {
-                try {
-                    const formData = new FormData()
-                    formData.append('file', file)
-                    formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET)
-
-                    const response = await fetch(
-                        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-                        {
-                            method: 'POST',
-                            body: formData
-                        }
-                    )
-
-                    const data = await response.json()
-                    if (data.secure_url) {
-                        const range = editor.getSelection()
-                        editor.insertEmbed(range.index, 'image', data.secure_url)
-                    } else {
-                        throw new Error('Failed to upload image')
-                    }
-                } catch (error) {
-                    console.error('Image upload failed:', error)
-                    setError('Failed to upload image to Cloudinary')
-                }
-            }
-        }
-    }
-
-    // Fetch blog posts from API
+    // Fetch jobs
     useEffect(() => {
-        const fetchBlogPosts = async () => {
+        const fetchJobs = async () => {
             setIsLoading(true)
             try {
-                const response = await fetch('/api/posts')
-                if (!response.ok) {
-                    throw new Error('Failed to fetch blog posts')
+                const response = await fetch('/api/jobs?includeStats=true')
+                if (response.ok) {
+                    const data = await response.json()
+                    setJobs(data.jobs || [])
+                    setFilteredJobs(data.jobs || [])
+                } else {
+                    console.error('Failed to fetch jobs:', response.statusText)
                 }
-                const data = await response.json()
-                setBlogPosts(data)
-                setFilteredPosts(data)
             } catch (error) {
-                setError(error.message)
-                console.error('Failed to fetch blog posts:', error)
+                console.error('Failed to fetch jobs:', error)
             } finally {
                 setIsLoading(false)
             }
         }
 
-        if (!loading && isAuthenticated) {
-            fetchBlogPosts()
-        } else if (!loading && !isAuthenticated) {
+        if (!loading && isAuthenticated && isAdmin()) {
+            fetchJobs()
+        } else if (!loading && (!isAuthenticated || !isAdmin())) {
             router.push('/login')
         }
-    }, [loading, isAuthenticated, router])
+    }, [isAuthenticated, loading, isAdmin, router])
 
-    // Handle filtering and searching
+    // Filter jobs
     useEffect(() => {
-        let result = [...blogPosts]
+        let result = [...jobs]
 
         if (statusFilter !== "all") {
-            result = result.filter(post => post.status === statusFilter)
+            result = result.filter(job => job.status === statusFilter)
         }
 
         if (categoryFilter !== "all") {
-            result = result.filter(post => post.category === categoryFilter)
+            result = result.filter(job => job.category === categoryFilter)
         }
 
         if (searchTerm) {
             const term = searchTerm.toLowerCase()
-            result = result.filter(post =>
-                post.title.toLowerCase().includes(term) ||
-                post.content.toLowerCase().includes(term) ||
-                (post.tags && post.tags.some(tag => tag.toLowerCase().includes(term)))
+            result = result.filter(job =>
+                job.title.toLowerCase().includes(term) ||
+                job.category.toLowerCase().includes(term) ||
+                job.location.toLowerCase().includes(term) ||
+                job.employmentType.toLowerCase().includes(term)
             )
         }
 
-        setFilteredPosts(result)
-    }, [blogPosts, statusFilter, categoryFilter, searchTerm])
+        setFilteredJobs(result)
+    }, [jobs, statusFilter, categoryFilter, searchTerm])
 
-    // Handle edit post
-    const handleEditPost = (post) => {
-        setEditingPost(post)
-        setIsNewPost(false)
-        setFormData({
-            title: post.title,
-            slug: post.slug,
-            content: post.content,
-            featuredImage: post.featuredImage,
-            category: post.category,
-            tags: post.tags ? post.tags.join(", ") : "",
-            status: post.status,
-            publicUrl: post.publicUrl || ""
-        })
-        setIsEditorOpen(true)
-    }
+    // Handle job deletion
+    const handleDeleteJob = async () => {
+        if (!deleteJobId) return
 
-    // Handle new post
-    const handleNewPost = () => {
-        setEditingPost(null)
-        setIsNewPost(true)
-        setFormData({
-            title: "",
-            slug: "",
-            content: "",
-            featuredImage: "",
-            category: categories[0],
-            tags: "",
-            status: "draft",
-            publicUrl: ""
-        })
-        setIsEditorOpen(true)
-    }
-
-    // Handle form input change
-    const handleInputChange = (e) => {
-        const { name, value } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }))
-
-        if (name === 'title' && isNewPost) {
-            const slug = value
-                .toLowerCase()
-                .replace(/[^\w\s]/gi, '')
-                .replace(/\s+/g, '-')
-            setFormData(prev => ({
-                ...prev,
-                slug
-            }))
-        }
-    }
-
-    // Handle content change in Quill editor
-    const handleContentChange = (content) => {
-        setFormData(prev => ({
-            ...prev,
-            content
-        }))
-    }
-
-    // Handle save post
-    const handleSavePost = async () => {
-        if (!formData.title || !formData.content) {
-            setError("Title and content are required")
-            return
-        }
-
-        setIsSubmitting(true)
-        setError(null)
-
+        setIsDeleting(true)
         try {
-            const processedTags = formData.tags
-                ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
-                : []
+            const response = await fetch(`/api/jobs/${deleteJobId}`, {
+                method: 'DELETE',
+            })
 
-            const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-            const postData = {
-                ...formData,
-                tags: processedTags,
-                author: "Admin",
-                publicUrl: formData.status === "published" ? `${baseUrl}/blog/${formData.slug}.html` : ""
-            }
-
-            let response;
-            if (isNewPost) {
-                response = await fetch('/api/posts', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(postData)
-                })
+            if (response.ok) {
+                setJobs(prev => prev.filter(job => job.id !== deleteJobId))
+                console.log('Job deleted successfully')
             } else {
-                response = await fetch(`/api/posts/${editingPost._id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(postData)
-                })
+                const data = await response.json()
+                alert(`Failed to delete job: ${data.error}`)
             }
-
-            if (!response.ok) {
-                throw new Error(`Failed to ${isNewPost ? 'create' : 'update'} post`)
-            }
-
-            const updatedPost = await response.json()
-
-            // If the post is published, notify the backend to make it public and request indexing
-            if (postData.status === "published") {
-                try {
-                    const publishResponse = await fetch('/api/publish', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            url: postData.publicUrl,
-                            title: postData.title,
-                            content: postData.content,
-                            featuredImage: postData.featuredImage,
-                            category: postData.category,
-                            tags: postData.tags,
-                            author: postData.author,
-                            publishedDate: updatedPost.publishedDate || new Date().toISOString()
-                        })
-                    })
-
-                    if (!publishResponse.ok) {
-                        throw new Error('Failed to publish post publicly')
-                    }
-                } catch (error) {
-                    console.error('Failed to notify backend for public publishing:', error)
-                    setError('Post saved, but failed to publish publicly')
-                }
-            }
-
-            if (isNewPost) {
-                setBlogPosts(prev => [updatedPost, ...prev])
-            } else {
-                setBlogPosts(prev => prev.map(post =>
-                    post._id === updatedPost._id ? updatedPost : post
-                ))
-            }
-
-            setIsEditorOpen(false)
-            console.log(`Post ${isNewPost ? 'created' : 'updated'} successfully!`)
         } catch (error) {
-            setError(error.message)
-            console.error(`Failed to ${isNewPost ? 'create' : 'update'} post:`, error)
+            console.error('Failed to delete job:', error)
+            alert('Failed to delete job')
         } finally {
-            setIsSubmitting(false)
+            setIsDeleting(false)
+            setDeleteJobId(null)
         }
     }
 
-    // Handle delete post
-    const handleDeletePost = async (id) => {
-        try {
-            const response = await fetch(`/api/posts/${id}`, {
-                method: 'DELETE'
-            })
-
-            if (!response.ok) {
-                throw new Error('Failed to delete post')
-            }
-
-            setBlogPosts(prev => prev.filter(post => post._id !== id))
-            setConfirmDeleteId(null)
-            console.log("Post deleted successfully!")
-        } catch (error) {
-            setError(error.message)
-            console.error("Failed to delete post:", error)
-        }
-    }
-
-    // Handle publish/unpublish post
-    const handleStatusChange = async (id, newStatus) => {
-        try {
-            const post = blogPosts.find(post => post._id === id)
-            const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-            const updatedPostData = {
-                ...post,
-                status: newStatus,
-                publishedDate: newStatus === 'published' && !post.publishedDate
-                    ? new Date().toISOString()
-                    : post.publishedDate,
-                tags: post.tags || [],
-                publicUrl: newStatus === "published" ? `${baseUrl}/blog/${post.slug}.html` : ""
-            }
-
-            const response = await fetch(`/api/posts/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedPostData)
-            })
-
-            if (!response.ok) {
-                throw new Error(`Failed to ${newStatus === 'published' ? 'publish' : 'unpublish'} post`)
-            }
-
-            const updatedPost = await response.json()
-
-            // If the post is published, notify the backend to make it public and request indexing
-            if (newStatus === "published") {
-                try {
-                    const publishResponse = await fetch('/api/publish', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            url: updatedPostData.publicUrl,
-                            title: updatedPostData.title,
-                            content: updatedPostData.content,
-                            featuredImage: updatedPostData.featuredImage,
-                            category: updatedPostData.category,
-                            tags: updatedPostData.tags,
-                            author: updatedPostData.author,
-                            publishedDate: updatedPostData.publishedDate
-                        })
-                    })
-
-                    if (!publishResponse.ok) {
-                        throw new Error('Failed to publish post publicly')
-                    }
-                } catch (error) {
-                    console.error('Failed to notify backend for public publishing:', error)
-                    setError('Post published, but failed to make it public')
-                }
-            }
-
-            setBlogPosts(prev => prev.map(post =>
-                post._id === id ? updatedPost : post
-            ))
-
-            console.log(`Post ${newStatus === 'published' ? 'published' : 'unpublished'} successfully!`)
-        } catch (error) {
-            setError(error.message)
-            console.error(`Failed to ${newStatus === 'published' ? 'publish' : 'unpublish'} post:`, error)
+    // Get status badge color
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case 'published':
+                return 'bg-green-100 text-green-800'
+            case 'draft':
+                return 'bg-yellow-100 text-yellow-800'
+            case 'archived':
+                return 'bg-gray-100 text-gray-800'
+            default:
+                return 'bg-gray-100 text-gray-800'
         }
     }
 
     // Format date
     const formatDate = (dateString) => {
-        if (!dateString) return "Not published"
-
-        const date = new Date(dateString)
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        })
-    }
-
-    // Handle preview post
-    const handlePreviewPost = (post) => {
-        setPreviewPost(post)
+        if (!dateString) return 'Not set'
+        return new Date(dateString).toLocaleDateString()
     }
 
     if (loading) {
@@ -470,8 +154,181 @@ export default function AdminBlog() {
     }
 
     return (
-        <div className="flex justify-center items-center h-screen">
-                <div>Yet to Implement</div>
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold">Jobs Management</h1>
+                    <p className="text-gray-600">Manage job postings and applications</p>
+                </div>
+                <Button onClick={() => router.push('/admin/jobs/create')}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Job
+                </Button>
+            </div>
+
+            {/* Filters */}
+            <Card>
+                <CardContent className="pt-6">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex-1 relative">
+                            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <Input
+                                placeholder="Search jobs..."
+                                className="pl-9"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex gap-3">
+                            <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                <SelectTrigger className="w-[140px]">
+                                    <SelectValue placeholder="Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Status</SelectItem>
+                                    <SelectItem value="published">Published</SelectItem>
+                                    <SelectItem value="draft">Draft</SelectItem>
+                                    <SelectItem value="archived">Archived</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                                <SelectTrigger className="w-[140px]">
+                                    <SelectValue placeholder="Category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Categories</SelectItem>
+                                    <SelectItem value="Engineering">Engineering</SelectItem>
+                                    <SelectItem value="Design">Design</SelectItem>
+                                    <SelectItem value="Marketing">Marketing</SelectItem>
+                                    <SelectItem value="Sales">Sales</SelectItem>
+                                    <SelectItem value="Operations">Operations</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Jobs List */}
+            {isLoading ? (
+                <div className="flex justify-center py-8">
+                    <div className="w-8 h-8 border-t-2 border-blue-500 rounded-full animate-spin"></div>
+                </div>
+            ) : filteredJobs.length === 0 ? (
+                <Card>
+                    <CardContent className="text-center py-8">
+                        <Briefcase className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                        <p className="text-gray-500">No jobs found</p>
+                        {(searchTerm || statusFilter !== "all" || categoryFilter !== "all") && (
+                            <Button
+                                variant="link"
+                                onClick={() => {
+                                    setSearchTerm("")
+                                    setStatusFilter("all")
+                                    setCategoryFilter("all")
+                                }}
+                            >
+                                Clear filters
+                            </Button>
+                        )}
+                    </CardContent>
+                </Card>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredJobs.map((job) => (
+                        <Card key={job.id} className="hover:shadow-lg transition-shadow">
+                            <CardHeader>
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Briefcase className="h-5 w-5" />
+                                        <CardTitle className="text-lg">{job.title}</CardTitle>
+                                    </div>
+                                    <span className={`inline-flex px-2 py-1 text-xs rounded-full ${getStatusBadge(job.status)}`}>
+                                        {job.status}
+                                    </span>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <MapPin className="h-4 w-4" />
+                                        <span>{job.location || 'Remote'}</span>
+                                        <span>•</span>
+                                        <span>{job.employmentType}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <Calendar className="h-4 w-4" />
+                                        <span>Deadline: {formatDate(job.applicationDeadline)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <Users className="h-4 w-4" />
+                                        <span>{job.applicationCount || 0} applications</span>
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-2">
+                                        Category: {job.category}
+                                    </p>
+                                </div>
+
+                                <div className="flex justify-end items-center gap-2 mt-4">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => router.push(`/admin/jobs/${job.id}/applications`)}
+                                        title="View Applications"
+                                    >
+                                        <Eye className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => router.push(`/admin/jobs/edit/${job.id}`)}
+                                        title="Edit Job"
+                                    >
+                                        <Edit className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setDeleteJobId(job.id)}
+                                        title="Delete Job"
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            )}
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={!!deleteJobId} onOpenChange={() => setDeleteJobId(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Delete Job</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to delete this job? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setDeleteJobId(null)}
+                            disabled={isDeleting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDeleteJob}
+                            disabled={isDeleting}
+                        >
+                            {isDeleting ? "Deleting..." : "Delete"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

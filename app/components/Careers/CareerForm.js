@@ -1,12 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Check, Upload, Info } from "lucide-react"
-import { useServicesData } from "./useServiceData"
 
 // Import UI components
 import {
@@ -37,7 +36,7 @@ import {
 
 // Form validation schema
 const formSchema = z.object({
-    name: z.string().min(2, {
+    applicantName: z.string().min(2, {
         message: "Name must be at least 2 characters.",
     }),
     email: z.string().email({
@@ -46,13 +45,13 @@ const formSchema = z.object({
     phone: z.string().min(10, {
         message: "Please enter a valid phone number.",
     }),
-    position: z.string({
+    jobId: z.string({
         required_error: "Please select a position you're applying for",
     }),
     experience: z.string().min(1, {
         message: "Please enter your years of experience.",
     }),
-    portfolio: z.string().url().optional().or(z.literal("")),
+    portfolioUrl: z.string().url().optional().or(z.literal("")),
     resume: z.any()
         .refine((file) => file?.length > 0, "Resume is required")
         .refine(
@@ -69,7 +68,7 @@ const formSchema = z.object({
             },
             "Only PDF, DOC and DOCX files are accepted"
         ),
-    cover_letter: z.string().min(50, {
+    coverLetter: z.string().min(50, {
         message: "Cover letter must be at least 50 characters.",
     }),
 });
@@ -79,20 +78,39 @@ const CareerForm = () => {
     const [formSubmitted, setFormSubmitted] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [fileName, setFileName] = useState("")
-    const { services, loading, error } = useServicesData()
+    const [jobs, setJobs] = useState([])
+    const [jobsLoading, setJobsLoading] = useState(true)
+
+    useEffect(() => {
+        fetchJobs()
+    }, [])
+
+    const fetchJobs = async () => {
+        try {
+            const response = await fetch('/api/jobs?status=published')
+            if (response.ok) {
+                const data = await response.json()
+                setJobs(data.jobs || [])
+            }
+        } catch (error) {
+            console.error('Error fetching jobs:', error)
+        } finally {
+            setJobsLoading(false)
+        }
+    }
 
     // React Hook Form
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
+            applicantName: "",
             email: "",
             phone: "",
-            position: "",
+            jobId: "",
             experience: "",
-            portfolio: "",
+            portfolioUrl: "",
             resume: undefined,
-            cover_letter: "",
+            coverLetter: "",
         }
     })
 
@@ -101,19 +119,56 @@ const CareerForm = () => {
         setIsSubmitting(true)
 
         try {
-            // In a real app, this would be an API call to handle the form submission
-            // And likely would use FormData to handle the file upload
+            // First upload the resume if provided
+            let resumeUrl = '';
+            if (values.resume && values.resume.length > 0) {
+                const imageFormData = new FormData();
+                imageFormData.append('image', values.resume[0]);
 
-            console.log("Form submitted:", values)
+                const uploadResponse = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: imageFormData,
+                });
 
-            // Simulate API call with delay
-            await new Promise(resolve => setTimeout(resolve, 1500))
+                if (uploadResponse.ok) {
+                    const uploadData = await uploadResponse.json();
+                    resumeUrl = uploadData.url;
+                }
+            }
 
+            // Prepare application data
+            const applicationData = {
+                jobId: values.jobId,
+                applicantName: values.applicantName,
+                email: values.email,
+                phone: values.phone,
+                experience: values.experience,
+                portfolioUrl: values.portfolioUrl || undefined,
+                resumeUrl,
+                coverLetter: values.coverLetter,
+            };
+
+            // Submit application
+            const response = await fetch(`/api/jobs/${values.jobId}/applications`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(applicationData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to submit application');
+            }
+
+            console.log("Application submitted successfully")
             setFormSubmitted(true)
             form.reset()
             setFileName("")
         } catch (error) {
             console.error("Form submission error:", error)
+            alert(error.message || 'Failed to submit application. Please try again.');
         } finally {
             setIsSubmitting(false)
         }
@@ -181,7 +236,7 @@ const CareerForm = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <FormField
                                     control={form.control}
-                                    name="name"
+                                    name="applicantName"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="text-gray-700">Full Name</FormLabel>
@@ -223,14 +278,15 @@ const CareerForm = () => {
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="position"
+                                    name="jobId"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="text-gray-700">Position</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                                disabled={loading}
+                                                value={field.value}
+                                                disabled={jobsLoading}
+                                                name="position"
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className="border-gray-300">
@@ -238,14 +294,14 @@ const CareerForm = () => {
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    {services.map((option) => (
-                                                        <SelectItem key={option.id} value={option.value}>
-                                                            {option.label}
+                                                    {jobs.map((job) => (
+                                                        <SelectItem key={job._id} value={job._id}>
+                                                            {job.title} - {job.department}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
-                                            {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+                                            {jobsLoading && <p className="text-sm text-gray-500 mt-1">Loading positions...</p>}
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -272,7 +328,7 @@ const CareerForm = () => {
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="portfolio"
+                                    name="portfolioUrl"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="text-gray-700 flex items-center">
@@ -342,7 +398,7 @@ const CareerForm = () => {
 
                             <FormField
                                 control={form.control}
-                                name="cover_letter"
+                                name="coverLetter"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="text-gray-700">Cover Letter</FormLabel>

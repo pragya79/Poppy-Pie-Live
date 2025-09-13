@@ -99,15 +99,36 @@ const ContactForm = () => {
         setIsSubmitting(true)
 
         try {
-            // Simulate API call - reduced timeout for better UX
-            await new Promise(resolve => setTimeout(resolve, 600))
+            // Make API call to submit contact form
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: values.name,
+                    email: values.email,
+                    phone: values.phone,
+                    subject: values.subject,
+                    message: values.message,
+                    services: selectedService,
+                }),
+            });
 
-            console.log("Form submitted:", values)
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to submit inquiry');
+            }
+
+            console.log("Form submitted successfully:", data)
             setFormSubmitted(true)
             form.reset()
             setSelectedService("")
         } catch (error) {
             console.error("Form submission error:", error)
+            // Show error message to user
+            alert(error.message || 'Failed to send message. Please try again or contact us directly.')
         } finally {
             setIsSubmitting(false)
         }

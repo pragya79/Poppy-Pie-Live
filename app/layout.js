@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "./components/Layout/Header";
 import Footer from "./components/Layout/Footer";
 import AuthWrapper from "./components/context/AuthWrapper"; // 👈 new import
+import ErrorBoundary from "./components/shared/ErrorBoundary";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -30,11 +31,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${reenieBeanie.variable} antialiased`}>
-        <AuthWrapper>
-          <Header />
-          {children}
-          <Footer />
-        </AuthWrapper>
+        <ErrorBoundary>
+          <AuthWrapper>
+            <Header />
+            {children}
+            <Footer />
+          </AuthWrapper>
+        </ErrorBoundary>
       </body>
     </html>
   );

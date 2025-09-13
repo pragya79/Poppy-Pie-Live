@@ -50,7 +50,7 @@ const StatsSection = () => {
 
             return () => clearInterval(timer)
         }
-    }, [isInView])
+    }, [isInView, targetCounts.awards, targetCounts.clients, targetCounts.projects])
 
     // Animation variants
     const containerVariants = {

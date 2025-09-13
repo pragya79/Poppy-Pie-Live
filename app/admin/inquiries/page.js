@@ -137,7 +137,7 @@ export default function AdminInquiries() {
     const { user, isAuthenticated, loading } = useAuth()
     const router = useRouter()
 
-    // Fetch inquiries (simulated)
+    // Fetch inquiries from API
     useEffect(() => {
         // Redirect if not authenticated
         // if (!loading && !isAuthenticated) {
@@ -148,21 +148,31 @@ export default function AdminInquiries() {
         const fetchInquiries = async () => {
             setIsLoading(true)
             try {
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 800))
-                setInquiries(mockInquiries)
-                setFilteredInquiries(mockInquiries)
+                const response = await fetch('/api/inquiries');
+                if (response.ok) {
+                    const data = await response.json();
+                    const inquiriesData = data.inquiries || data; // Handle both response formats
+                    setInquiries(inquiriesData);
+                    setFilteredInquiries(inquiriesData);
+                } else {
+                    console.error('Failed to fetch inquiries:', response.statusText);
+                    // Fallback to mock data if API fails
+                    setInquiries(mockInquiries);
+                    setFilteredInquiries(mockInquiries);
+                }
             } catch (error) {
-                console.error('Failed to fetch inquiries:', error)
+                console.error('Failed to fetch inquiries:', error);
+                // Fallback to mock data if API fails
+                setInquiries(mockInquiries);
+                setFilteredInquiries(mockInquiries);
             } finally {
                 setIsLoading(false)
             }
         }
 
         // if (isAuthenticated) {
-        // fetchInquiries()
-        // }
         fetchInquiries()
+        // }
     }, [isAuthenticated, loading, router])
 
     // Handle filtering and searching
@@ -202,23 +212,40 @@ export default function AdminInquiries() {
         setIsSubmitting(true)
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            const response = await fetch(`/api/inquiries/${selectedInquiry.id}/respond`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    response: responseText,
+                    respondedBy: 'Admin'
+                }),
+            });
 
-            // Update inquiry status in our local state
-            const updatedInquiries = inquiries.map(inq =>
-                inq.id === selectedInquiry.id
-                    ? { ...inq, status: "completed" }
-                    : inq
-            )
+            const data = await response.json();
 
-            setInquiries(updatedInquiries)
+            if (response.ok) {
+                // Update inquiry status in our local state
+                const updatedInquiries = inquiries.map(inq =>
+                    inq.id === selectedInquiry.id
+                        ? { ...inq, status: "completed", response: responseText, responseDate: new Date().toISOString() }
+                        : inq
+                )
+                setInquiries(updatedInquiries)
+
+                alert(data.emailError ?
+                    'Response saved but email failed to send. Please contact customer manually.' :
+                    'Response sent successfully!'
+                );
+            } else {
+                throw new Error(data.error || 'Failed to send response');
+            }
+
             setOpenDialog(false)
-
-            // Show success message (you could use a toast here)
-            console.log("Response sent successfully!")
         } catch (error) {
             console.error("Failed to send response:", error)
+            alert(`Failed to send response: ${error.message}`)
         } finally {
             setIsSubmitting(false)
         }
@@ -227,17 +254,32 @@ export default function AdminInquiries() {
     // Handle status update
     const handleStatusUpdate = async (id, newStatus) => {
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 500))
+            const response = await fetch(`/api/inquiries/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: newStatus,
+                    updatedBy: 'Admin'
+                }),
+            });
 
-            // Update inquiry status in our local state
-            const updatedInquiries = inquiries.map(inq =>
-                inq.id === id ? { ...inq, status: newStatus } : inq
-            )
-
-            setInquiries(updatedInquiries)
+            if (response.ok) {
+                const updatedInquiry = await response.json();
+                // Update inquiry status in our local state
+                const updatedInquiries = inquiries.map(inq =>
+                    inq.id === id ? updatedInquiry : inq
+                )
+                setInquiries(updatedInquiries)
+                console.log(`Status updated to ${newStatus} successfully!`)
+            } else {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to update status');
+            }
         } catch (error) {
             console.error("Failed to update status:", error)
+            alert(`Failed to update status: ${error.message}`)
         }
     }
 
@@ -257,15 +299,19 @@ export default function AdminInquiries() {
     const handleRefresh = async () => {
         setIsLoading(true)
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 800))
-
-            // In a real app, you would fetch fresh data here
-            // For now, we'll just use our mock data
-            setInquiries(mockInquiries)
-            setFilteredInquiries(mockInquiries)
+            const response = await fetch('/api/inquiries');
+            if (response.ok) {
+                const data = await response.json();
+                const inquiriesData = data.inquiries || data; // Handle both response formats
+                setInquiries(inquiriesData);
+                setFilteredInquiries(inquiriesData);
+            } else {
+                console.error('Failed to refresh inquiries:', response.statusText);
+                // Keep existing data if refresh fails
+            }
         } catch (error) {
-            console.error('Failed to refresh inquiries:', error)
+            console.error('Failed to refresh inquiries:', error);
+            // Keep existing data if refresh fails
         } finally {
             setIsLoading(false)
         }

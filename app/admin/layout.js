@@ -3,7 +3,6 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { signOut } from "next-auth/react"
 
 import {
     Inbox,
@@ -27,7 +26,7 @@ export default function AdminLayout({ children }) {
     const pathname = usePathname()
 
     const { logout } = useAuth()
-    
+
 
     const navItems = [
         {
@@ -101,7 +100,7 @@ export default function AdminLayout({ children }) {
                         </div>
                         <div>
                             <p className="font-medium text-gray-800">Admin User</p>
-                            <p className="text-xs text-gray-500">admin@poppypie.com</p>
+                            <p className="text-xs text-gray-500">contact@poppypie.com</p>
                         </div>
                     </div>
                     <Button
@@ -167,7 +166,7 @@ export default function AdminLayout({ children }) {
                         </div>
                         <div>
                             <p className="font-medium text-gray-800">Admin User</p>
-                            <p className="text-xs text-gray-500">admin@poppypie.com</p>
+                            <p className="text-xs text-gray-500">contact@poppypie.com</p>
                         </div>
                     </div>
                     <Button

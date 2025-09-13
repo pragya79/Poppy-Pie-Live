@@ -1,6 +1,6 @@
 export const products = [
     {
-        id: "product-1",
+        id: "ai-marketing-manager",
         title: "AI Marketing Manager",
         description:
             "Automate your marketing campaigns with our powerful AI assistant that optimizes content delivery, audience targeting, and performance analytics in real-time.",
@@ -17,7 +17,7 @@ export const products = [
         action: "Know More",
     },
     {
-        id: "product-2",
+        id: "ai-lead-generator",
         title: "AI Lead Generator",
         description:
             "Discover and engage high-quality leads with our AI-powered tool that identifies potential customers based on behavior patterns and engagement metrics.",
@@ -34,7 +34,7 @@ export const products = [
         action: "Know More",
     },
     {
-        id: "product-3",
+        id: "ai-web-scraper",
         title: "AI Web Scraper",
         description:
             "Extract valuable data from websites to fuel your business intelligence with our advanced AI scraping tool that adapts to website changes automatically.",
@@ -51,7 +51,7 @@ export const products = [
         action: "Know More",
     },
     {
-        id: "product-4",
+        id: "ai-campaign-manager",
         title: "AI Campaign Manager",
         description:
             "Manage multiple marketing campaigns across platforms with an intelligent system that optimizes budget allocation and creative performance.",
@@ -68,7 +68,7 @@ export const products = [
         action: "Know More",
     },
     {
-        id: "product-5",
+        id: "ai-content-generator",
         title: "AI Content Generator",
         description:
             "Create engaging, SEO-optimized content at scale with our AI writing assistant that adapts to your brand voice and marketing objectives.",
@@ -85,7 +85,7 @@ export const products = [
         action: "Know More",
     },
     {
-        id: "product-6",
+        id: "ai-analytics-dashboard",
         title: "AI Analytics Dashboard",
         description:
             "Visualize and interpret complex marketing data with our intuitive analytics platform that provides actionable insights and predictive forecasting.",
@@ -102,7 +102,7 @@ export const products = [
         action: "Know More",
     },
     {
-        id: "product-7",
+        id: "ai-email-automation",
         title: "AI Email Automation",
         description:
             "Boost email engagement and conversion rates with personalized, AI-driven campaigns that adapt to recipient behavior and preferences.",
@@ -122,28 +122,26 @@ export const products = [
         id: "fitness-api",
         title: "Fitness API - AI Fitness Platform",
         description:
-            "Enterprise-grade fitness tracking APIs and platform designed for modern gyms, featuring AI-powered workout planning, nutrition management, and comprehensive member analytics.",
+            "Transform your gym with our enterprise-grade AI fitness platform. Complete workout planning, nutrition management, and member analytics - all powered by advanced AI technology.",
         details:
-            "Fitness API is a comprehensive fitness API platform that empowers gyms with AI-driven solutions. Built with Next.js 15, TypeScript, and Google Gemini AI, it provides complete fitness tracking, personalized workout planning, nutrition management, and advanced progress analytics. The platform features a mobile-first responsive design, multi-tenant architecture, and real-time integration capabilities.",
+            "Fitness API is the ultimate AI-powered fitness management solution for modern gyms, fitness centers, and health clubs. Our comprehensive platform combines cutting-edge artificial intelligence with robust API infrastructure to deliver personalized workout experiences, intelligent nutrition guidance, and detailed member analytics. Built with enterprise-grade security and scalability in mind, this turnkey solution can transform any fitness business into a tech-forward operation that members love.",
         features: [
-            "AI-powered workout planning with Google Gemini",
-            "Comprehensive nutrition and diet management APIs",
-            "Real-time progress tracking and analytics",
-            "Multi-tenant architecture for gym chains",
-            "Mobile-first responsive design (320px to 1600px+)",
-            "Enterprise security with JWT authentication",
-            "RESTful API endpoints for easy integration",
-            "Custom member management system"
+            "AI-powered workout planning with Google Gemini integration",
+            "Comprehensive nutrition and diet management system",
+            "Real-time progress tracking and performance analytics",
+            "Multi-tenant architecture perfect for gym chains",
+            "Mobile-first responsive design (supports all devices)",
+            "Enterprise-grade security with JWT authentication",
+            "RESTful API endpoints for seamless integration",
+            "Advanced member management and engagement tools"
         ],
-        action: "Visit Live Site",
-        liveUrl: "https://gym-project-pied-eta.vercel.app/",
-        isLiveProduct: true,
+        action: "Know More",
     },
 ];
 
 export const services = [
     {
-        id: "service-1",
+        id: "content-creation-social-media-marketing",
         title: "Content Creation for Social Media Marketing",
         description:
             `We offer content suggestions based on personalized social media marketing strategy for your brand, both in posts and videos. Our process starts with in-depth research-studying competitors, market trends, and audience behavior.
@@ -166,7 +164,7 @@ export const services = [
         action: "Know More",
     },
     {
-        id: "service-2",
+        id: "seo-content-writing-services",
         title: "SEO Content Writing Services",
         description:
             `We provide SEO content writing services to enhance new as well as current website or blog content.
@@ -188,7 +186,7 @@ export const services = [
         action: "Know More",
     },
     {
-        id: "service-3",
+        id: "sales-marketing-automation-services",
         title: "Sales & Marketing Automation Services",
         description:
             `We assist companies in saving time and growing more quickly by streamlining repetitive workflows on platforms such as LinkedIn, email, SMS, WhatsApp, and websites.
@@ -208,7 +206,7 @@ export const services = [
         action: "Know More",
     },
     {
-        id: "service-4",
+        id: "market-research-services",
         title: "Market Research Services",
         description:
             `We begin by learning how your business operates, its organization, business model, and how it generates revenue with market analysis and research.
@@ -228,7 +226,7 @@ export const services = [
         action: "Know More",
     },
     {
-        id: "service-5",
+        id: "social-media-management-services",
         title: "Social Media Management Services",
         description:
             `We will assist in growing on all major social media platforms with a sound & strategic planning. It's not merely about posting–it’s about planning the correct content, studying trends, crafting keyword rich captions, and creating scroll stopping visuals. 
@@ -248,7 +246,7 @@ export const services = [
         action: "Know More",
     },
     {
-        id: "service-6",
+        id: "offline-sales-services",
         title: "Offline Sales Services",
         description:
             `If your company requires assistance with offline sales strategy, we've got you covered! Wondering how to get clients offline? We've got the answer for you. On a fixed compensation basis, we can offer you a trained salesperson from our team who will generate leads for you.
@@ -269,7 +267,7 @@ export const services = [
         action: "Know More",
     },
     {
-        id: "service-7",
+        id: "social-media-ads",
         title: "Social Media Ads",
         description:
             `We design and run top-performing ad campaigns across platforms such as Facebook, Instagram, and LinkedIn. We can handle social media advertising, campaign setup, budgeting, audience targeting, and on-going optimization.

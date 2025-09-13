@@ -163,7 +163,7 @@ const AnimatedTestimonials = ({ testimonials }) => {
         }, interval)
 
         return () => clearInterval(autoRotate)
-    }, [autoRotatePaused, isRotating, screenSize])
+    }, [autoRotatePaused, isRotating, screenSize, rotateCards])
 
     // Initialize carousel
     useEffect(() => {
@@ -182,7 +182,7 @@ const AnimatedTestimonials = ({ testimonials }) => {
         positionCards()
     }, [screenSize, orientation, positionCards])
 
-    const rotateCards = (direction = "next") => {
+    const rotateCards = useCallback((direction = "next") => {
         if (isRotating) return
         setIsRotating(true)
 
@@ -340,7 +340,7 @@ const AnimatedTestimonials = ({ testimonials }) => {
                 animDelay,
             )
         })
-    }
+    }, [isRotating, screenSize, positions])
 
     // Enhanced touch/swipe handling - works better on all devices
     const handleTouchStart = (e) => {

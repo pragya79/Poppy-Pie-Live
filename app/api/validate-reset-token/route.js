@@ -7,13 +7,26 @@ export async function POST(req) {
 
         const { email, token } = await req.json();
 
-        const user = await User.findOne({
-            email,
-            resetPasswordToken: token,
-            resetPasswordExpiry: { $gt: Date.now() },
-        });
+        // Validate input
+        if (!email || !token) {
+            return new Response(JSON.stringify({ message: 'Email and token are required' }), {
+                status: 400,
+            });
+        }
+
+        // Find user by email and include the reset token fields
+        const user = await User.findOne({ email }).select('+resetPasswordToken +resetPasswordExpiry');
 
         if (!user) {
+            return new Response(JSON.stringify({ message: 'Invalid or expired reset token' }), {
+                status: 400,
+            });
+        }
+
+        // Use the secure token verification method from the model
+        const isValidToken = user.verifyPasswordResetToken(token);
+
+        if (!isValidToken) {
             return new Response(JSON.stringify({ message: 'Invalid or expired reset token' }), {
                 status: 400,
             });

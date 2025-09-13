@@ -150,7 +150,7 @@ const FixedFloatingBubbles = () => {
         )
       })
     },
-    [getResponsiveValues, services],
+    [getResponsiveValues],
   )
 
   // Setup the initial bubble positions with proper distribution
@@ -229,7 +229,7 @@ const FixedFloatingBubbles = () => {
         0,
       )
     })
-  }, [activeService, getResponsiveValues, services])
+  }, [activeService, getResponsiveValues])
 
   // Get screen size and set up resize listener
   useEffect(() => {
@@ -258,7 +258,7 @@ const FixedFloatingBubbles = () => {
       window.removeEventListener("resize", handleResize)
       clearTimeout(loadTimer)
     }
-  }, [])
+  }, [setupBubbles])
 
   // Update bubble positions when screen size changes
   useEffect(() => {
@@ -278,7 +278,7 @@ const FixedFloatingBubbles = () => {
       updateBubblePositions(activeService)
       animateContentChange(activeService)
     }
-  }, [activeService, isLoaded])
+  }, [activeService, isLoaded, animateContentChange, updateBubblePositions])
 
   // Animate content change
   const animateContentChange = useCallback((newActiveId) => {

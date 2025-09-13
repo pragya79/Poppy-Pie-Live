@@ -70,7 +70,7 @@ export default function SettingsPage() {
         resolver: zodResolver(profileFormSchema),
         defaultValues: {
             name: "Admin User",
-            email: "admin@poppypie.com",
+            email: "contact@poppypie.com",
         },
     });
 
@@ -90,14 +90,21 @@ export default function SettingsPage() {
         setSuccessMessage("");
 
         try {
-            // Here you would send the data to your API
-            console.log("Profile data submitted:", data);
+            // Send profile data to API
+            const response = await fetch('/api/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            toast.success("Profile updated successfully!");
-            setSuccessMessage("Profile updated successfully!");
+            if (response.ok) {
+                toast.success("Profile updated successfully!");
+                setSuccessMessage("Profile updated successfully!");
+            } else {
+                throw new Error('Failed to update profile');
+            }
         } catch (error) {
             console.error("Error updating profile:", error);
             toast.error("Failed to update profile. Please try again.");
@@ -112,24 +119,35 @@ export default function SettingsPage() {
         setSuccessMessage("");
 
         try {
-            // Here you would send the data to your API
-            console.log("Password data submitted:", data);
-
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Reset form after successful submission
-            passwordForm.reset({
-                currentPassword: "",
-                newPassword: "",
-                confirmPassword: "",
+            // Send password update to API
+            const response = await fetch('/api/auth/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    currentPassword: data.currentPassword,
+                    newPassword: data.newPassword,
+                }),
             });
 
-            toast.success("Password updated successfully!");
-            setSuccessMessage("Password updated successfully!");
+            if (response.ok) {
+                // Reset form after successful submission
+                passwordForm.reset({
+                    currentPassword: "",
+                    newPassword: "",
+                    confirmPassword: "",
+                });
+
+                toast.success("Password updated successfully!");
+                setSuccessMessage("Password updated successfully!");
+            } else {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update password');
+            }
         } catch (error) {
             console.error("Error updating password:", error);
-            toast.error("Failed to update password. Please try again.");
+            toast.error(error.message || "Failed to update password. Please try again.");
         } finally {
             setIsSubmitting(false);
         }

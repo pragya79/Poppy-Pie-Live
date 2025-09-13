@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, use } from "react"
+import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, ExternalLink, Calendar, User, Tag, Sparkles, Eye, Award } from "lucide-react"
 import { portfolioItems } from "../DataUtility"
@@ -146,11 +147,12 @@ const ProjectDetailPage = ({ params }) => {
                                     {/* Image Card */}
                                     <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl bg-white w-full max-w-md lg:max-w-lg">
                                         <div className="aspect-[3/4] overflow-hidden">
-                                            <img
+                                            <Image
                                                 src={imageItem.image}
                                                 alt={imageItem.alt}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                                loading="lazy"
+                                                fill
+                                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                                sizes="(max-width: 768px) 90vw, (max-width: 1024px) 400px, 500px"
                                             />
                                         </div>
                                         {/* Image Caption */}
@@ -335,11 +337,12 @@ const ProjectDetailPage = ({ params }) => {
                                         }}
                                     >
                                         <div className="relative aspect-[4/3] overflow-hidden rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-white">
-                                            <img
+                                            <Image
                                                 src={relatedProject.image}
                                                 alt={relatedProject.title}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                                loading="lazy"
+                                                fill
+                                                className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                                sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 33vw"
                                             />
 
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-400">

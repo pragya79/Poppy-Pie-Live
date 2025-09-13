@@ -16,121 +16,17 @@ import {
   TrendingUp,
   Users,
   ArrowUpRight,
+  Briefcase,
+  AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/app/components/context/AuthProvider";
 import { useRouter } from "next/navigation";
-
-// Stats cards data for dashboard
-const statsCards = [
-  {
-    title: "Total Inquiries",
-    value: "145",
-    change: "+12.5%",
-    trend: "up",
-    description: "vs. previous month",
-    icon: <Mail className="h-5 w-5 text-blue-500" />,
-  },
-  {
-    title: "Blog Posts",
-    value: "28",
-    change: "+3.2%",
-    trend: "up",
-    description: "vs. previous month",
-    icon: <FileText className="h-5 w-5 text-indigo-500" />,
-  },
-  {
-    title: "Visitor Traffic",
-    value: "8,642",
-    change: "+18.7%",
-    trend: "up",
-    description: "vs. previous month",
-    icon: <TrendingUp className="h-5 w-5 text-green-500" />,
-  },
-  {
-    title: "Conversion Rate",
-    value: "4.6%",
-    change: "+1.2%",
-    trend: "up",
-    description: "vs. previous month",
-    icon: <Users className="h-5 w-5 text-purple-500" />,
-  },
-];
-
-// Recent inquiries data
-const recentInquiries = [
-  {
-    id: "INQ-001",
-    name: "John Smith",
-    email: "john@example.com",
-    date: "2025-04-02",
-    subject: "Branding services inquiry",
-    status: "new",
-  },
-  {
-    id: "INQ-002",
-    name: "Emily Johnson",
-    email: "emily@company.co",
-    date: "2025-04-01",
-    subject: "Digital marketing strategy",
-    status: "new",
-  },
-  {
-    id: "INQ-003",
-    name: "Michael Brown",
-    email: "michael@startup.io",
-    date: "2025-03-31",
-    subject: "Website redesign project",
-    status: "in-progress",
-  },
-  {
-    id: "INQ-004",
-    name: "Sarah Williams",
-    email: "sarah@corporation.com",
-    date: "2025-03-30",
-    subject: "Social media management",
-    status: "in-progress",
-  },
-  {
-    id: "INQ-005",
-    name: "David Lee",
-    email: "david@business.org",
-    date: "2025-03-28",
-    subject: "Logo design inquiry",
-    status: "completed",
-  },
-];
-
-// Recent blog posts data
-const recentBlogPosts = [
-  {
-    id: "POST-001",
-    title: "Digital Marketing Trends for 2025",
-    date: "2025-04-01",
-    author: "Admin",
-    views: 428,
-    status: "published",
-  },
-  {
-    id: "POST-002",
-    title: "How to Build a Strong Brand Identity",
-    date: "2025-03-28",
-    author: "Admin",
-    views: 356,
-    status: "published",
-  },
-  {
-    id: "POST-003",
-    title: "The Power of Content Marketing",
-    date: "2025-03-25",
-    author: "Admin",
-    views: 279,
-    status: "published",
-  },
-];
+import useAnalytics from "@/app/components/shared/hooks/useAnalytics";
 
 export default function AdminDashboard() {
   const { user, isAuthenticated, loading, isAdmin } = useAuth();
   const router = useRouter();
+  const { analytics, loading: analyticsLoading, error: analyticsError, refetch } = useAnalytics();
 
   // Protect the route
   useEffect(() => {
@@ -143,7 +39,7 @@ export default function AdminDashboard() {
     }
   }, [isAuthenticated, loading, user, isAdmin, router]);
 
-  if (loading) {
+  if (loading || analyticsLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="w-10 h-10 border-t-2 border-blue-500 rounded-full animate-spin"></div>
@@ -156,11 +52,111 @@ export default function AdminDashboard() {
     return null;
   }
 
+  // Handle analytics error
+  if (analyticsError) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back to the admin dashboard</p>
+        </div>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Error loading dashboard data</h3>
+            <p className="text-gray-600 mb-4">{analyticsError}</p>
+            <button
+              onClick={refetch}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Get data from analytics
+  const overview = analytics?.overview || {};
+  const recentActivities = analytics?.recentActivities || [];
+
+  // Create stats cards with real data
+  const statsCards = [
+    {
+      title: "Total Inquiries",
+      value: overview.totalInquiries || 0,
+      change: overview.recentInquiries ? `+${overview.recentInquiries}` : "+0",
+      trend: "up",
+      description: "new this week",
+      icon: <Mail className="h-5 w-5 text-blue-500" />,
+    },
+    {
+      title: "Blog Posts",
+      value: overview.totalBlogs || 0,
+      change: overview.recentBlogs ? `+${overview.recentBlogs}` : "+0",
+      trend: "up",
+      description: "new this week",
+      icon: <FileText className="h-5 w-5 text-indigo-500" />,
+    },
+    {
+      title: "Active Jobs",
+      value: overview.activeJobs || 0,
+      change: overview.recentJobs ? `+${overview.recentJobs}` : "+0",
+      trend: "up",
+      description: "new this week",
+      icon: <Briefcase className="h-5 w-5 text-green-500" />,
+    },
+    {
+      title: "Total Users",
+      value: overview.totalUsers || 0,
+      change: overview.recentUsers ? `+${overview.recentUsers}` : "+0",
+      trend: "up",
+      description: "new this week",
+      icon: <Users className="h-5 w-5 text-purple-500" />,
+    },
+  ];
+
+  // Filter recent activities for display
+  const recentInquiries = recentActivities
+    .filter(activity => activity.type === 'inquiry')
+    .slice(0, 4)
+    .map((activity, index) => ({
+      id: `INQ-${index + 1}`,
+      name: activity.title.replace('New inquiry from ', ''),
+      email: activity.email || 'N/A',
+      date: activity.date,
+      subject: activity.service || 'General inquiry',
+      status: 'new',
+    }));
+
+  const recentBlogPosts = recentActivities
+    .filter(activity => activity.type === 'blog')
+    .slice(0, 3)
+    .map((activity, index) => ({
+      id: `POST-${index + 1}`,
+      title: activity.title.replace('New blog post: ', ''),
+      date: activity.date,
+      author: "Admin",
+      views: Math.floor(Math.random() * 500) + 100, // Random views for now
+      status: activity.status || 'published',
+    }));
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back to the admin dashboard</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back to the admin dashboard</p>
+        </div>
+        <button
+          onClick={refetch}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+          disabled={analyticsLoading}
+        >
+          <TrendingUp className="h-4 w-4" />
+          {analyticsLoading ? 'Refreshing...' : 'Refresh Data'}
+        </button>
       </div>
 
       {/* Stats Cards Grid */}
@@ -202,32 +198,36 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {recentInquiries.slice(0, 4).map((inquiry) => (
-                <div
-                  key={inquiry.id}
-                  className="flex items-start justify-between border-b border-gray-100 pb-3 last:border-0 last:pb-0"
-                >
-                  <div>
-                    <p className="font-medium text-sm">{inquiry.name}</p>
-                    <p className="text-xs text-gray-500">{inquiry.subject}</p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(inquiry.date).toLocaleDateString()}
-                    </p>
+              {recentInquiries.length > 0 ? (
+                recentInquiries.map((inquiry) => (
+                  <div
+                    key={inquiry.id}
+                    className="flex items-start justify-between border-b border-gray-100 pb-3 last:border-0 last:pb-0"
+                  >
+                    <div>
+                      <p className="font-medium text-sm">{inquiry.name}</p>
+                      <p className="text-xs text-gray-500">{inquiry.subject}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(inquiry.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+                          ${inquiry.status === "new" ? "bg-blue-100 text-blue-800" : inquiry.status === "in-progress" ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800"}`}
+                      >
+                        {inquiry.status === "new"
+                          ? "New"
+                          : inquiry.status === "in-progress"
+                            ? "In Progress"
+                            : "Completed"}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                        ${inquiry.status === "new" ? "bg-blue-100 text-blue-800" : inquiry.status === "in-progress" ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800"}`}
-                    >
-                      {inquiry.status === "new"
-                        ? "New"
-                        : inquiry.status === "in-progress"
-                        ? "In Progress"
-                        : "Completed"}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-gray-500 text-center py-4">No recent inquiries</p>
+              )}
             </div>
             <button
               className="w-full text-center text-sm text-blue-600 hover:text-blue-800 mt-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
@@ -249,26 +249,30 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {recentBlogPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className="flex items-start justify-between border-b border-gray-100 pb-3 last:border-0 last:pb-0"
-                >
-                  <div>
-                    <p className="font-medium text-sm">{post.title}</p>
-                    <p className="text-xs text-gray-500">By {post.author}</p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(post.date).toLocaleDateString()}
-                    </p>
+              {recentBlogPosts.length > 0 ? (
+                recentBlogPosts.map((post) => (
+                  <div
+                    key={post.id}
+                    className="flex items-start justify-between border-b border-gray-100 pb-3 last:border-0 last:pb-0"
+                  >
+                    <div>
+                      <p className="font-medium text-sm">{post.title}</p>
+                      <p className="text-xs text-gray-500">By {post.author}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
+                        {post.status === 'published' ? 'Published' : 'Draft'}
+                      </span>
+                      <span className="text-xs text-gray-500 mt-1">{post.views} views</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
-                      Published
-                    </span>
-                    <span className="text-xs text-gray-500 mt-1">{post.views} views</span>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-gray-500 text-center py-4">No recent blog posts</p>
+              )}
             </div>
             <button
               className="w-full text-center text-sm text-blue-600 hover:text-blue-800 mt-4 py-2 rounded-md hover:bg-gray-50 transition-colors"

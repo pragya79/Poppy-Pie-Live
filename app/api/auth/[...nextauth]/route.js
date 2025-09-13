@@ -7,7 +7,7 @@ import connectToDatabase from "../../../../lib/mongodb";
 import User from "../../../../models/User";
 import bcrypt from "bcryptjs";
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -30,6 +30,7 @@ const handler = NextAuth({
             id: "1",
             name: "Poppy Pie",
             email: allowedEmail,
+            role: "admin",
           };
         }
 
@@ -45,6 +46,7 @@ const handler = NextAuth({
               id: user._id.toString(),
               name: `${user.firstName} ${user.lastName}`,
               email: user.email,
+              role: user.role || "user",
             };
           }
         }
@@ -69,6 +71,7 @@ const handler = NextAuth({
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.role = user.role;
       }
       return token;
     },
@@ -76,6 +79,7 @@ const handler = NextAuth({
       session.user = {
         id: token.id,
         email: token.email,
+        role: token.role,
       };
       return session;
     },
@@ -84,6 +88,8 @@ const handler = NextAuth({
     signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
+import Image from "next/image"
 import {
     Card,
     CardContent,
@@ -75,14 +76,17 @@ export default function BlogPage() {
             setIsLoading(true)
             setError(null)
             try {
-                const response = await fetch('/api/posts')
+                const response = await fetch('/api/posts?status=published')
                 console.log('Response status:', response.status, response.statusText)
                 if (!response.ok) {
                     throw new Error(`Failed to fetch blog posts: ${response.status} ${response.statusText}`)
                 }
                 const data = await response.json()
                 console.log('Fetched data:', data)
-                const publishedPosts = data.filter(post => post.status === "published")
+
+                // Handle both old and new API response formats
+                const posts = data.posts || data || []
+                const publishedPosts = posts.filter(post => post.status === "published")
                 setBlogPosts(publishedPosts)
                 setFilteredPosts(publishedPosts)
             } catch (error) {
@@ -135,10 +139,10 @@ export default function BlogPage() {
     }
 
     return (
-        <div className="space-y-6 container mx-auto px-4 py-8">
+        <div className="space-y-6 container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             {error && (
                 <div className="text-red-500 text-center p-4 bg-red-50 rounded-md">
-                    <p>{error}</p>
+                    <p className="text-sm sm:text-base">{error}</p>
                     <Button
                         variant="outline"
                         onClick={() => {
@@ -151,27 +155,27 @@ export default function BlogPage() {
                     </Button>
                 </div>
             )}
-            <div className="text-center">
-                <h1 className="text-3xl font-bold tracking-tight">Our Blog</h1>
-                <p className="text-muted-foreground mt-2">Explore our latest insights and tips</p>
+            <div className="text-center mb-6 sm:mb-8">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">Our Blog</h1>
+                <p className="text-muted-foreground mt-2 text-sm sm:text-base max-w-2xl mx-auto">Explore our latest insights and tips</p>
             </div>
 
             {/* Search and Filters */}
             <Card>
-                <CardContent className="pt-6">
-                    <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
-                        <div className="flex-1 relative">
+                <CardContent className="pt-4 sm:pt-6">
+                    <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:gap-4 sm:justify-between sm:items-center">
+                        <div className="flex-1 relative w-full sm:max-w-md">
                             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                             <Input
                                 placeholder="Search blog posts..."
-                                className="pl-9"
+                                className="pl-9 w-full"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                <SelectTrigger className="w-[140px]">
+                                <SelectTrigger className="w-full sm:w-[160px]">
                                     <SelectValue placeholder="Category" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -182,7 +186,7 @@ export default function BlogPage() {
                                 </SelectContent>
                             </Select>
                             <Select value={tagFilter} onValueChange={setTagFilter}>
-                                <SelectTrigger className="w-[140px]">
+                                <SelectTrigger className="w-full sm:w-[160px]">
                                     <SelectValue placeholder="Tag" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -204,9 +208,9 @@ export default function BlogPage() {
                         <div className="w-10 h-10 border-t-2 border-blue-500 rounded-full animate-spin"></div>
                     </div>
                 ) : filteredPosts.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                        <FileText className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                        <p>No blog posts found</p>
+                    <div className="text-center py-12 sm:py-16 text-gray-500">
+                        <FileText className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 text-gray-300" />
+                        <p className="text-sm sm:text-base mb-4">No blog posts found</p>
                         {(searchTerm || categoryFilter !== "all" || tagFilter !== "all") && (
                             <Button
                                 variant="link"
@@ -215,21 +219,24 @@ export default function BlogPage() {
                                     setCategoryFilter("all")
                                     setTagFilter("all")
                                 }}
+                                className="text-sm sm:text-base"
                             >
                                 Clear filters
                             </Button>
                         )}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-6">
                         {filteredPosts.map((post) => (
-                            <Card key={post._id} className="overflow-hidden flex flex-col h-full transition-all hover:shadow-lg">
+                            <Card key={post._id} className="overflow-hidden flex flex-col h-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02]">
                                 <div className="relative aspect-video">
                                     {post.featuredImage ? (
-                                        <img
+                                        <Image
                                             src={post.featuredImage}
                                             alt={post.title}
-                                            className="w-full h-full object-cover"
+                                            fill
+                                            className="object-cover"
+                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         />
                                     ) : (
                                         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400">
@@ -237,27 +244,27 @@ export default function BlogPage() {
                                         </div>
                                     )}
                                 </div>
-                                <CardHeader className="pb-0">
-                                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                                        <Tag className="h-4 w-4" />
-                                        <span>{post.category}</span>
+                                <CardHeader className="pb-2 sm:pb-0 p-4 sm:p-6">
+                                    <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 mb-2">
+                                        <Tag className="h-3 w-3 sm:h-4 sm:w-4" />
+                                        <span className="truncate">{post.category}</span>
                                     </div>
-                                    <CardTitle className="text-base font-semibold line-clamp-2 h-12">
-                                        <a href={`/blog/${post.slug}`} className="hover:underline">
+                                    <CardTitle className="text-sm sm:text-base font-semibold line-clamp-2 h-10 sm:h-12 leading-tight">
+                                        <a href={`/blogs/${post.slug}`} className="hover:underline transition-colors">
                                             {post.title}
                                         </a>
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="flex-1">
-                                    <p className="text-sm text-gray-600 line-clamp-3 h-[4.5rem]">
-                                        {post.excerpt || post.content.replace(/<[^>]+>/g, '').substring(0, 150) + '...'}
+                                <CardContent className="flex-1 p-4 sm:p-6 pt-0">
+                                    <p className="text-xs sm:text-sm text-gray-600 line-clamp-3 h-[3.5rem] sm:h-[4.5rem] mb-3">
+                                        {post.excerpt || post.content.replace(/<[^>]+>/g, '').substring(0, 120) + '...'}
                                     </p>
                                     {post.tags && post.tags.length > 0 && (
-                                        <div className="flex flex-wrap gap-1 mt-2">
-                                            {post.tags.map(tag => (
+                                        <div className="flex flex-wrap gap-1 mt-2 mb-3">
+                                            {post.tags.slice(0, 3).map(tag => (
                                                 <span
                                                     key={tag}
-                                                    className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 cursor-pointer"
+                                                    className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 cursor-pointer hover:bg-blue-200 transition-colors"
                                                     onClick={() => setTagFilter(tag)}
                                                 >
                                                     {tag}
@@ -265,17 +272,20 @@ export default function BlogPage() {
                                             ))}
                                         </div>
                                     )}
-                                    <div className="flex items-center gap-2 text-xs text-gray-500 mt-4">
-                                        <Calendar className="h-4 w-4" />
-                                        <span>{formatDate(post.publishedDate)}</span>
+                                    <div className="flex justify-between items-center text-xs sm:text-sm text-gray-500 mt-3 pt-3 border-t">
+                                        <div className="flex items-center gap-1 sm:gap-2">
+                                            <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
+                                            <span className="truncate">{formatDate(post.publishedDate)}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1 sm:gap-2">
+                                            <User className="h-3 w-3 sm:h-4 sm:w-4" />
+                                            <span className="truncate">{post.author}</span>
+                                        </div>
                                     </div>
                                 </CardContent>
-                                <CardFooter className="flex justify-between border-t pt-4 mt-auto">
-                                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                                        <User className="h-4 w-4" />
-                                        <span>{post.author}</span>
-                                        <span className="mx-1">•</span>
-                                        <span>{post.views || 0} views</span>
+                                <CardFooter className="flex justify-between items-center border-t pt-3 mt-auto p-4 sm:p-6">
+                                    <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500">
+                                        <span className="truncate">{post.views || 0} views</span>
                                     </div>
 
                                     {/* Dialog Trigger */}
@@ -283,6 +293,8 @@ export default function BlogPage() {
                                         <DialogTrigger asChild>
                                             <Button
                                                 variant="link"
+                                                size="sm"
+                                                className="text-xs sm:text-sm p-0 h-auto"
                                                 onClick={() => {
                                                     setSelectedPost(post)
                                                     setIsDialogOpen(true)
@@ -292,25 +304,29 @@ export default function BlogPage() {
                                             </Button>
                                         </DialogTrigger>
                                         {selectedPost && (
-                                            <DialogContent className="max-h-[85vh] overflow-y-auto max-w-3xl">
-                                                <DialogHeader>
-                                                    <DialogTitle>{selectedPost.title}</DialogTitle>
-                                                    <DialogDescription>
+                                            <DialogContent className="max-h-[85vh] overflow-y-auto max-w-xs sm:max-w-lg lg:max-w-3xl mx-4 sm:mx-auto">
+                                                <DialogHeader className="space-y-2 sm:space-y-3">
+                                                    <DialogTitle className="text-lg sm:text-xl lg:text-2xl leading-tight">{selectedPost.title}</DialogTitle>
+                                                    <DialogDescription className="text-sm sm:text-base">
                                                         {formatDate(selectedPost.publishedDate)} by {selectedPost.author}
                                                     </DialogDescription>
                                                 </DialogHeader>
                                                 {selectedPost.featuredImage && (
-                                                    <img
-                                                        src={selectedPost.featuredImage}
-                                                        alt={selectedPost.title}
-                                                        className="w-full h-48 object-cover rounded-md mb-4"
-                                                    />
+                                                    <div className="relative w-full h-32 sm:h-48 lg:h-64 mb-4">
+                                                        <Image
+                                                            src={selectedPost.featuredImage}
+                                                            alt={selectedPost.title}
+                                                            fill
+                                                            className="object-cover rounded-md"
+                                                            sizes="(max-width: 640px) 95vw, (max-width: 1024px) 80vw, 700px"
+                                                        />
+                                                    </div>
                                                 )}
-                                                <div className="mt-4 text-sm text-gray-700 prose prose-sm max-w-none">
+                                                <div className="mt-4 text-xs sm:text-sm lg:text-base text-gray-700 prose prose-xs sm:prose-sm lg:prose max-w-none">
                                                     <div dangerouslySetInnerHTML={{ __html: selectedPost.content }} />
                                                 </div>
                                                 {selectedPost.tags && selectedPost.tags.length > 0 && (
-                                                    <div className="flex flex-wrap gap-2 mt-4">
+                                                    <div className="flex flex-wrap gap-1 sm:gap-2 mt-4">
                                                         {selectedPost.tags.map(tag => (
                                                             <span
                                                                 key={tag}
@@ -321,19 +337,22 @@ export default function BlogPage() {
                                                         ))}
                                                     </div>
                                                 )}
-                                                <DialogFooter className="mt-4">
+                                                <DialogFooter className="mt-4 flex-col sm:flex-row gap-2 sm:gap-0">
                                                     <Button
-                                                        variant="link"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="w-full sm:w-auto order-2 sm:order-1"
                                                         onClick={() => setIsDialogOpen(false)}
                                                     >
                                                         Close
                                                     </Button>
                                                     <Button
                                                         asChild
-                                                        variant="link"
+                                                        size="sm"
+                                                        className="w-full sm:w-auto order-1 sm:order-2"
                                                         onClick={() => setIsDialogOpen(false)}
                                                     >
-                                                        <a href={`/blog/${selectedPost.slug}`} target="_blank" rel="noopener noreferrer">
+                                                        <a href={`/blogs/${selectedPost.slug}`} target="_blank" rel="noopener noreferrer">
                                                             Open Full Page
                                                         </a>
                                                     </Button>

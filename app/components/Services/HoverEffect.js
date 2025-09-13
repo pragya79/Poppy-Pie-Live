@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export const HoverEffect = ({
@@ -18,54 +18,7 @@ export const HoverEffect = ({
     return (
         <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-10 gap-4", className)}>
             {items.map((item, idx) => {
-                // Check if this is the Fitness API product with a live URL
-                const isFitnessAPI = item.id === 'fitness-api' && item.liveUrl;
-
-                if (isFitnessAPI) {
-                    // Render a different component for Fitness API with external link option
-                    return (
-                        <div
-                            key={idx}
-                            className="relative group block p-2 h-full w-full"
-                            onMouseEnter={() => setHoveredIndex(idx)}
-                            onMouseLeave={() => setHoveredIndex(null)}
-                        >
-                            <AnimatePresence>
-                                {hoveredIndex === idx && (
-                                    <motion.span
-                                        className="absolute inset-0 h-full w-full bg-accent dark:bg-accent/30 block rounded-3xl"
-                                        layoutId="hoverBackground"
-                                        initial={{ opacity: 0 }}
-                                        animate={{
-                                            opacity: 1,
-                                            transition: { duration: 0.15 },
-                                        }}
-                                        exit={{
-                                            opacity: 0,
-                                            transition: { duration: 0.15, delay: 0.2 },
-                                        }}
-                                    />
-                                )}
-                            </AnimatePresence>
-
-                            <Card>
-                                <CardTitle>{item.title}</CardTitle>
-                                <CardDescription>{item.description}</CardDescription>
-                                <div className="flex flex-col gap-3 mt-6">
-                                    <Link
-                                        href={`/services/${item.id}`}
-                                        className="flex items-center text-sm text-primary font-medium hover:text-primary/80 transition-colors"
-                                    >
-                                        View Details
-                                        <ArrowRight className="ml-1 w-4 h-4" />
-                                    </Link>
-                                </div>
-                            </Card>
-                        </div>
-                    );
-                }
-
-                // Regular item rendering
+                // Regular item rendering for all items
                 return (
                     <Link
                         href={`/services/${item.id}`}
